@@ -1,0 +1,41 @@
+@startuml
+!define RECTANGLE class
+actor Administrator
+
+rectangle "Zarządzanie użytkownikami" as users {
+	usecase "Przejrzyj listę użytkowników" as UCA1
+	usecase "Przejrzyj listę zgłoszonych użytkowników" as UCA2
+	usecase "Usuń użytkownika" as UCA3
+	usecase "Zablokuj użytkownika" as UCA4
+	usecase "Odblokuj użytkownika" as UCA5
+	usecase "Usuń post użytkownika" as UCA6
+	usecase "Usuń komentarz użytkownika" as UCA7
+	usecase "Usuń zgłoszenie" as UCA8
+	usecase "Zobacz profil użytkownika" as UCA9
+}
+
+Administrator -up-> UCA1
+Administrator -up-> UCA2
+
+UCA1 -up-> UCA9 : invokes
+UCA2 -up-> UCA9 : invokes
+
+UCA9 -up-> UCA3 : invokes
+UCA9 -up-> UCA4 : invokes
+UCA9 -up-> UCA5 : invokes
+UCA9 -up-> UCA6 : invokes
+UCA9 -up-> UCA7 : invokes
+UCA9 -up-> UCA8 : invokes
+
+rectangle "Zarządzanie łowiskami" as fishing {
+	usecase "Przejżyj listę propozycji łowisk" as UCB1
+	usecase "Akceptuj łowisko" as UCB2
+	usecase "Usuń łowisko" as UCB3
+}
+
+Administrator -down-> UCB1
+UCB1 --> UCB2 : invokes
+UCB1 --> UCB3 : invokes
+
+
+@enduml

@@ -1,0 +1,94 @@
+@startuml
+skinparam linetype polyline
+!define RECTANGLE class
+actor Użytkownik
+
+rectangle "Logowanie" as login {
+	usecase "Zaloguj się" as UCA1
+	usecase "Zarejestruj się" as UCA2
+	usecase "Zresetuj hasło" as UCA3
+}
+
+Użytkownik -left-> UCA1
+Użytkownik -left-> UCA2
+
+UCA1 -down-> UCA2 : invokes
+UCA1 -left-> UCA3 : invokes
+
+rectangle "Zarządzanie postami" as post {
+	usecase "Utwórz post" as UCB1
+	usecase "Edytuj post" as UCB2
+	usecase "Usuń post" as UCB3
+}
+
+Użytkownik --> UCB1
+Użytkownik --> UCB2
+Użytkownik --> UCB3
+
+rectangle "Interkacja z innymi użytkownikami" as interaction {
+	usecase "Wyświetl komentarze" as UCC1
+	usecase "Komentuj post" as UCC2
+	usecase "Usuń komentarz" as UCC3
+	usecase "Lajkuj post" as UCC4
+	usecase "Usuń lajk" as UCC5
+	usecase "Udostępnij post" as UCC6
+	usecase "Cofnij udostępnienie" as UCC7
+	usecase "Zobacz profil innego użytkownika" as UCC8
+	usecase "Zobacz post innego użytkownika" as UCC9
+	usecase "Zobacz listę znajomych" as UCC10
+	usecase "Dodaj znajomego" as UCC11
+	usecase "Usuń znajomego" as UCC12
+	usecase "Zgłoś użytkownika" as UCC13
+}
+
+Użytkownik -up-> UCC8
+Użytkownik -up-> UCC9
+Użytkownik -up-> UCC10
+
+UCC8 -up-> UCC11 : invokes
+UCC8 -up-> UCC12 : invokes
+UCC10 -up-> UCC12 : invokes
+
+UCC8 -right-> UCC9 : invokes
+UCC8 -up-> UCC13 : invokes
+UCC9 -up-> UCC1 : invokes
+UCC9 -up-> UCC4 : invokes
+UCC9 -up-> UCC5 : invokes
+UCC9 -up-> UCC6 : invokes
+UCC9 -right-> UCC7 : invokes
+UCC1 -up-> UCC2 : invokes
+UCC1 -up-> UCC3 : invokes
+
+UCC8 -[hidden]left- UCC10
+
+rectangle "Zarządzanie kontem" as account {
+	usecase "Wyświetl profil" as UCD1
+	usecase "Edytuj profil" as UCD2
+	usecase "Ustal zasięg postów" as UCD3
+	usecase "Zmień hasło" as UCD4
+	usecase "Usuń konto" as UCD5
+	usecase "Zmień preferencje" as UCD6
+}
+
+Użytkownik --> UCD1
+
+UCD1 --> UCD2 : invokes
+UCD1 --> UCD3 : invokes
+UCD1 --> UCD4 : invokes
+UCD1 --> UCD6 : invokes
+UCD1 -right-> UCD5 : invokes
+
+rectangle "Łowiska" as fishing {
+	usecase "Wyświetl listę łowisk" as UCE1
+	usecase "Wyświetl informacje o łowisku" as UCE2
+	usecase "Oceń łowisko" as UCE3
+	usecase "Dodaj łowisko" as UCE4
+}
+
+Użytkownik -right-> UCE1
+
+UCE1 -down-> UCE2 : invokes
+UCE1 -down-> UCE4 : invokes
+UCE2 -down-> UCE3 : invokes
+
+@enduml
