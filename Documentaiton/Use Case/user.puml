@@ -7,13 +7,17 @@ rectangle "Logowanie" as login {
 	usecase "Zaloguj się" as UCA1
 	usecase "Zarejestruj się" as UCA2
 	usecase "Zresetuj hasło" as UCA3
+	usecase "Wyloguj się" as UCA4
 }
 
 Użytkownik -left-> UCA1
 Użytkownik -left-> UCA2
+Użytkownik -left-> UCA4
 
 UCA1 -down-> UCA2 : invokes
 UCA1 -left-> UCA3 : invokes
+
+UCA2 -[hidden]down- UCA4
 
 rectangle "Zarządzanie postami" as post {
 	usecase "Utwórz post" as UCB1
@@ -67,7 +71,7 @@ rectangle "Zarządzanie kontem" as account {
 	usecase "Ustal zasięg postów" as UCD3
 	usecase "Zmień hasło" as UCD4
 	usecase "Usuń konto" as UCD5
-	usecase "Zmień preferencje" as UCD6
+	usecase "Zmień ustawienia prywatności" as UCD6
 }
 
 Użytkownik --> UCD1
