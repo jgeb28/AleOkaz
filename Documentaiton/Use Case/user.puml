@@ -82,7 +82,7 @@ rectangle "Łowiska" as fishing {
 	usecase "Wyświetl listę łowisk" as UCE1
 	usecase "Wyświetl informacje o łowisku" as UCE2
 	usecase "Oceń łowisko" as UCE3
-	usecase "Dodaj łowisko" as UCE4
+	usecase "Zaproponuj dodanie łowiska" as UCE4
 }
 
 Użytkownik -right-> UCE1
