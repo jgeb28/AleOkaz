@@ -25,7 +25,7 @@ Użytkownik --> UCB1
 Użytkownik --> UCB2
 Użytkownik --> UCB3
 
-rectangle "Interkacja z innymi użytkownikami" as interaction {
+rectangle "Interakcja z innymi użytkownikami" as interaction {
 	usecase "Wyświetl komentarze" as UCC1
 	usecase "Komentuj post" as UCC2
 	usecase "Usuń komentarz" as UCC3
