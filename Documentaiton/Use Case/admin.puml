@@ -28,7 +28,7 @@ UCA9 -up-> UCA7 : invokes
 UCA9 -up-> UCA8 : invokes
 
 rectangle "Zarządzanie łowiskami" as fishing {
-	usecase "Przejżyj listę propozycji łowisk" as UCB1
+	usecase "Przejrzyj listę propozycji łowisk" as UCB1
 	usecase "Akceptuj łowisko" as UCB2
 	usecase "Usuń łowisko" as UCB3
 }
