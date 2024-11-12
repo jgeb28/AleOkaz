@@ -23,6 +23,7 @@ rectangle "Zarządzanie postami" as post {
 	usecase "Utwórz post" as UCB1
 	usecase "Edytuj post" as UCB2
 	usecase "Usuń post" as UCB3
+	
 }
 
 Użytkownik --> UCB1
@@ -38,22 +39,28 @@ rectangle "Interakcja z innymi użytkownikami" as interaction {
 	usecase "Udostępnij post" as UCC6
 	usecase "Cofnij udostępnienie" as UCC7
 	usecase "Zobacz profil innego użytkownika" as UCC8
-	usecase "Zobacz post innego użytkownika" as UCC9
+	usecase "Wyświetl listę postów" as UCC9
 	usecase "Zobacz listę znajomych" as UCC10
 	usecase "Dodaj znajomego" as UCC11
 	usecase "Usuń znajomego" as UCC12
 	usecase "Zgłoś użytkownika" as UCC13
+	usecase "Wyświetl posty użytkownika" as UCC14
+	usecase "Wyświetl posty na stronie głównej" as UCC15
 }
 
 Użytkownik -up-> UCC8
-Użytkownik -up-> UCC9
 Użytkownik -up-> UCC10
+Użytkownik -up-> UCC15
 
 UCC8 -up-> UCC11 : invokes
 UCC8 -up-> UCC12 : invokes
 UCC10 -up-> UCC12 : invokes
 
-UCC8 -right-> UCC9 : invokes
+UCC14 --|> UCC9
+UCC15 --|> UCC9
+
+
+UCC8 --> UCC14
 UCC8 -up-> UCC13 : invokes
 UCC9 -up-> UCC1 : invokes
 UCC9 -up-> UCC4 : invokes
@@ -89,7 +96,7 @@ rectangle "Łowiska" as fishing {
 	usecase "Zaproponuj dodanie łowiska" as UCE4
 }
 
-Użytkownik -right-> UCE1
+Użytkownik -down-> UCE1
 
 UCE1 -down-> UCE2 : invokes
 UCE1 -down-> UCE4 : invokes
