@@ -5,24 +5,23 @@ skinparam linetype polyline
 class Account {
     + ID: int
     + name: String
-    + surname: String
     + email: String
     + username: String
     + password: String
 
-    + role: AccountRole
+    + roles: Collection<AccountRole>
 }
 
 enum AccountRole {
     USER
-    EMPLOYEE
     ADMIN
+    MODERATOR
 }
 
 class User {
     + bio: String
     + privacySettings: String
-    + postRange: String
+    + postRangeInKilometers: float
     + isBlocked: bool
 
     + posts: Collection<Post>
@@ -31,10 +30,9 @@ class User {
 
 class Post {
     + ID: int
-    + textContent: String
+    + content: String
     + image: Image
     + createdAt: DateTime
-    + isEdited: bool
     + editedAt: DateTime
     + author: User
     + likes: int
@@ -48,7 +46,7 @@ class Comment {
     + ID: int
     + content: String
     + author: User
-    + timestamp: DateTime
+    + createdAt: DateTime
 }
 
 class Report {
@@ -61,7 +59,7 @@ class Report {
 class FishingSpot {
     + ID: int
     + name: String
-    + location: Location
+    + location: Point
 }
 
 class AcceptedFishingSpot {
@@ -72,22 +70,16 @@ class AcceptedFishingSpot {
 }
 
 class ProposedFishingSpot {
-    + proposedBy: User
-    + proposedTimestamp: DateTime
+    + proposer: User
+    + proposedAt: DateTime
 }
 
-
-struct Location {
-    + X: float
-    + Y: float
-}
 
 Account <|-- User
 Account -right- AccountRole
 User "1" <--> "*" Post
 Post "*" <-right-> "1" AcceptedFishingSpot
 Post "1" --> "*" Comment
-FishingSpot -- Location
 User "1" <-left- "*" Report
 ProposedFishingSpot "*" -left-> "1" User
 ProposedFishingSpot -left-|> FishingSpot
