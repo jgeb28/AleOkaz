@@ -2,75 +2,79 @@
 skinparam linetype polyline
 !define RECTANGLE class
 
+class Account {
+    + ID: int
+    + name: String
+    + surname: String
+    + email: String
+    + username: String
+    + password: String
 
-    class Account {
-        + ID: int
-        + name : String
-        + surname : String
-        + email: String
-        + username: String
-        + password: String
+    + role: AccountRole
+}
 
-        + role: AccountRole
-    }
-    enum AccountRole {
-        USER
-        EMPLOYEE
-        ADMIN
-    }
-    class User {
-        + bio : String
-        + privacySettings : String
-        + postRange : String
-        + isBlocked : bool
+enum AccountRole {
+    USER
+    EMPLOYEE
+    ADMIN
+}
 
-        + posts: Collection<Post>
-        + friends: Collection<User>
-    }
-    class Post {
-        + ID: int
-        + textContent: String
-        + image: Image
-        + createdAt: DateTime
-        + isEdited: bool
-        + editedAt: DateTime
-        + author: User
-        + likes: int
-        + shares: int
+class User {
+    + bio: String
+    + privacySettings: String
+    + postRange: String
+    + isBlocked: bool
 
-        + comments: Collection<Comment>
-        + fishingSpot: FishingSpot
-    }
-    class Comment {
-        + ID: int
-        + content: String
-        + author: User
-        + timestamp: DateTime
-    }
-    class Report {
-        + ID: int
-        + reporter: User
-        + reportedUser: User
-        + reason: String
-    }
+    + posts: Collection<Post>
+    + friends: Collection<User>
+}
 
-    class FishingSpot {
-        + ID: int
-        + name: String 
-        + location: Location
-    }
+class Post {
+    + ID: int
+    + textContent: String
+    + image: Image
+    + createdAt: DateTime
+    + isEdited: bool
+    + editedAt: DateTime
+    + author: User
+    + likes: int
+    + shares: int
 
-    class AcceptedFishingSpot {        
-        + rating: float
-        + details: String    
-        
-        + posts: Collection<Post>
-    }
+    + comments: Collection<Comment>
+    + fishingSpot: FishingSpot
+}
 
-    class ProposedFishingSpot {
-        + proposedBy: User
-        + proposedTimestamp: DateTime
-    }
+class Comment {
+    + ID: int
+    + content: String
+    + author: User
+    + timestamp: DateTime
+}
+
+class Report {
+    + ID: int
+    + reporter: User
+    + reportedUser: User
+    + reason: String
+}
+
+class FishingSpot {
+    + ID: int
+    + name: String
+    + location: Location
+}
+
+class AcceptedFishingSpot {
+    + rating: float
+    + details: String
+
+    + posts: Collection<Post>
+}
+
+class ProposedFishingSpot {
+    + proposedBy: User
+    + proposedTimestamp: DateTime
+}
 
 
 struct Location {
@@ -80,7 +84,7 @@ struct Location {
 
 Account <|-- User
 Account -right- AccountRole
-User "1" <--> "*" Post 
+User "1" <--> "*" Post
 Post "*" <-right-> "1" AcceptedFishingSpot
 Post "1" --> "*" Comment
 FishingSpot -- Location
