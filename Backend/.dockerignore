@@ -1,0 +1,15 @@
+# Narzędzia
+**/.git
+
+# Edytory
+**/.vscode
+
+# Artefakty
+**/target
+
+# Inne pliki
+**/.dockerignore
+**/.env
+**/.gitignore
+**/Dockerfile
+**/README.md
