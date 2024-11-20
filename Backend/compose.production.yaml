@@ -1,0 +1,28 @@
+services:
+  # TODO: Dodać healthcheck
+  backend:
+    build:
+      context: .
+    environment:
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
+      - DATABASE_URL=jdbc:postgresql://postgres:5432/aleokaz
+      - DATABASE_USER=aleokaz
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+      - KAFKA_SERVERS=kafka:9092
+    ports:
+      - 8080:8080
+    deploy:
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+    depends_on:
+      kafka:
+        condition: service_healthy
+        restart: true
+      postgres:
+        condition: service_healthy
+        restart: true
+    develop:
+      watch:
+        - action: rebuild
+          path: .
