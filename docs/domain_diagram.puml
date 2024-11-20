@@ -20,12 +20,17 @@ enum AccountRole {
 
 class User {
     + bio: String
-    + privacySettings: String
     + postRangeInKilometers: float
     + isBlocked: bool
 
+    + privacySettings: PrivacySetting
     + posts: Collection<Post>
     + friends: Collection<User>
+}
+
+enum PrivacySetting {
+    PRIVATE
+    PUBLIC
 }
 
 class Post {
@@ -33,11 +38,11 @@ class Post {
     + content: String
     + image: Image
     + createdAt: DateTime
-    + editedAt: DateTime
-    + author: User
+    + editedAt: DateTime 
     + likes: int
     + shares: int
 
+    + author: User
     + comments: Collection<Comment>
     + fishingSpot: FishingSpot
 }
@@ -45,15 +50,25 @@ class Post {
 class Comment {
     + ID: int
     + content: String
-    + author: User
     + createdAt: DateTime
+    + likes: int
+    + shares: int
+
+    + author: User
 }
 
 class Report {
     + ID: int
-    + reporter: User
-    + reportedUser: User
     + reason: String
+    
+    + status: ReportStatus
+    + reporter: User
+    + accused: User
+}
+
+enum ReportStatus {
+    PENDING
+    COMPLETED
 }
 
 class FishingSpot {
@@ -69,9 +84,10 @@ class AcceptedFishingSpot {
     + posts: Collection<Post>
 }
 
-class ProposedFishingSpot {
-    + proposer: User
+class ProposedFishingSpot {   
     + proposedAt: DateTime
+
+    + proposer: User
 }
 
 
@@ -80,9 +96,13 @@ Account -right- AccountRole
 User "1" <--> "*" Post
 Post "*" <-right-> "1" AcceptedFishingSpot
 Post "1" --> "*" Comment
-User "1" <-left- "*" Report
+User "1" <-right- "*" Report
+User -left- PrivacySetting
+Report -right- ReportStatus
 ProposedFishingSpot "*" -left-> "1" User
 ProposedFishingSpot -left-|> FishingSpot
 AcceptedFishingSpot --|> FishingSpot
+Comment "*" -- "1" User
+
 
 @enduml
