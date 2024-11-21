@@ -1,0 +1,30 @@
+# Artefakty
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+# Edytory
+!**/src/main/**/build/
+!**/src/test/**/build/
+*.iml
+*.ipr
+*.iws
+.apt_generated
+.classpath
+.factorypath
+.idea
+.project
+.settings
+.springBeans
+.sts4-cache
+.vscode/
+/.nb-gradle/
+/dist/
+/nbbuild/
+/nbdist/
+/nbproject/private/
+build/
+
+# Inne pliki
+.env

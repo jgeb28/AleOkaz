@@ -1,0 +1,7 @@
+services:
+  kafka:
+    ports:
+      - 9092:9092
+  postgres:
+    ports:
+      - 5432:5432
