@@ -9,8 +9,7 @@ enum UserRole {
 }
 
 class User {
-    + ID: int
-    + name: String
+    + ID: long
     + email: String
     + username: String
     + password: String
@@ -30,7 +29,8 @@ enum PrivacySetting {
 }
 
 abstract class PostBase {
-    + ID: int
+    + ID: long
+    + Title: String
     + content: String
     + imageURL: String
     + createdAt: DateTime
@@ -53,8 +53,10 @@ class Comment {
     + post: Post
 }
 
+
+
 class Reaction {
-    + ID: int
+    + ID: long
     + type: enum ReactionType
 
     + user: User
@@ -62,12 +64,22 @@ class Reaction {
 }
 
 class Report {
-    + ID: int
-    + reason: String
-    
-    + status: ReportStatus
+    + ID: long
     + reporter: User
-    + accused: User
+    + type: ReportType
+    + status: ReportStatus
+}
+
+class PostReport {
+    + reportedPost: Post
+}
+
+class UserReport { 
+    + accusedUser: User
+}
+
+enum ReportType {
+    ...
 }
 
 enum ReportStatus {
@@ -76,7 +88,7 @@ enum ReportStatus {
 }
 
 class FishingSpot {
-    + ID: int
+    + ID: long
     + name: String
     + location: Point
 }
@@ -91,12 +103,13 @@ class AcceptedFishingSpot {
 
 class ProposedFishingSpot {   
     + proposedAt: DateTime
+    + description: String
 
     + proposer: User
 }
 
 class FishingSpotRating {
-    + ID: int
+    + ID: long
     + rater: User
     + value: float
 }
@@ -104,10 +117,8 @@ class FishingSpotRating {
 User -up- UserRole
 User "1" <--> "*" Post
 Post "*" <-right-> "1" AcceptedFishingSpot
-User "1" <-right- "*" Report
 User -left- PrivacySetting
 PostBase -up- PrivacySetting
-Report -right- ReportStatus
 ProposedFishingSpot "*" -left-> "1" User
 ProposedFishingSpot --|> FishingSpot
 AcceptedFishingSpot --|> FishingSpot
@@ -118,6 +129,13 @@ PostBase "1" -up- "*" Reaction
 User -left- Reaction
 AcceptedFishingSpot -right- FishingSpotRating
 User -- FishingSpotRating
+Report <|-left- UserReport
+Report <|-right- PostReport
+Report -- ReportType
+Report -- ReportStatus
+User -right- UserReport
+
+
 
 
 
