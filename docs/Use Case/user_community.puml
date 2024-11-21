@@ -1,0 +1,79 @@
+@startuml
+skinparam linetype polyline
+!define RECTANGLE class
+actor Użytkownik
+
+rectangle "Interakcja z użytkownikami" {
+	usecase "Zobacz profil innego użytkownika" as UCC8
+	usecase "Zobacz listę znajomych" as UCC10
+	usecase "Dodaj znajomego" as UCC11
+	usecase "Usuń znajomego" as UCC12
+	usecase "Zgłoś użytkownika" as UCC13
+}
+
+Użytkownik -right-> UCC8
+Użytkownik -right-> UCC10
+
+UCC8 -up-> UCC11 : invokes
+UCC8 -down-> UCC12 : invokes
+UCC10 -up-> UCC12 : invokes
+UCC8 -up-> UCC13 : invokes
+
+rectangle "Interakcja z postami" as interaction {
+	usecase "Wyświetl komentarze" as UCC1
+	usecase "Komentuj post" as UCC2
+	usecase "Usuń komentarz" as UCC3
+	usecase "Lajkuj post" as UCC4
+	usecase "Usuń lajk" as UCC5
+	usecase "Udostępnij post" as UCC6
+	usecase "Cofnij udostępnienie" as UCC7
+	
+	usecase "Wyświetl listę postów" as UCC9
+	
+	usecase "Wyświetl posty użytkownika" as UCC14
+	usecase "Wyświetl posty na stronie głównej" as UCC15
+	usecase "Wyświetl posty z łowiska" as UCC16
+}
+
+
+
+Użytkownik --> UCC15
+
+
+UCC14 -down-|> UCC9
+UCC15 -down-|> UCC9
+UCC16 -down-|> UCC9
+
+UCC8 --> UCC14 : invokes
+
+UCC9 --> UCC1 : invokes
+UCC9 --> UCC4 : invokes
+UCC9 --> UCC5 : invokes
+UCC9 --> UCC6 : invokes
+UCC9 --> UCC7 : invokes
+UCC1 --> UCC2 : invokes
+UCC1 --> UCC3 : invokes
+
+rectangle "Łowiska" as fishing {
+	usecase "Wyświetl listę łowisk" as UCE1
+	usecase "Wyświetl informacje o łowisku" as UCE2
+	usecase "Oceń łowisko" as UCE3
+	usecase "Zaproponuj dodanie łowiska" as UCE4
+	usecase "Wyświetl mapę" as UCE5
+	usecase "Wyświetl szczegóły lokacji" as UCE6
+	
+}
+
+Użytkownik --> UCE1
+Użytkownik --> UCE5
+
+UCE5 --> UCE6 : invokes
+UCE6 --> UCE2 : invokes
+UCE2 --> UCC16 : invokes
+UCE1 --> UCE2 : invokes
+UCE1 --> UCE4 : invokes
+UCE2 --> UCE3 : invokes
+
+
+
+@enduml
