@@ -2,30 +2,26 @@
 skinparam linetype polyline
 !define RECTANGLE class
 
-class Account {
-    + ID: int
-    + name: String
-    + email: String
-    + username: String
-    + password: String
-
-    + roles: Collection<AccountRole>
-}
-
-enum AccountRole {
+enum UserRole {
     USER
     ADMIN
     MODERATOR
 }
 
 class User {
+    + ID: int
+    + name: String
+    + email: String
+    + username: String
+    + password: String
     + bio: String
     + postRangeInKilometers: float
     + isBlocked: bool
 
-    + privacySettings: PrivacySetting
+    + privacy: PrivacySetting
     + posts: Collection<Post>
     + friends: Collection<User>
+    + roles: Collection<UserRole>
 }
 
 enum PrivacySetting {
@@ -33,28 +29,36 @@ enum PrivacySetting {
     PUBLIC
 }
 
-class Post {
+abstract class PostBase {
     + ID: int
     + content: String
-    + image: Image
+    + imageURL: String
     + createdAt: DateTime
     + editedAt: DateTime 
-    + likes: int
     + shares: int
 
+    + reactions: Collection<Reaction>
     + author: User
+}
+
+class Post {
+    + shares: int
+
+    + privacy: PrivacySetting
     + comments: Collection<Comment>
     + fishingSpot: FishingSpot
 }
 
 class Comment {
-    + ID: int
-    + content: String
-    + createdAt: DateTime
-    + likes: int
-    + shares: int
+    + post: Post
+}
 
-    + author: User
+class Reaction {
+    + ID: int
+    + type: enum ReactionType
+
+    + user: User
+    + target: PostBase
 }
 
 class Report {
@@ -78,9 +82,10 @@ class FishingSpot {
 }
 
 class AcceptedFishingSpot {
-    + rating: float
+    + ratingValue: float
     + details: String
 
+    + ratings: Collection<FishingSpotRating>
     + posts: Collection<Post>
 }
 
@@ -90,19 +95,32 @@ class ProposedFishingSpot {
     + proposer: User
 }
 
+class FishingSpotRating {
+    + ID: int
+    + rater: User
+    + value: float
+}
 
-Account <|-- User
-Account -right- AccountRole
+User -up- UserRole
 User "1" <--> "*" Post
 Post "*" <-right-> "1" AcceptedFishingSpot
-Post "1" --> "*" Comment
 User "1" <-right- "*" Report
 User -left- PrivacySetting
+PostBase -up- PrivacySetting
 Report -right- ReportStatus
 ProposedFishingSpot "*" -left-> "1" User
-ProposedFishingSpot -left-|> FishingSpot
+ProposedFishingSpot --|> FishingSpot
 AcceptedFishingSpot --|> FishingSpot
-Comment "*" -- "1" User
+PostBase <|-up- Post
+PostBase <|-left- Comment
+Post -left- Comment
+PostBase "1" -up- "*" Reaction
+User -left- Reaction
+AcceptedFishingSpot -right- FishingSpotRating
+User -- FishingSpotRating
+
+
+
 
 
 @enduml
