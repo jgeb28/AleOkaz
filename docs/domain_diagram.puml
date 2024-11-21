@@ -1,0 +1,144 @@
+@startuml
+skinparam linetype polyline
+!define RECTANGLE class
+
+enum UserRole {
+    USER
+    ADMIN
+    MODERATOR
+}
+
+class User {
+    + ID: long
+    + email: String
+    + username: String
+    + password: String
+    + bio: String
+    + postRangeInKilometers: float
+    + isBlocked: bool
+
+    + privacy: PrivacySetting
+    + posts: Collection<Post>
+    + friends: Collection<User>
+    + roles: Collection<UserRole>
+}
+
+enum PrivacySetting {
+    PRIVATE
+    PUBLIC
+}
+
+abstract class PostBase {
+    + ID: long
+    + Title: String
+    + content: String
+    + imageURL: String
+    + createdAt: DateTime
+    + editedAt: DateTime 
+    + shares: int
+
+    + reactions: Collection<Reaction>
+    + author: User
+}
+
+class Post {
+    + shares: int
+
+    + privacy: PrivacySetting
+    + comments: Collection<Comment>
+    + fishingSpot: FishingSpot
+}
+
+class Comment {
+    + post: Post
+}
+
+
+
+class Reaction {
+    + ID: long
+    + type: enum ReactionType
+
+    + user: User
+    + target: PostBase
+}
+
+class Report {
+    + ID: long
+    + reporter: User
+    + type: ReportType
+    + status: ReportStatus
+}
+
+class PostReport {
+    + reportedPost: Post
+}
+
+class UserReport { 
+    + accusedUser: User
+}
+
+enum ReportType {
+    ...
+}
+
+enum ReportStatus {
+    PENDING
+    COMPLETED
+}
+
+class FishingSpot {
+    + ID: long
+    + name: String
+    + location: Point
+}
+
+class AcceptedFishingSpot {
+    + ratingValue: float
+    + details: String
+
+    + ratings: Collection<FishingSpotRating>
+    + posts: Collection<Post>
+}
+
+class ProposedFishingSpot {   
+    + proposedAt: DateTime
+    + description: String
+
+    + proposer: User
+}
+
+class FishingSpotRating {
+    + ID: long
+    + rater: User
+    + value: float
+}
+
+User -up- UserRole
+User "1" <--> "*" Post
+Post "*" <-right-> "1" AcceptedFishingSpot
+User -left- PrivacySetting
+PostBase -up- PrivacySetting
+ProposedFishingSpot "*" -left-> "1" User
+ProposedFishingSpot --|> FishingSpot
+AcceptedFishingSpot --|> FishingSpot
+PostBase <|-up- Post
+PostBase <|-left- Comment
+Post -left- Comment
+PostBase "1" -up- "*" Reaction
+User -left- Reaction
+AcceptedFishingSpot -right- FishingSpotRating
+User -- FishingSpotRating
+Report <|-left- UserReport
+Report <|-right- PostReport
+Report -- ReportType
+Report -- ReportStatus
+User -right- UserReport
+
+
+
+
+
+
+
+@enduml
