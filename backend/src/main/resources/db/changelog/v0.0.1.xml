@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                        http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
+    <changeSet id="1" author="michalciechan">
+        <createTable tableName="user">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" primaryKeyName="users_pk" nullable="false" />
+            </column>
+            <column name="email" type="text">
+                <constraints nullable="false" unique="true" />
+            </column>
+            <column name="username" type="text">
+                <constraints nullable="false" unique="true" />
+            </column>
+            <column name="password" type="text">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+
+        <createTable tableName="user_role">
+            <column name="user_id" type="uuid">
+                <constraints nullable="false" />
+            </column>
+            <column name="role" type="text"></column>
+        </createTable>
+        <addUniqueConstraint tableName="user_role" columnNames="user_id,role" />
+        <addForeignKeyConstraint
+            baseTableName="user_role"
+            baseColumnNames="user_id"
+            constraintName="verification_user_fk"
+            referencedTableName="user"
+            referencedColumnNames="id" />
+    </changeSet>
+</databaseChangeLog>
