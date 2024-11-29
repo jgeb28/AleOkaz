@@ -37,4 +37,29 @@
             referencedTableName="user"
             referencedColumnNames="id" />
     </changeSet>
+
+    <changeSet id="2" author="michalciechan">
+        <createTable tableName="verification">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" primaryKeyName="verifications_pk" nullable="false" />
+            </column>
+            <column name="code" type="text">
+                <constraints nullable="false" />
+            </column>
+            <column name="user_id" type="uuid">
+                <constraints nullable="false" />
+            </column>
+            <column name="created_at" type="timestamp with time zone"
+                defaultValueDate="CURRENT_TIMESTAMP">
+                <constraints nullable="false" />
+            </column>
+            <column name="verified_at" type="timestamp with time zone" />
+        </createTable>
+        <addForeignKeyConstraint
+            baseTableName="verification"
+            baseColumnNames="user_id"
+            constraintName="verification_user_fk"
+            referencedTableName="user"
+            referencedColumnNames="id" />
+    </changeSet>
 </databaseChangeLog>
