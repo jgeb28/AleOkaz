@@ -49,7 +49,7 @@
             <column name="user_id" type="uuid">
                 <constraints nullable="false" />
             </column>
-            <column name="created_at" type="timestamp with time zone" defaultValueDate="${now}">
+            <column name="created_at" type="timestamp with time zone" defaultValueDate="NOW()">
                 <constraints nullable="false" />
             </column>
             <column name="verified_at" type="timestamp with time zone" />

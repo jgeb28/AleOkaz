@@ -27,6 +27,9 @@ public class UserService {
     @Autowired
     private VerificationRepository verificationRepository;
 
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
+
     /**
      * Rejestruje użytkownika i wysyła kod weryfikacyjny na podanego emaila.
      * Po rejestracji użytkownik jest niezweryfikowany i nie może korzystać w pełni
@@ -85,6 +88,26 @@ public class UserService {
                 user.id().toString());
 
         return userMapper.convertUserToUserDto(user);
+    }
+
+    /**
+     * Sprawdza, czy login i hasło użytkownika się zgadzają. Jeśli tak, to zwraca
+     * token
+     *
+     * @param registerCommand Dane użytkownika do zarejestrowania.
+     * @return Zarejestrowanego użytkownika
+     * @throws UserAlreadyExistsException jeżeli użytkownik o takiej samej nazwie
+     *                                    lub emailu istnieje.
+     */
+    public String loginUser(LoginCommand loginCommand) {
+        var user = userRepository.findByUsername(loginCommand.username());
+
+        final PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+        if (user == null || !passwordEncoder.matches(loginCommand.password(), user.password())) {
+            throw new IllegalArgumentException("Invalid username or password");
+        }
+
+        return jwtTokenProvider.createToken(user);
     }
 
     private String createVerificationCode() {

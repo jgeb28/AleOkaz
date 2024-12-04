@@ -2,6 +2,7 @@ package pl.aleokaz.backend.user;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.hibernate.validator.constraints.UniqueElements;
 
@@ -21,7 +22,8 @@ import java.util.UUID;
 
 @Data
 @Entity
-class User {
+@NoArgsConstructor
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
