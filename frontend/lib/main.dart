@@ -1,4 +1,5 @@
 import 'package:ale_okaz/screens/register/register.dart';
+import 'package:ale_okaz/screens/login/login.dart';
 import 'package:flutter/material.dart';
 
 void main() => runApp(const MyApp());
@@ -27,6 +28,13 @@ class MyApp extends StatelessWidget {
                           builder: (context) => const RegisterScreen()));
                     },
                     child: const Text('To register'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => LoginScreen()));
+                    },
+                    child: const Text('To login'),
                   ),
                 ],
               );
