@@ -3,12 +3,16 @@ import 'package:flutter/material.dart';
 class LabelInput extends StatelessWidget {
   const LabelInput({
     required this.labelName,
-    required this.isObscured,
+    required this.controller,
+    this.isObscured = false,
+    this.hintText,
     super.key,
   });
 
   final String labelName;
   final bool isObscured;
+  final TextEditingController controller;
+  final String? hintText;
 
    @override
   Widget build(BuildContext context) {
@@ -33,12 +37,13 @@ class LabelInput extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 TextFormField(
+                  controller: controller,
                   obscureText: isObscured,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     filled: true,
                     fillColor: Colors.white,
-                    hintText: 'Wartość',
-                    enabledBorder: OutlineInputBorder(
+                    hintText: hintText,
+                    enabledBorder: const OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(10.0)),
                       borderSide: BorderSide(
                         width: 1.0, 

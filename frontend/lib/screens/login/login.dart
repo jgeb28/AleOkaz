@@ -4,11 +4,17 @@ import 'package:ale_okaz/widgets/label_input.dart';
 import 'package:ale_okaz/widgets/title_section.dart';
 import 'package:ale_okaz/widgets/line_divider.dart';
 
+import 'package:ale_okaz/main.dart';
+import 'package:ale_okaz/screens/register/register.dart';
+
+
+
 class LoginScreen extends StatelessWidget {
   LoginScreen({super.key});
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passowrdController = TextEditingController();
   
 
   @override
@@ -24,14 +30,16 @@ class LoginScreen extends StatelessWidget {
                 const TitleSection(
                   name: 'AleOkaz',
                 ),
-                const LabelInput(
+                LabelInput(
                   labelName: 'Nazwa użytkownika',
                   isObscured: false,
+                  controller: _usernameController, 
 
                 ),
-                const LabelInput(
+                LabelInput(
                   labelName: 'Hasło',
                   isObscured: true,
+                  controller: _passowrdController, 
                 ),
                 Padding(
                   padding: const EdgeInsets.only(left: 70),
@@ -60,7 +68,8 @@ class LoginScreen extends StatelessWidget {
                     ),
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
-                        //tu się odezwie do logowania puki co nic nie mam
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => MyApp(username: _usernameController.text,)));
                       }
                     },
                     child: const Text('Zaloguj się',
@@ -75,7 +84,10 @@ class LoginScreen extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(top: 8, bottom: 8),
                   child: TextButton(
-                    onPressed: () { },
+                    onPressed: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => const RegisterScreen()));
+                     },
                     child: const Text('Stwórz nowe konto',
                     style: TextStyle(
                       color: Color(0xFF0C4010), // Set link color
@@ -108,3 +120,4 @@ class LoginScreen extends StatelessWidget {
     );
   }
 }
+

@@ -5,7 +5,11 @@ import 'package:flutter/material.dart';
 void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({
+    this.username,
+    super.key,
+    });
+  final String? username;
 
   @override
   Widget build(BuildContext context) {
@@ -36,6 +40,7 @@ class MyApp extends StatelessWidget {
                     },
                     child: const Text('To login'),
                   ),
+                  Text( username != null ? 'Welcome, $username' : ''),
                 ],
               );
             },
