@@ -3,10 +3,7 @@ package pl.aleokaz.backend.user;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/users")
@@ -20,13 +17,16 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> loginUser(@RequestBody LoginCommand loginCommand) {
-        try {
-            String token = userService.loginUser(loginCommand);
-
-            return ResponseEntity.ok(token);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
-        }
+    public ResponseEntity<LoginResponse> loginUser(@RequestBody LoginCommand loginCommand) {
+        System.out.println(loginCommand.username());
+        System.out.println(loginCommand.password());
+        return ResponseEntity.ok(userService.loginUser(loginCommand));
     }
+
+    @PostMapping("/validate")
+    public ResponseEntity<Boolean> validateToken(@RequestBody TokenCommand tokenCommand) {
+        System.out.println(tokenCommand.token());
+        return ResponseEntity.ok(userService.validateToken(tokenCommand));
+    }
+
 }

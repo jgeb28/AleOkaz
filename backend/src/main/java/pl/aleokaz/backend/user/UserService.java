@@ -1,5 +1,6 @@
 package pl.aleokaz.backend.user;
 
+import org.apache.kafka.common.security.auth.Login;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,12 +95,11 @@ public class UserService {
      * Sprawdza, czy login i hasło użytkownika się zgadzają. Jeśli tak, to zwraca
      * token
      *
-     * @param registerCommand Dane użytkownika do zarejestrowania.
-     * @return Zarejestrowanego użytkownika
-     * @throws UserAlreadyExistsException jeżeli użytkownik o takiej samej nazwie
-     *                                    lub emailu istnieje.
+     * @param loginCommand Dane użytkownika do logowania.
+     * @return JWT Token użytkownika
+     * @throws IllegalArgumentException jeżeli dane logowania są niepoprawne
      */
-    public String loginUser(LoginCommand loginCommand) {
+    public LoginResponse loginUser(LoginCommand loginCommand) {
         var user = userRepository.findByUsername(loginCommand.username());
 
         final PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
@@ -107,8 +107,23 @@ public class UserService {
             throw new IllegalArgumentException("Invalid username or password");
         }
 
-        return jwtTokenProvider.createToken(user);
+        String token = jwtTokenProvider.createToken(user);
+
+        LoginResponse loginResponse = LoginResponse.builder()
+            .token(token)
+            .tokenType("Bearer")
+            .expiresIn(3600)
+            .build();
+
+        return loginResponse;
     }
+
+
+    public Boolean validateToken(TokenCommand tokenCommand) {
+        return jwtTokenProvider.validateToken(tokenCommand.token());
+    }
+
+
 
     private String createVerificationCode() {
         final int CODE_LENGTH = 6;
