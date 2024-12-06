@@ -1,4 +1,4 @@
-package pl.aleokaz.backend.user;
+package pl.aleokaz.backend.user.login;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;

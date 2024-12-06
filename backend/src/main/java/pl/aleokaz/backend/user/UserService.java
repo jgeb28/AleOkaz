@@ -1,6 +1,5 @@
 package pl.aleokaz.backend.user;
 
-import org.apache.kafka.common.security.auth.Login;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,10 +8,12 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pl.aleokaz.backend.user.login.*;
 
 import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Map;
 
 @Service
 @Transactional
@@ -96,7 +97,7 @@ public class UserService {
      * token
      *
      * @param loginCommand Dane użytkownika do logowania.
-     * @return JWT Token użytkownika
+     * @return JWT Access i Refresh tokeny i ich expiration date
      * @throws IllegalArgumentException jeżeli dane logowania są niepoprawne
      */
     public LoginResponse loginUser(LoginCommand loginCommand) {
@@ -107,21 +108,35 @@ public class UserService {
             throw new IllegalArgumentException("Invalid username or password");
         }
 
-        String token = jwtTokenProvider.createToken(user);
+        String accessToken = jwtTokenProvider.createAccessToken(user);
+        String refreshToken = jwtTokenProvider.createRefreshToken(user);
 
         LoginResponse loginResponse = LoginResponse.builder()
-            .token(token)
-            .tokenType("Bearer")
-            .expiresIn(3600)
+            .accessToken(accessToken)
+            .expiresAt(jwtTokenProvider.getTokenExpiration(accessToken))
+            .refreshToken(refreshToken)
+            .refreshExpiresAt(jwtTokenProvider.getTokenExpiration(refreshToken))
             .build();
 
         return loginResponse;
     }
 
+    public RefreshResponse refreshUserToken(Map<String, String> refreshCommand) {
+        String refreshToken = refreshCommand.get("refreshToken");
+        if (!jwtTokenProvider.validateToken(refreshToken)) {
+            throw new RuntimeException("Invalid or expired refresh token");
+        }
 
-    public Boolean validateToken(TokenCommand tokenCommand) {
-        return jwtTokenProvider.validateToken(tokenCommand.token());
+        String accessToken = jwtTokenProvider.refreshAccessToken(refreshToken);
+
+        RefreshResponse refreshResponse = RefreshResponse.builder()
+            .accessToken(accessToken)
+            .expiresAt(jwtTokenProvider.getTokenExpiration(accessToken))
+            .build();
+
+        return refreshResponse;
     }
+
 
 
 

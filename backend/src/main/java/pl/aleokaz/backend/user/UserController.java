@@ -1,9 +1,11 @@
 package pl.aleokaz.backend.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pl.aleokaz.backend.user.login.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/users")
@@ -18,15 +20,13 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> loginUser(@RequestBody LoginCommand loginCommand) {
-        System.out.println(loginCommand.username());
-        System.out.println(loginCommand.password());
         return ResponseEntity.ok(userService.loginUser(loginCommand));
     }
 
-    @PostMapping("/validate")
-    public ResponseEntity<Boolean> validateToken(@RequestBody TokenCommand tokenCommand) {
-        System.out.println(tokenCommand.token());
-        return ResponseEntity.ok(userService.validateToken(tokenCommand));
+    @PostMapping("/refresh")
+    public ResponseEntity<RefreshResponse> refreshUserToken(@RequestBody Map<String, String> refreshCommand) {
+        return ResponseEntity.ok(userService.refreshUserToken(refreshCommand));
     }
+
 
 }

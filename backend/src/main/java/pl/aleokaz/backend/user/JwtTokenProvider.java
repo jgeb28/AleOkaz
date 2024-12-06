@@ -4,67 +4,122 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.JWTVerifier;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component
 public class JwtTokenProvider {
 
+    @Autowired
+    private UserRepository userRepository;
+
     @Value("${jwt.secret}")
     private String secretKey;
 
-    @Value("${jwt.expiration}")
-    private long expirationTime;
+    @Value("${jwt.access-token.expiration}")
+    private long accessTokenExpirationTime;
 
-    //TODO roles
-    public String createToken(User user) {
-        Algorithm algorithm = Algorithm.HMAC512(secretKey);
+    @Value("${jwt.refresh-token.expiration}")
+    private long refreshTokenExpirationTime;
+
+    public JwtTokenProvider(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    private Algorithm getAlgorithm() {
+        return Algorithm.HMAC512(secretKey);
+    }
+
+    /**
+     * Generates an access token for the given user.
+     */
+    public String createAccessToken(User user) {
+        List<String> roleNames = user.roles().stream()
+            .map(UserRole::name)
+            .toList();
 
         return JWT.create()
             .withSubject(user.username())
             .withIssuedAt(new Date())
-            .withExpiresAt(new Date(System.currentTimeMillis() + expirationTime))
-            .sign(algorithm);
+            .withExpiresAt(new Date(System.currentTimeMillis() + accessTokenExpirationTime))
+            .withClaim("roles", roleNames)
+            .sign(getAlgorithm());
     }
 
+    /**
+     * Generates a refresh token for the given user.
+     */
+    public String createRefreshToken(User user) {
+        return JWT.create()
+            .withSubject(user.username())
+            .withIssuedAt(new Date())
+            .withExpiresAt(new Date(System.currentTimeMillis() + refreshTokenExpirationTime))
+            .sign(getAlgorithm());
+    }
+
+    public String refreshAccessToken(String refreshToken) {
+        if (!validateToken(refreshToken)) {
+            throw new RuntimeException("Invalid or expired refresh token");
+        }
+
+        DecodedJWT decodedJWT = JWT.require(Algorithm.HMAC512(secretKey)).build().verify(refreshToken);
+        String username = decodedJWT.getSubject();
+
+        User user = userRepository.findByUsername(username);
+
+        return createAccessToken(user);
+    }
+
+    /**
+     * Validates the given token.
+     */
     public boolean validateToken(String token) {
-
         try {
-            Algorithm algorithm = Algorithm.HMAC512(secretKey);
-
-            JWTVerifier verifier = JWT.require(algorithm)
+            JWTVerifier verifier = JWT.require(getAlgorithm())
                 .build();
 
             verifier.verify(token);
             return true;
 
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.out.println("Token validation failed: " + e.getMessage());
             return false;
         }
     }
 
-    public String getUsernameFromToken(String token) {
-        Algorithm algorithm = Algorithm.HMAC512(secretKey);
+    public Date getTokenExpiration(String token) {
+       Algorithm algorithm = this.getAlgorithm();
+       DecodedJWT decodedJWT = JWT.require(algorithm).build().verify(token);
 
-        DecodedJWT decodedJWT = JWT.require(algorithm)
+       return decodedJWT.getExpiresAt();
+    }
+
+    /**
+     * Extracts the username (subject) from the token.
+     */
+    public String getUsernameFromToken(String token) {
+        DecodedJWT decodedJWT = JWT.require(getAlgorithm())
             .build()
             .verify(token);
 
         return decodedJWT.getSubject();
     }
 
-    //TODO roles
-    public List<String> getRolesFromToken(String token) {
-        Algorithm algorithm = Algorithm.HMAC512(secretKey);
-
-        DecodedJWT decodedJWT = JWT.require(algorithm)
+    public Set<UserRole> getRolesFromToken(String token) {
+        DecodedJWT decodedJWT = JWT.require(getAlgorithm())
             .build()
             .verify(token);
 
-        return decodedJWT.getClaim("roles").asList(String.class);
+        List<String> roleNames = decodedJWT.getClaim("roles").asList(String.class);
+
+        return roleNames.stream()
+            .map(UserRole::valueOf)
+            .collect(Collectors.toSet());
     }
 }
