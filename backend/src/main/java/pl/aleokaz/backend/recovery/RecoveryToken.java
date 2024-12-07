@@ -1,6 +1,7 @@
 package pl.aleokaz.backend.recovery;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,16 +13,16 @@ import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import pl.aleokaz.backend.user.User;
 
 @Data
+@NoArgsConstructor
 @Entity
 public class RecoveryToken {
     @Id
-    @NotNull
-    @Column(unique = true, updatable = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @NotNull
     @ManyToOne

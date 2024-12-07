@@ -1,7 +1,10 @@
 package pl.aleokaz.backend.user;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import org.hibernate.validator.constraints.UniqueElements;
 
@@ -20,6 +23,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @Data
+@NoArgsConstructor
 @Entity
 public class User {
     @Id

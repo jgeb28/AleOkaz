@@ -1,22 +1,22 @@
 package pl.aleokaz.backend.recovery;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NonNull;
 
 @Data
 @Builder
 public class ResetPasswordCommand {
-    @NotNull
+    @NonNull
     @NotBlank
     private String token;
 
-    @NotNull
+    @NonNull
     @NotBlank
     private String email;
 
-    @NotNull
+    @NonNull
     @NotBlank
     private String password;
 }

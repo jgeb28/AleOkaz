@@ -4,6 +4,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 
 @Builder
-record ResponseMsgDto(
+public record ResponseMsgDto(
                 @NotNull String message) {
 }

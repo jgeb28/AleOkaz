@@ -27,6 +27,7 @@ public class RecoveryService {
                 .message("Your recovery token is: " + recoveryToken.token())
                 .build();
         mailingService.sendEmail();
+
         return ResponseMsgDto.builder().message(recoveryToken.token()).build();
     }
 
@@ -43,10 +44,11 @@ public class RecoveryService {
                 .email(resetPasswordCommand.email())
                 .token(resetPasswordCommand.token())
                 .build();
+                
         if (recoveryTokenService.verifyRecoveryToken(checkTokenCommand)) {
             User user = userRepository.findByEmail(resetPasswordCommand.email());
             user.password(resetPasswordCommand.password());
-            userRepository.save(user); // TODO(marcin): ask how you update
+            userRepository.save(user);
             return ResponseMsgDto.builder().message("Password reset").build();
         } else {
             return ResponseMsgDto.builder().message("Password could not be reset").build();
