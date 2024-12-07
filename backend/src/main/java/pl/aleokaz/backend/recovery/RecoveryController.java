@@ -16,7 +16,7 @@ public class RecoveryController {
     @PostMapping
     public ResponseEntity<ResponseMsgDto> createAndSendRecoveryToken(@RequestBody RecoveryCommand recoveryCommand) {
         try {
-            recoveryService.createAndSendRecoveryToken(recoveryCommand)
+            recoveryService.createAndSendRecoveryToken(recoveryCommand);
             return ResponseEntity.ok().body(ResponseMsgDto.builder().message("Recovery code sent.").build());
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(ResponseMsgDto.builder().message("An issue occured while generating recovery code.").build());

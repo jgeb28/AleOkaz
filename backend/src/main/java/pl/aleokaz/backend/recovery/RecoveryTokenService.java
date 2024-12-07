@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import pl.aleokaz.backend.user.User;
@@ -17,6 +18,9 @@ public class RecoveryTokenService {
     @Autowired
     private TokenRepository tokenRepository;
 
+    @Value("${recovery.token.expiration.minutes}")
+    private int tokenExpirationMinutes;
+
     public RecoveryToken createRecoveryToken(RecoveryCommand recoveryCommand) throws UserNotFoundException {
         User user = userRepository.findByEmail(recoveryCommand.email());
         if (user == null) {
@@ -25,14 +29,14 @@ public class RecoveryTokenService {
 
         RecoveryToken recoveryToken = RecoveryToken.builder()
                 .token(UUID.randomUUID().toString())
-                .expirationDate(LocalDateTime.now().plusMinutes(15))
+                .expirationDate(LocalDateTime.now().plusMinutes(tokenExpirationMinutes))
                 .user(userRepository.findByEmail(recoveryCommand.email()))
                 .build();
 
         RecoveryToken existingToken = tokenRepository.findByUserId(user.id());
         if (existingToken != null) {
             existingToken.token(recoveryToken.token());
-            existingToken.expirationDate(LocalDateTime.now().plusMinutes(15));//TODO: make expiration date configurable
+            existingToken.expirationDate(LocalDateTime.now().plusMinutes(tokenExpirationMinutes));
             tokenRepository.save(existingToken);
         } else {
             tokenRepository.save(recoveryToken);

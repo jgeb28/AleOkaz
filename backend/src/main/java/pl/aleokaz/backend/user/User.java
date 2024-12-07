@@ -1,10 +1,8 @@
 package pl.aleokaz.backend.user;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import org.hibernate.validator.constraints.UniqueElements;
 
