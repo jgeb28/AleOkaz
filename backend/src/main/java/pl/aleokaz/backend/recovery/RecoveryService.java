@@ -18,7 +18,7 @@ public class RecoveryService {
         super();
     }
 
-    public ResponseMsgDto createAndSendRecoveryToken(RecoveryCommand recoveryCommand) throws Exception {
+    public void createAndSendRecoveryToken(RecoveryCommand recoveryCommand) throws UserNotFoundException {
         RecoveryToken recoveryToken = recoveryTokenService.createRecoveryToken(recoveryCommand);
 
         MailingService mailingService = MailingService.builder()
@@ -27,31 +27,24 @@ public class RecoveryService {
                 .message("Your recovery token is: " + recoveryToken.token())
                 .build();
         mailingService.sendEmail();
-
-        return ResponseMsgDto.builder().message(recoveryToken.token()).build();
     }
 
-    public ResponseMsgDto verifyRecoveryToken(CheckTokenCommand checkTokenCommand) throws Exception {
-        if (recoveryTokenService.verifyRecoveryToken(checkTokenCommand)) {
-            return ResponseMsgDto.builder().message("Token validated").build();
-        } else {
-            return ResponseMsgDto.builder().message("Token could not be validated").build();
-        }
+    public boolean verifyRecoveryToken(CheckTokenCommand checkTokenCommand) throws UserNotFoundException, TokenNotFoundException {
+        return recoveryTokenService.verifyRecoveryToken(checkTokenCommand);
     }
 
-    public ResponseMsgDto resetPassword(ResetPasswordCommand resetPasswordCommand) throws Exception {
+    public boolean resetPassword(ResetPasswordCommand resetPasswordCommand) throws Exception {
         CheckTokenCommand checkTokenCommand = CheckTokenCommand.builder()
                 .email(resetPasswordCommand.email())
                 .token(resetPasswordCommand.token())
                 .build();
-                
+
         if (recoveryTokenService.verifyRecoveryToken(checkTokenCommand)) {
             User user = userRepository.findByEmail(resetPasswordCommand.email());
             user.password(resetPasswordCommand.password());
             userRepository.save(user);
-            return ResponseMsgDto.builder().message("Password reset").build();
-        } else {
-            return ResponseMsgDto.builder().message("Password could not be reset").build();
-        }
+            return true;
+        } 
+        return false;
     }
 }

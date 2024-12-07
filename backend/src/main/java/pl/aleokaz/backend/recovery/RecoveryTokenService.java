@@ -17,10 +17,10 @@ public class RecoveryTokenService {
     @Autowired
     private TokenRepository tokenRepository;
 
-    public RecoveryToken createRecoveryToken(RecoveryCommand recoveryCommand) throws Exception {
+    public RecoveryToken createRecoveryToken(RecoveryCommand recoveryCommand) throws UserNotFoundException {
         User user = userRepository.findByEmail(recoveryCommand.email());
         if (user == null) {
-            throw new Exception("User not found"); // TODO(marcin): create and handle special exception types
+            throw new UserNotFoundException("email", recoveryCommand.email());
         }
 
         RecoveryToken recoveryToken = RecoveryToken.builder()
@@ -28,7 +28,6 @@ public class RecoveryTokenService {
                 .expirationDate(LocalDateTime.now().plusMinutes(15))
                 .user(userRepository.findByEmail(recoveryCommand.email()))
                 .build();
-        System.out.println("RecoveryToken: " + recoveryToken);//TODO: remove
 
         RecoveryToken existingToken = tokenRepository.findByUserId(user.id());
         if (existingToken != null) {
@@ -41,16 +40,16 @@ public class RecoveryTokenService {
         return recoveryToken;
     }
 
-    public boolean verifyRecoveryToken(CheckTokenCommand checkTokenCommand) throws Exception {
+    public boolean verifyRecoveryToken(CheckTokenCommand checkTokenCommand) throws UserNotFoundException, TokenNotFoundException {
         User user = userRepository.findByEmail(checkTokenCommand.email());
         if (user == null) {
-            throw new Exception("User not found"); // TODO(marcin): create and handle special exception types
+            throw new UserNotFoundException("email", checkTokenCommand.email());
         }
 
         UUID userId = user.id();
         RecoveryToken recoveryToken = tokenRepository.findByUserId(userId);
         if(recoveryToken == null) {
-            throw new Exception("Token not found"); // TODO(marcin): create and handle special exception types
+            throw new TokenNotFoundException("userId", user.id().toString());
         }
         if (recoveryToken.expirationDate().isAfter(LocalDateTime.now()) && recoveryToken.token().equals(checkTokenCommand.token())) {
             return true;

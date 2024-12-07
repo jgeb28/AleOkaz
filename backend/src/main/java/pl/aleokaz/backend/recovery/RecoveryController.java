@@ -16,27 +16,36 @@ public class RecoveryController {
     @PostMapping
     public ResponseEntity<ResponseMsgDto> createAndSendRecoveryToken(@RequestBody RecoveryCommand recoveryCommand) {
         try {
-            return ResponseEntity.ok(recoveryService.createAndSendRecoveryToken(recoveryCommand));
+            recoveryService.createAndSendRecoveryToken(recoveryCommand)
+            return ResponseEntity.ok().body(ResponseMsgDto.builder().message("Recovery code sent.").build());
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(ResponseMsgDto.builder().message(e.getMessage()).build());
+            return ResponseEntity.badRequest().body(ResponseMsgDto.builder().message("An issue occured while generating recovery code.").build());
         }
     }
 
     @PostMapping("/verifyToken")
     public ResponseEntity<ResponseMsgDto> verifyRecoveryToken(@RequestBody CheckTokenCommand checkTokenCommand) {
         try {
-            return ResponseEntity.ok(recoveryService.verifyRecoveryToken(checkTokenCommand));
+            if(recoveryService.verifyRecoveryToken(checkTokenCommand)) {
+                return ResponseEntity.ok().body(ResponseMsgDto.builder().message("Recovery code verified.").build());
+            } else {
+                return ResponseEntity.badRequest().body(ResponseMsgDto.builder().message("Recovery code could not be verified.").build());
+            }
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(ResponseMsgDto.builder().message(e.getMessage()).build());
+            return ResponseEntity.badRequest().body(ResponseMsgDto.builder().message("An issue occured while verifying recovry code.").build());
         }
     }
 
     @PostMapping("/resetPassword")
     public ResponseEntity<ResponseMsgDto> resetPassword(@RequestBody ResetPasswordCommand resetPasswordCommand) {
         try {
-            return ResponseEntity.ok(recoveryService.resetPassword(resetPasswordCommand));
+            if(recoveryService.resetPassword(resetPasswordCommand)) {
+                return ResponseEntity.ok().body(ResponseMsgDto.builder().message("Password reset.").build());
+            } else {
+                return ResponseEntity.badRequest().body(ResponseMsgDto.builder().message("Password could not be reset.").build());
+            }
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(ResponseMsgDto.builder().message(e.getMessage()).build());
+            return ResponseEntity.badRequest().body(ResponseMsgDto.builder().message("An issue occured while reseting the password.").build());
         }
     }
 }
