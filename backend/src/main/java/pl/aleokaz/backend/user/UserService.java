@@ -8,12 +8,12 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pl.aleokaz.backend.user.login.*;
 
 import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @Transactional
@@ -113,9 +113,7 @@ public class UserService {
 
         LoginResponse loginResponse = LoginResponse.builder()
             .accessToken(accessToken)
-            .expiresAt(jwtTokenProvider.getTokenExpiration(accessToken))
             .refreshToken(refreshToken)
-            .refreshExpiresAt(jwtTokenProvider.getTokenExpiration(refreshToken))
             .build();
 
         return loginResponse;
@@ -123,15 +121,23 @@ public class UserService {
 
     public RefreshResponse refreshUserToken(RefreshCommand refreshCommand) {
         String refreshToken = refreshCommand.refreshToken();
+        UUID userId = UUID.fromString(jwtTokenProvider.getUserIdFromToken(refreshToken));
+        System.out.println("user id: " + userId);
 
-        String accessToken = jwtTokenProvider.refreshAccessToken(refreshToken);
+        Optional<User> optionalUser = userRepository.findById(userId);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            String accessToken = jwtTokenProvider.refreshAccessToken(refreshToken, user);
+            System.out.println("New access token: " + accessToken);
 
-        RefreshResponse refreshResponse = RefreshResponse.builder()
-            .accessToken(accessToken)
-            .expiresAt(jwtTokenProvider.getTokenExpiration(accessToken))
-            .build();
-
-        return refreshResponse;
+            RefreshResponse refreshResponse = RefreshResponse.builder()
+                .accessToken(accessToken)
+                .build();
+            return refreshResponse;
+        } else {
+            // Handle the case where the user was not found
+            throw new IllegalArgumentException("User not found with ID: " + userId);
+        }
     }
 
     private String createVerificationCode() {

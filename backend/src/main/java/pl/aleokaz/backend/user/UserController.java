@@ -3,9 +3,6 @@ package pl.aleokaz.backend.user;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pl.aleokaz.backend.user.login.*;
-
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/users")

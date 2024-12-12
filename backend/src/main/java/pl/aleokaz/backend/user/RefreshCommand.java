@@ -1,4 +1,4 @@
-package pl.aleokaz.backend.user.login;
+package pl.aleokaz.backend.user;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
@@ -7,12 +7,10 @@ import lombok.NonNull;
 
 @Data
 @Builder
-public class LoginCommand {
-        @NonNull
-        @NotBlank
-        private String username;
+public class RefreshCommand {
+        private Void __ignore;
 
         @NonNull
         @NotBlank
-        private String password;
+        private String refreshToken;
 }

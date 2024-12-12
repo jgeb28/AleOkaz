@@ -41,10 +41,9 @@ public class JwtTokenProvider {
             .toList();
 
         return JWT.create()
-            .withSubject(user.username())
+            .withSubject(user.id().toString())
             .withIssuedAt(new Date())
             .withExpiresAt(new Date(System.currentTimeMillis() + accessTokenExpirationTime))
-            .withClaim("roles", roleNames)
             .sign(getAlgorithm());
     }
 
@@ -53,21 +52,16 @@ public class JwtTokenProvider {
      */
     public String createRefreshToken(User user) {
         return JWT.create()
-            .withSubject(user.username())
+            .withSubject(user.id().toString())
             .withIssuedAt(new Date())
             .withExpiresAt(new Date(System.currentTimeMillis() + refreshTokenExpirationTime))
             .sign(getAlgorithm());
     }
 
-    public String refreshAccessToken(String refreshToken) {
-        if (!validateToken(refreshToken)) {
-            throw new IllegalArgumentException("Invalid or expired refresh token");
-        }
+    public String refreshAccessToken(String refreshToken, User user) {
 
         DecodedJWT decodedJWT = JWT.require(Algorithm.HMAC512(secretKey)).build().verify(refreshToken);
         String username = decodedJWT.getSubject();
-
-        User user = userRepository.findByUsername(username);
 
         return createAccessToken(user);
     }
@@ -99,23 +93,11 @@ public class JwtTokenProvider {
     /**
      * Extracts the username (subject) from the token.
      */
-    public String getUsernameFromToken(String token) {
+    public String getUserIdFromToken(String token) {
         DecodedJWT decodedJWT = JWT.require(getAlgorithm())
             .build()
             .verify(token);
 
         return decodedJWT.getSubject();
-    }
-
-    public Set<UserRole> getRolesFromToken(String token) {
-        DecodedJWT decodedJWT = JWT.require(getAlgorithm())
-            .build()
-            .verify(token);
-
-        List<String> roleNames = decodedJWT.getClaim("roles").asList(String.class);
-
-        return roleNames.stream()
-            .map(UserRole::valueOf)
-            .collect(Collectors.toSet());
     }
 }
