@@ -121,11 +121,8 @@ public class UserService {
         return loginResponse;
     }
 
-    public RefreshResponse refreshUserToken(Map<String, String> refreshCommand) {
-        String refreshToken = refreshCommand.get("refreshToken");
-        if (!jwtTokenProvider.validateToken(refreshToken)) {
-            throw new RuntimeException("Invalid or expired refresh token");
-        }
+    public RefreshResponse refreshUserToken(RefreshCommand refreshCommand) {
+        String refreshToken = refreshCommand.refreshToken();
 
         String accessToken = jwtTokenProvider.refreshAccessToken(refreshToken);
 
@@ -136,9 +133,6 @@ public class UserService {
 
         return refreshResponse;
     }
-
-
-
 
     private String createVerificationCode() {
         final int CODE_LENGTH = 6;

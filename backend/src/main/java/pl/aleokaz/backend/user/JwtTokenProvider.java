@@ -28,10 +28,6 @@ public class JwtTokenProvider {
     @Value("${jwt.refresh-token.expiration}")
     private long refreshTokenExpirationTime;
 
-    public JwtTokenProvider(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
-
     private Algorithm getAlgorithm() {
         return Algorithm.HMAC512(secretKey);
     }
@@ -65,7 +61,7 @@ public class JwtTokenProvider {
 
     public String refreshAccessToken(String refreshToken) {
         if (!validateToken(refreshToken)) {
-            throw new RuntimeException("Invalid or expired refresh token");
+            throw new IllegalArgumentException("Invalid or expired refresh token");
         }
 
         DecodedJWT decodedJWT = JWT.require(Algorithm.HMAC512(secretKey)).build().verify(refreshToken);
