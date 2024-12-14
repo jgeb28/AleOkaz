@@ -5,7 +5,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+<<<<<<< HEAD
 import org.springframework.security.crypto.password.PasswordEncoder;
+=======
+>>>>>>> 33ba5f6138d8e2085fa18f00c07c69f3f80b62d4
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -55,7 +58,11 @@ public class UserService {
 
         // TODO(michalciechan): Minimalna entropia hasła?
 
+<<<<<<< HEAD
         final PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+=======
+        final var passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+>>>>>>> 33ba5f6138d8e2085fa18f00c07c69f3f80b62d4
         final var password = registerCommand.password();
         final var encodedPassword = passwordEncoder.encode(String.valueOf(password));
         for (int i = 0; i < password.length; i++) {

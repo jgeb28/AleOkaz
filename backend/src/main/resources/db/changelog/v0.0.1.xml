@@ -49,7 +49,12 @@
             <column name="user_id" type="uuid">
                 <constraints nullable="false" />
             </column>
+<<<<<<< HEAD
             <column name="created_at" type="timestamp with time zone" defaultValueDate="${now}">
+=======
+            <column name="created_at" type="timestamp with time zone"
+                defaultValueDate="CURRENT_TIMESTAMP">
+>>>>>>> 33ba5f6138d8e2085fa18f00c07c69f3f80b62d4
                 <constraints nullable="false" />
             </column>
             <column name="verified_at" type="timestamp with time zone" />

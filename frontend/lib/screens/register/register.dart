@@ -6,14 +6,11 @@ import 'package:ale_okaz/widgets/line_divider.dart';
 import 'package:flutter/material.dart';
 
 class RegisterScreen extends StatelessWidget {
-  RegisterScreen({super.key});
-
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final TextEditingController emailController = TextEditingController();
+  const RegisterScreen({super.key});
 
   void onPressed(BuildContext context) {
-    // Navigator.of(context)
-    //     .push(MaterialPageRoute(builder: (context) =>()));
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (context) => (LoginScreen())));
   }
 
   @override
