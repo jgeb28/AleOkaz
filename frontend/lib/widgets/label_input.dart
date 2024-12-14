@@ -1,32 +1,32 @@
 import 'package:flutter/material.dart';
 
 class LabelInput extends StatelessWidget {
+  final String labelName;
+  final bool isObscured;
+  final TextEditingController controller;
+  final String? hintText;
+  final String? Function(String?) validator;
+
   const LabelInput({
     required this.labelName,
     required this.controller,
+    required this.validator,
     this.isObscured = false,
     this.hintText,
     super.key,
   });
 
-  final String labelName;
-  final bool isObscured;
-  final TextEditingController controller;
-  final String? hintText;
-
-   @override
+  @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 80, right: 80),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Expanded (
-            child : Padding(
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Expanded(
+          child: Padding(
             padding: const EdgeInsets.only(bottom: 8),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min, 
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
                   labelName,
@@ -46,26 +46,18 @@ class LabelInput extends StatelessWidget {
                     enabledBorder: const OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(10.0)),
                       borderSide: BorderSide(
-                        width: 1.0, 
-                        color: Color.fromARGB(255, 211, 211, 211),
-                        style: BorderStyle.solid
-                      ),
+                          width: 1.0,
+                          color: Color.fromARGB(255, 211, 211, 211),
+                          style: BorderStyle.solid),
                     ),
                   ),
-                  validator: (String? value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Należy wypełnić pole';
-                    }
-                    return null;
-                  },
+                  validator: validator,
                 ),
-                
               ],
             ),
           ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
