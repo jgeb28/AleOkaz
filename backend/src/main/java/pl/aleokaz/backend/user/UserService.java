@@ -64,13 +64,13 @@ public class UserService {
         }
 
         final var roles = new HashSet<>(Arrays.asList(UserRole.UNVERIFIED_USER));
-        final var user = User.builder()
+        var user = User.builder()
                 .username(username)
                 .email(email)
                 .password(encodedPassword)
                 .roles(roles)
                 .build();
-        userRepository.save(user);
+        user = userRepository.save(user);
 
         final var code = createVerificationCode();
 
