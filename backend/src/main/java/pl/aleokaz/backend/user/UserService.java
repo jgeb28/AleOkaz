@@ -2,7 +2,6 @@ package pl.aleokaz.backend.user;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.stereotype.Service;
@@ -19,14 +18,19 @@ import java.util.HashSet;
 public class UserService {
     final static Logger LOGGER = LoggerFactory.getLogger(UserService.class);
 
-    @Autowired
     private UserMapper userMapper;
 
-    @Autowired
     private UserRepository userRepository;
 
-    @Autowired
     private VerificationRepository verificationRepository;
+
+    public UserService(@NonNull UserMapper userMapper,
+            @NonNull UserRepository userRepository,
+            @NonNull VerificationRepository verificationRepository) {
+        this.userMapper = userMapper;
+        this.userRepository = userRepository;
+        this.verificationRepository = verificationRepository;
+    }
 
     /**
      * Rejestruje użytkownika i wysyła kod weryfikacyjny na podanego emaila.
