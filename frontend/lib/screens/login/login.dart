@@ -1,5 +1,6 @@
 import 'package:ale_okaz/utils/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:ale_okaz/screens/login/login_form.dart';
 import 'package:sign_in_button/sign_in_button.dart';
 import 'package:ale_okaz/widgets/label_input.dart';
 import 'package:ale_okaz/widgets/title_section.dart';
@@ -26,100 +27,45 @@ class LoginScreen extends StatelessWidget {
           child: Container(
             margin: EdgeInsets.symmetric(
                 horizontal: horizonalMargin, vertical: verticalMargin),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                children: [
-                  const TitleSection(
-                    name: 'AleOkaz',
-                  ),
-                  LabelInput(
-                      labelName: 'Email',
-                      isObscured: false,
-                      controller: _emailController,
-                      validator: (String? value) {
-                        if (value == null) {}
-                      }),
-                  LabelInput(
-                      labelName: 'Hasło',
-                      isObscured: true,
-                      controller: _passowrdController,
-                      validator: (String? value) {
-                        return null;
-                      }),
-                  TextButton(
-                    onPressed: () {},
-                    child: const Text(
-                      'Zapomniałeś hasło?',
-                      style: TextStyle(
-                        color: Color(0xFF0C4010),
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: double.maxFinite,
-                    height: 50,
-                    child: FilledButton(
-                      style: FilledButton.styleFrom(
-                        backgroundColor: const Color(0xff6fc27f),
-                        side: BorderSide.none,
-                      ),
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
+                child: Column(
+                  children: [
+                    const LoginForm(),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8, bottom: 8),
+                      child: TextButton(
+                        onPressed: () {
                           Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => MyApp(
-                                    username: _emailController.text,
-                                  )));
-                        }
-                      },
-                      child: const Text(
-                        'Zaloguj się',
-                        style: TextStyle(
-                          color: Color(0xfff3eeea),
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
+                              builder: (context) => RegisterScreen()));
+                        },
+                        child: const Text(
+                          'Stwórz nowe konto',
+                          style: TextStyle(
+                            color: Color(0xFF0C4010), // Set link color
+                            fontWeight:
+                                FontWeight.bold, // Underline text like a link
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8, bottom: 8),
-                    child: TextButton(
-                      onPressed: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => RegisterScreen()));
-                      },
-                      child: const Text(
-                        'Stwórz nowe konto',
-                        style: TextStyle(
-                          color: Color(0xFF0C4010), // Set link color
-                          fontWeight:
-                              FontWeight.bold, // Underline text like a link
+                    const LineDivider(),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 20),
+                      child: SizedBox(
+                        width: double.maxFinite,
+                        height: 50,
+                        child: SignInButton(
+                          Buttons.google,
+                          text: "Sign up with Google",
+                          shape: RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.circular(30), // Make it rounded
+                          ),
+                          onPressed: () {},
                         ),
                       ),
                     ),
-                  ),
-                  const LineDivider(),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 20),
-                    child: SizedBox(
-                      width: double.maxFinite,
-                      height: 50,
-                      child: SignInButton(
-                        Buttons.google,
-                        text: "Sign up with Google",
-                        shape: RoundedRectangleBorder(
-                          borderRadius:
-                              BorderRadius.circular(30), // Make it rounded
-                        ),
-                        onPressed: () {},
-                      ),
-                    ),
-                  ),
-                ],
+                  ],
               ),
-            ),
           ),
         ));
   }
