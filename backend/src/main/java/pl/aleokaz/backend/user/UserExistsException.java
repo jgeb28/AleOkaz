@@ -1,7 +1,11 @@
 package pl.aleokaz.backend.user;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
 import lombok.NonNull;
 
+@ResponseStatus(value = HttpStatus.BAD_REQUEST)
 class UserExistsException extends RuntimeException {
     UserExistsException(@NonNull String field, @NonNull String value) {
         super(formatMessage(field, value), null);
