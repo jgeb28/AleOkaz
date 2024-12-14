@@ -12,8 +12,8 @@ class RegisterScreen extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
 
   void onPressed(BuildContext context) {
-    Navigator.of(context)
-        .push(MaterialPageRoute(builder: (context) => LoginScreen()));
+    // Navigator.of(context)
+    //     .push(MaterialPageRoute(builder: (context) =>()));
   }
 
   @override

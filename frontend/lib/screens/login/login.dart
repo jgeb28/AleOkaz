@@ -34,15 +34,19 @@ class LoginScreen extends StatelessWidget {
                     name: 'AleOkaz',
                   ),
                   LabelInput(
-                    labelName: 'Email',
-                    isObscured: false,
-                    controller: _emailController,
-                  ),
+                      labelName: 'Email',
+                      isObscured: false,
+                      controller: _emailController,
+                      validator: (String? value) {
+                        return null;
+                      }),
                   LabelInput(
-                    labelName: 'Hasło',
-                    isObscured: true,
-                    controller: _passowrdController,
-                  ),
+                      labelName: 'Hasło',
+                      isObscured: true,
+                      controller: _passowrdController,
+                      validator: (String? value) {
+                        return null;
+                      }),
                   TextButton(
                     onPressed: () {},
                     child: const Text(

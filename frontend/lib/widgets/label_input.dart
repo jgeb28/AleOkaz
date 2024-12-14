@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
 
 class LabelInput extends StatelessWidget {
-  const LabelInput({
-    required this.labelName,
-    required this.controller,
-    this.isObscured = false,
-    this.hintText,
-    super.key,
-  });
-
   final String labelName;
   final bool isObscured;
   final TextEditingController controller;
   final String? hintText;
+  final String? Function(String?) validator;
+
+  const LabelInput({
+    required this.labelName,
+    required this.controller,
+    required this.validator,
+    this.isObscured = false,
+    this.hintText,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -49,12 +51,7 @@ class LabelInput extends StatelessWidget {
                           style: BorderStyle.solid),
                     ),
                   ),
-                  validator: (String? value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Należy wypełnić pole';
-                    }
-                    return null;
-                  },
+                  validator: validator,
                 ),
               ],
             ),
