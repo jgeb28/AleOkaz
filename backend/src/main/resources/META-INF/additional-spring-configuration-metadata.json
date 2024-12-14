@@ -1,0 +1,14 @@
+{
+    "properties": [
+        {
+            "name": "aleokaz.admin.email",
+            "type": "java.lang.String",
+            "description": "Admin email"
+        },
+        {
+            "name": "aleokaz.admin.password",
+            "type": "java.lang.String",
+            "description": "Admin password"
+        }
+    ]
+}
