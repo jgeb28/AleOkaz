@@ -12,6 +12,7 @@ import lombok.NonNull;
 import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.UUID;
 
 @Service
 @Transactional
@@ -30,6 +31,22 @@ public class UserService {
         this.userMapper = userMapper;
         this.userRepository = userRepository;
         this.verificationRepository = verificationRepository;
+    }
+
+    /**
+     * Zwraca użytkownika na podstawie id.
+     *
+     * @param id ID użytkownika
+     * @return Użytkownika
+     * @throws UserNotFoundException jeżeli użytkownik nie istnieje.
+     */
+    // TODO(michalciechan): Kto powinien mieć dostęp? Może ograniczony zestaw
+    // danych publicznie, a dla znajomych więcej?
+    public UserDto findUserById(@NonNull UUID id) {
+        final var user = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException(id));
+
+        return userMapper.convertUserToUserDto(user);
     }
 
     /**
