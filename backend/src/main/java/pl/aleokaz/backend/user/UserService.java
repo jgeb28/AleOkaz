@@ -8,6 +8,8 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import lombok.NonNull;
+
 import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -38,7 +40,7 @@ public class UserService {
      *                                    lub emailu istnieje.
      */
     @PreAuthorize("permitAll()")
-    public UserDto registerUser(RegisterCommand registerCommand) {
+    public UserDto registerUser(@NonNull RegisterCommand registerCommand) {
         final var username = registerCommand.username();
         if (userRepository.existsByUsername(username)) {
             throw new UserExistsException("username", username);

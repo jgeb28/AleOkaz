@@ -1,7 +1,9 @@
 package pl.aleokaz.backend.user;
 
+import lombok.NonNull;
+
 class UserExistsException extends RuntimeException {
-    UserExistsException(String field, String value) {
+    UserExistsException(@NonNull String field, @NonNull String value) {
         super(formatMessage(field, value), null);
     }
 
