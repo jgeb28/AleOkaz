@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
                   ElevatedButton(
                     onPressed: () {
                       Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => LoginScreen()));
+                          builder: (context) => const LoginScreen()));
                     },
                     child: const Text('To login'),
                   ),

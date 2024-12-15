@@ -1,20 +1,13 @@
-import 'package:ale_okaz/utils/colors.dart';
 import 'package:flutter/material.dart';
-import 'package:ale_okaz/screens/login/login_form.dart';
 import 'package:sign_in_button/sign_in_button.dart';
-import 'package:ale_okaz/widgets/label_input.dart';
-import 'package:ale_okaz/widgets/title_section.dart';
-import 'package:ale_okaz/widgets/line_divider.dart';
 
-import 'package:ale_okaz/main.dart';
+import 'package:ale_okaz/utils/colors.dart';
+import 'package:ale_okaz/screens/login/login_form.dart';
+import 'package:ale_okaz/widgets/line_divider.dart';
 import 'package:ale_okaz/screens/register/register.dart';
 
 class LoginScreen extends StatelessWidget {
-  LoginScreen({super.key});
-
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passowrdController = TextEditingController();
+  const LoginScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +28,7 @@ class LoginScreen extends StatelessWidget {
                       child: TextButton(
                         onPressed: () {
                           Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => RegisterScreen()));
+                              builder: (context) => const RegisterScreen()));
                         },
                         child: const Text(
                           'Stwórz nowe konto',

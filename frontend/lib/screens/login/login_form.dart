@@ -1,6 +1,7 @@
 import 'package:ale_okaz/widgets/auth_button.dart';
 import 'package:ale_okaz/widgets/label_input.dart';
 import 'package:ale_okaz/widgets/title_section.dart';
+import 'package:ale_okaz/services/auth_service.dart';
 import 'package:flutter/material.dart';
 
 class LoginForm extends StatefulWidget {
@@ -14,6 +15,7 @@ class _LoginFormState extends State<LoginForm> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _authService = AuthService();
 
   @override
   void dispose() {
@@ -27,15 +29,19 @@ class _LoginFormState extends State<LoginForm> {
     _passwordController.text = "";
   }
 
+  void showErrorSnackBar(e) {
+    ScaffoldMessenger.of(context).showSnackBar( SnackBar(
+            backgroundColor: Colors.red,
+            content: Center(child: Text('Wystąpił błąd podczas logowania: $e'))));
+  }
+
   void submit() async {
     if (_formKey.currentState!.validate()) {
       try {
-       // To Do
+        await _authService.login(_emailController.text, _passwordController.text);
       } catch (e) {
         clearInputs();
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            backgroundColor: Colors.red,
-            content: Center(child: Text('Wystąpił błąd podczas logowania!'))));
+        showErrorSnackBar(e);
       }
     }
   }
@@ -51,7 +57,16 @@ class _LoginFormState extends State<LoginForm> {
                 labelName: "Email",
                 controller: _emailController,
                 validator: (String? value) {
-                  return value == null ? "Wypełnij pole" : null;
+                  if (value == null) {
+                    return "Wypełnij pole";
+                  }
+                  final bool emailValid = 
+                  RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                    .hasMatch(value);
+                  if (!emailValid) {
+                    return "Niepoprawny email";
+                  }
+                  return null; 
                 }
             ),
             LabelInput(
