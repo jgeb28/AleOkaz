@@ -140,6 +140,17 @@ public class UserService {
         }
     }
 
+    public UserDto getUserInfo(UUID userId) {
+        Optional<User> optionalUser = userRepository.findById(userId);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            return userMapper.convertUserToUserDto(user);
+        }
+        else {
+            throw new IllegalArgumentException("User not found with ID: " + userId);
+        }
+    }
+
     private String createVerificationCode() {
         final int CODE_LENGTH = 6;
         final char[] DIGITS = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };

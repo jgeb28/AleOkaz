@@ -36,13 +36,10 @@ public class JwtTokenProvider {
      * Generates an access token for the given user.
      */
     public String createAccessToken(User user) {
-        List<String> roleNames = user.roles().stream()
-            .map(UserRole::name)
-            .toList();
-
         return JWT.create()
             .withSubject(user.id().toString())
             .withIssuedAt(new Date())
+            .withClaim("token_type", "access")
             .withExpiresAt(new Date(System.currentTimeMillis() + accessTokenExpirationTime))
             .sign(getAlgorithm());
     }
@@ -54,6 +51,7 @@ public class JwtTokenProvider {
         return JWT.create()
             .withSubject(user.id().toString())
             .withIssuedAt(new Date())
+            .withClaim("token_type", "refresh")
             .withExpiresAt(new Date(System.currentTimeMillis() + refreshTokenExpirationTime))
             .sign(getAlgorithm());
     }
@@ -69,18 +67,9 @@ public class JwtTokenProvider {
     /**
      * Validates the given token.
      */
-    public boolean validateToken(String token) {
-        try {
-            JWTVerifier verifier = JWT.require(getAlgorithm())
-                .build();
-
-            verifier.verify(token);
-            return true;
-
-        } catch (Exception e) {
-            System.out.println("Token validation failed: " + e.getMessage());
-            return false;
-        }
+    public DecodedJWT validateToken(String token) {
+            JWTVerifier verifier = JWT.require(getAlgorithm()).build();
+            return verifier.verify(token);
     }
 
     public Date getTokenExpiration(String token) {
