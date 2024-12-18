@@ -30,7 +30,7 @@ public class RecoveryToken {
     private User user;
 
     @NotNull
-    @Column(unique = true, updatable = false)
+    @Column(updatable = false)
     private String token;
 
     @NotNull

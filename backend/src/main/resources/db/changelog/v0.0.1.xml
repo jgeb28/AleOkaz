@@ -76,7 +76,7 @@
             <constraints nullable="false" unique="true"/>
         </column>
         <column name="token" type="text">
-            <constraints nullable="false" unique="true" />
+            <constraints nullable="false"/>
         </column>
         <column name="expiration_date" type="timestamp with time zone">
             <constraints nullable="false" />

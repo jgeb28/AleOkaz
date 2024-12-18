@@ -28,7 +28,7 @@ public class RecoveryTokenService {
         }
 
         RecoveryToken recoveryToken = RecoveryToken.builder()
-                .token(UUID.randomUUID().toString())
+                .token(generateToken())
                 .expirationDate(LocalDateTime.now().plusMinutes(tokenExpirationMinutes))
                 .user(userRepository.findByEmail(recoveryCommand.email()))
                 .build();
@@ -70,5 +70,13 @@ public class RecoveryTokenService {
             }
             return false;
         }
+    }
+
+    private String generateToken() {
+        String token = "";
+        for(int i = 0; i < 7; i++) {
+            token += (char) (Math.random() * 26 + 97);
+        }
+        return token;
     }
 }

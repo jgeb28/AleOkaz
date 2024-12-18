@@ -13,6 +13,9 @@ public class RecoveryService {
 
     @Autowired
     private UserRepository userRepository;
+    
+    @Autowired
+    private TokenRepository tokenRepository;
 
     public RecoveryService() {
         super();
@@ -43,6 +46,8 @@ public class RecoveryService {
             User user = userRepository.findByEmail(resetPasswordCommand.email());
             user.password(resetPasswordCommand.password());
             userRepository.save(user);
+            RecoveryToken recoveryToken = tokenRepository.findByUserId(user.id());
+            tokenRepository.delete(recoveryToken);
             return true;
         } 
         return false;
