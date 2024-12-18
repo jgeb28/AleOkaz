@@ -8,6 +8,8 @@ import org.testcontainers.containers.PostgreSQLContainer;
 
 public class PostgreSqlTestContainerInitializer
         implements ApplicationContextInitializer<ConfigurableApplicationContext>, AfterAllCallback {
+    // Zasób container jest zamykany po wywołaniu afterAll przez JUnit.
+    @SuppressWarnings({ "resource", "rawtypes" })
     private final static PostgreSQLContainer container = new PostgreSQLContainer("postgres:17")
             .withDatabaseName("postgres")
             .withUsername("postgres")
