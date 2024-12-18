@@ -78,6 +78,7 @@ public class UserControllerIT {
                 """;
         mockMvc.perform(
                 post("/api/users")
+                        .contentType("application/json")
                         .content(content))
                 .andExpect(status().isBadRequest());
     }
