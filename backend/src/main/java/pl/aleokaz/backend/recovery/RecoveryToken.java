@@ -36,6 +36,9 @@ public class RecoveryToken {
     @NotNull
     private LocalDateTime expirationDate;
 
+    @NotNull
+    private int attempts = 0;
+
     @Builder
     public RecoveryToken(String token, User user, LocalDateTime expirationDate) {
         this.token = token;

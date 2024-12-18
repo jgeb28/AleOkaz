@@ -81,6 +81,9 @@
         <column name="expiration_date" type="timestamp with time zone">
             <constraints nullable="false" />
         </column>
+        <column name="attempts" type="integer">
+            <constraints nullable="false" />
+        </column>
     </createTable>
     <addForeignKeyConstraint 
         baseColumnNames="user_id" 

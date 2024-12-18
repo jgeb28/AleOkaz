@@ -55,10 +55,19 @@ public class RecoveryTokenService {
         if(recoveryToken == null) {
             throw new TokenNotFoundException("userId", user.id().toString());
         }
-        if (recoveryToken.expirationDate().isAfter(LocalDateTime.now()) && recoveryToken.token().equals(checkTokenCommand.token())) {
+        if(!recoveryToken.expirationDate().isAfter(LocalDateTime.now())){
+            tokenRepository.delete(recoveryToken);
+            return false;
+        }
+        if(recoveryToken.token().equals(checkTokenCommand.token())){
             return true;
         } else {
-            tokenRepository.delete(recoveryToken);//TODO(marcin): ask if we should remove token when incorrect input
+            recoveryToken.attempts(recoveryToken.attempts() + 1);
+            if(recoveryToken.attempts() >= 3){
+                tokenRepository.delete(recoveryToken);
+            } else {
+                tokenRepository.save(recoveryToken);
+            }
             return false;
         }
     }
