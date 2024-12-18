@@ -49,7 +49,8 @@
             <column name="user_id" type="uuid">
                 <constraints nullable="false" />
             </column>
-            <column name="created_at" type="timestamp with time zone" defaultValueComputed="CURRENT_TIMESTAMP">
+            <column name="created_at" type="timestamp with time zone"
+                defaultValueDate="CURRENT_TIMESTAMP">
                 <constraints nullable="false" />
             </column>
             <column name="verified_at" type="timestamp with time zone" />
@@ -61,7 +62,6 @@
             referencedTableName="user"
             referencedColumnNames="id" />
     </changeSet>
-
 <changeSet id="3" author="marcinmarszewski">
     <preConditions onFail="MARK_RAN">
         <not>
