@@ -45,7 +45,7 @@ public class UserControllerIT {
     }
 
     @Test
-    private void shouldNotRegisterUserWhenRequiredFieldsAreMissing() throws Exception {
+    public void shouldNotRegisterUserWhenRequiredFieldsAreMissing() throws Exception {
         var content = """
                 {
                     "email": "user@example.com",
