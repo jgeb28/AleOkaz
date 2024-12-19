@@ -2,17 +2,19 @@ package pl.aleokaz.backend.user;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import lombok.NonNull;
 
 import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.HashSet;
-
-import lombok.NonNull;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -25,6 +27,9 @@ public class UserService {
     private UserRepository userRepository;
 
     private VerificationRepository verificationRepository;
+
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
 
     public UserService(@NonNull UserMapper userMapper,
             @NonNull UserRepository userRepository,
@@ -62,7 +67,6 @@ public class UserService {
      *                                    lub emailu istnieje.
      */
     @PreAuthorize("permitAll()")
-
     public UserDto registerUser(@NonNull RegisterCommand registerCommand) {
         final var username = registerCommand.username();
         if (userRepository.existsByUsername(username)) {
@@ -78,7 +82,6 @@ public class UserService {
         }
 
         // TODO(michalciechan): Minimalna entropia hasła?
-
 
         final var passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
         final var password = registerCommand.password();
@@ -110,6 +113,68 @@ public class UserService {
                 user.id().toString());
 
         return userMapper.convertUserToUserDto(user);
+    }
+
+    /**
+     * Sprawdza, czy login i hasło użytkownika się zgadzają. Jeśli tak, to zwraca
+     * token
+     *
+     * @param loginCommand Dane użytkownika do logowania.
+     * @return JWT Access i Refresh tokeny i ich expiration date
+     * @throws IllegalArgumentException jeżeli dane logowania są niepoprawne
+     */
+
+    @PreAuthorize("permitAll()")
+    public LoginResponse loginUser(LoginCommand loginCommand) {
+        var user = userRepository.findByUsername(loginCommand.username());
+
+        final PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+        if (user == null || !passwordEncoder.matches(loginCommand.password(), user.password())) {
+            throw new IllegalArgumentException("Invalid username or password");
+        }
+
+        String accessToken = jwtTokenProvider.createAccessToken(user);
+        String refreshToken = jwtTokenProvider.createRefreshToken(user);
+
+        LoginResponse loginResponse = LoginResponse.builder()
+            .accessToken(accessToken)
+            .refreshToken(refreshToken)
+            .build();
+
+        return loginResponse;
+    }
+
+    @PreAuthorize("permitAll()")
+    public RefreshResponse refreshUserToken(RefreshCommand refreshCommand) {
+        String refreshToken = refreshCommand.refreshToken();
+        UUID userId = UUID.fromString(jwtTokenProvider.getUserIdFromToken(refreshToken));
+        System.out.println("user id: " + userId);
+
+        Optional<User> optionalUser = userRepository.findById(userId);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            String accessToken = jwtTokenProvider.refreshAccessToken(refreshToken, user);
+            System.out.println("New access token: " + accessToken);
+
+            RefreshResponse refreshResponse = RefreshResponse.builder()
+                .accessToken(accessToken)
+                .build();
+            return refreshResponse;
+        } else {
+            // Handle the case where the user was not found
+            throw new IllegalArgumentException("User not found with ID: " + userId);
+        }
+    }
+
+    public UserDto getUserInfo(UUID userId) {
+        Optional<User> optionalUser = userRepository.findById(userId);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            return userMapper.convertUserToUserDto(user);
+        }
+        else {
+            throw new IllegalArgumentException("User not found with ID: " + userId);
+        }
     }
 
     private String createVerificationCode() {
