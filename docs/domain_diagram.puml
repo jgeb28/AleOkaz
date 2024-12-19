@@ -14,11 +14,14 @@ class User {
     + username: String
     + password: String
     + bio: String
+    + location: Point
     + postRangeInKilometers: float
     + isBlocked: bool
 
     + privacy: PrivacySetting
     + posts: Collection<Post>
+    + sharedPosts: Collection<Post>
+    + followedFishingSpots: Collection<FishingSpot>
     + friends: Collection<User>
     + roles: Collection<UserRole>
 }
@@ -35,7 +38,6 @@ abstract class PostBase {
     + imageURL: String
     + createdAt: DateTime
     + editedAt: DateTime 
-    + shares: int
 
     + reactions: Collection<Reaction>
     + author: User
@@ -43,7 +45,8 @@ abstract class PostBase {
 
 class Post {
     + shares: int
-
+    
+    + sharedBy: Collection<User>
     + privacy: PrivacySetting
     + comments: Collection<Comment>
     + fishingSpot: FishingSpot
@@ -97,6 +100,7 @@ class AcceptedFishingSpot {
     + ratingValue: float
     + details: String
 
+    + followedBy: Collection<User>
     + ratings: Collection<FishingSpotRating>
     + posts: Collection<Post>
 }

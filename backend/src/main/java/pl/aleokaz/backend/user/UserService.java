@@ -9,6 +9,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import lombok.NonNull;
+
 import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -20,17 +22,38 @@ import java.util.UUID;
 public class UserService {
     final static Logger LOGGER = LoggerFactory.getLogger(UserService.class);
 
-    @Autowired
     private UserMapper userMapper;
 
-    @Autowired
     private UserRepository userRepository;
 
-    @Autowired
     private VerificationRepository verificationRepository;
 
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
+
+    public UserService(@NonNull UserMapper userMapper,
+            @NonNull UserRepository userRepository,
+            @NonNull VerificationRepository verificationRepository) {
+        this.userMapper = userMapper;
+        this.userRepository = userRepository;
+        this.verificationRepository = verificationRepository;
+    }
+
+    /**
+     * Zwraca użytkownika na podstawie id.
+     *
+     * @param id ID użytkownika
+     * @return Użytkownika
+     * @throws UserNotFoundException jeżeli użytkownik nie istnieje.
+     */
+    // TODO(michalciechan): Kto powinien mieć dostęp? Może ograniczony zestaw
+    // danych publicznie, a dla znajomych więcej?
+    public UserDto findUserById(@NonNull UUID id) {
+        final var user = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException(id));
+
+        return userMapper.convertUserToUserDto(user);
+    }
 
     /**
      * Rejestruje użytkownika i wysyła kod weryfikacyjny na podanego emaila.
@@ -44,7 +67,7 @@ public class UserService {
      *                                    lub emailu istnieje.
      */
     @PreAuthorize("permitAll()")
-    public UserDto registerUser(RegisterCommand registerCommand) {
+    public UserDto registerUser(@NonNull RegisterCommand registerCommand) {
         final var username = registerCommand.username();
         if (userRepository.existsByUsername(username)) {
             throw new UserExistsException("username", username);
@@ -60,7 +83,7 @@ public class UserService {
 
         // TODO(michalciechan): Minimalna entropia hasła?
 
-        final PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+        final var passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
         final var password = registerCommand.password();
         final var encodedPassword = passwordEncoder.encode(String.valueOf(password));
         for (int i = 0; i < password.length; i++) {
@@ -68,13 +91,13 @@ public class UserService {
         }
 
         final var roles = new HashSet<>(Arrays.asList(UserRole.UNVERIFIED_USER));
-        final var user = User.builder()
+        var user = User.builder()
                 .username(username)
                 .email(email)
                 .password(encodedPassword)
                 .roles(roles)
                 .build();
-        userRepository.save(user);
+        user = userRepository.save(user);
 
         final var code = createVerificationCode();
 
@@ -100,6 +123,7 @@ public class UserService {
      * @return JWT Access i Refresh tokeny i ich expiration date
      * @throws IllegalArgumentException jeżeli dane logowania są niepoprawne
      */
+
     public LoginResponse loginUser(LoginCommand loginCommand) {
         var user = userRepository.findByUsername(loginCommand.username());
 
