@@ -39,6 +39,7 @@ class _LoginFormState extends State<LoginForm> {
     if (_formKey.currentState!.validate()) {
       try {
         await _authService.login(_emailController.text, _passwordController.text);
+        showErrorSnackBar("Text");
       } catch (e) {
         clearInputs();
         showErrorSnackBar(e);
