@@ -21,8 +21,8 @@ import java.util.Set;
 import java.util.UUID;
 
 @Data
-@Entity
 @NoArgsConstructor
+@Entity
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
