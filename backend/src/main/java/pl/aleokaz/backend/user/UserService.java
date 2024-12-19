@@ -28,15 +28,16 @@ public class UserService {
 
     private VerificationRepository verificationRepository;
 
-    @Autowired
     private JwtTokenProvider jwtTokenProvider;
 
     public UserService(@NonNull UserMapper userMapper,
             @NonNull UserRepository userRepository,
-            @NonNull VerificationRepository verificationRepository) {
+            @NonNull VerificationRepository verificationRepository,
+                       @NonNull JwtTokenProvider jwtTokenProvider) {
         this.userMapper = userMapper;
         this.userRepository = userRepository;
         this.verificationRepository = verificationRepository;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     /**
