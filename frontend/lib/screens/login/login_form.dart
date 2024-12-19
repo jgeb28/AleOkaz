@@ -13,35 +13,36 @@ class LoginForm extends StatefulWidget {
 
 class _LoginFormState extends State<LoginForm> {
   final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
+  final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
   final _authService = AuthService();
 
   @override
   void dispose() {
-    _emailController.dispose();
+    _usernameController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
 
   void clearInputs() {
-    _emailController.text = "";
+    _usernameController.text = "";
     _passwordController.text = "";
   }
 
-  void showErrorSnackBar(e) {
+  void showSnackBar(e, Color color) {
     ScaffoldMessenger.of(context).showSnackBar( SnackBar(
-            backgroundColor: Colors.red,
-            content: Center(child: Text('Wystąpił błąd podczas logowania: $e'))));
+            backgroundColor: color,
+            content: Center(child: Text('$e'))));
   }
 
   void submit() async {
     if (_formKey.currentState!.validate()) {
       try {
-        await _authService.login(_emailController.text, _passwordController.text);
+        await _authService.login(_usernameController.text, _passwordController.text);
+        showSnackBar("Zalogowano Pomyślnie", Colors.green);
       } catch (e) {
         clearInputs();
-        showErrorSnackBar(e);
+        showSnackBar('Wystąpił błąd podczas logowania: $e', Colors.red);
       }
     }
   }
@@ -54,19 +55,10 @@ class _LoginFormState extends State<LoginForm> {
           children: [
             const TitleSection(name: "AleOkaz"),
             LabelInput(
-                labelName: "Email",
-                controller: _emailController,
+                labelName: "Nazwa Użytkownika",
+                controller: _usernameController,
                 validator: (String? value) {
-                  if (value == null) {
-                    return "Wypełnij pole";
-                  }
-                  final bool emailValid = 
-                  RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                    .hasMatch(value);
-                  if (!emailValid) {
-                    return "Niepoprawny email";
-                  }
-                  return null; 
+                   return value == null ? "Wypełnij pole" : null;
                 }
             ),
             LabelInput(
