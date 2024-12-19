@@ -1,10 +1,15 @@
 import 'package:ale_okaz/screens/register/register.dart';
+import 'package:ale_okaz/screens/login/login.dart';
 import 'package:flutter/material.dart';
 
 void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({
+    this.username,
+    super.key,
+    });
+  final String? username;
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +33,14 @@ class MyApp extends StatelessWidget {
                     },
                     child: const Text('To register'),
                   ),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => const LoginScreen()));
+                    },
+                    child: const Text('To login'),
+                  ),
+                  Text( username != null ? 'Welcome, $username' : ''),
                 ],
               );
             },
