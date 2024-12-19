@@ -35,12 +35,10 @@ public class RecoveryTokenService {
 
         RecoveryToken existingToken = tokenRepository.findByUserId(user.id());
         if (existingToken != null) {
-            existingToken.token(recoveryToken.token());
-            existingToken.expirationDate(LocalDateTime.now().plusMinutes(tokenExpirationMinutes));
-            tokenRepository.save(existingToken);
-        } else {
-            tokenRepository.save(recoveryToken);
+            tokenRepository.delete(existingToken);
+            System.out.println("Existing token: " + existingToken.token());
         }
+        tokenRepository.save(recoveryToken);
         return recoveryToken;
     }
 
