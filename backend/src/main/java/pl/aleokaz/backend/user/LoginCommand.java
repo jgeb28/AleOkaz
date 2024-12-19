@@ -7,16 +7,12 @@ import lombok.NonNull;
 
 @Data
 @Builder
-class RegisterCommand {
+public class LoginCommand {
         @NonNull
         @NotBlank
         private String username;
 
         @NonNull
         @NotBlank
-        private String email;
-
-        @NonNull
-        @NotBlank
-        private char[] password;
+        private String password;
 }

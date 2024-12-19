@@ -49,12 +49,8 @@
             <column name="user_id" type="uuid">
                 <constraints nullable="false" />
             </column>
-<<<<<<< HEAD
-            <column name="created_at" type="timestamp with time zone" defaultValueDate="${now}">
-=======
             <column name="created_at" type="timestamp with time zone"
                 defaultValueDate="CURRENT_TIMESTAMP">
->>>>>>> 33ba5f6138d8e2085fa18f00c07c69f3f80b62d4
                 <constraints nullable="false" />
             </column>
             <column name="verified_at" type="timestamp with time zone" />
@@ -66,4 +62,34 @@
             referencedTableName="user"
             referencedColumnNames="id" />
     </changeSet>
+<changeSet id="3" author="marcinmarszewski">
+    <preConditions onFail="MARK_RAN">
+        <not>
+            <tableExists tableName="recovery_token" />
+        </not>
+    </preConditions>
+    <createTable tableName="recovery_token">
+        <column name="id" type="uuid">
+            <constraints primaryKey="true" primaryKeyName="recovery_token_pk" nullable="false" />
+        </column>
+        <column name="user_id" type="uuid">
+            <constraints nullable="false" unique="true"/>
+        </column>
+        <column name="token" type="text">
+            <constraints nullable="false"/>
+        </column>
+        <column name="expiration_date" type="timestamp with time zone">
+            <constraints nullable="false" />
+        </column>
+        <column name="attempts" type="integer">
+            <constraints nullable="false" />
+        </column>
+    </createTable>
+    <addForeignKeyConstraint 
+        baseColumnNames="user_id" 
+        baseTableName="recovery_token" 
+        constraintName="fk_user_recovery_token" 
+        referencedColumnNames="id" 
+        referencedTableName="user" />
+</changeSet>
 </databaseChangeLog>

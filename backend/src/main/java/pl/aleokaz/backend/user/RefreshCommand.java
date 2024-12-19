@@ -7,16 +7,10 @@ import lombok.NonNull;
 
 @Data
 @Builder
-class RegisterCommand {
-        @NonNull
-        @NotBlank
-        private String username;
+public class RefreshCommand {
+        private Void __ignore;
 
         @NonNull
         @NotBlank
-        private String email;
-
-        @NonNull
-        @NotBlank
-        private char[] password;
+        private String refreshToken;
 }
