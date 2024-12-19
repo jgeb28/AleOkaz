@@ -124,6 +124,7 @@ public class UserService {
      * @throws IllegalArgumentException jeżeli dane logowania są niepoprawne
      */
 
+    @PreAuthorize("permitAll()")
     public LoginResponse loginUser(LoginCommand loginCommand) {
         var user = userRepository.findByUsername(loginCommand.username());
 
@@ -143,6 +144,7 @@ public class UserService {
         return loginResponse;
     }
 
+    @PreAuthorize("permitAll()")
     public RefreshResponse refreshUserToken(RefreshCommand refreshCommand) {
         String refreshToken = refreshCommand.refreshToken();
         UUID userId = UUID.fromString(jwtTokenProvider.getUserIdFromToken(refreshToken));

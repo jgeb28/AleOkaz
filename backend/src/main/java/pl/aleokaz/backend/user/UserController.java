@@ -41,13 +41,11 @@ public class UserController {
         return ResponseEntity.created(uri).body(user);
     }
 
-    @PreAuthorize("permitAll()")
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> loginUser(@RequestBody LoginCommand loginCommand) {
         return ResponseEntity.ok(userService.loginUser(loginCommand));
     }
 
-    @PreAuthorize("permitAll()")
     @PostMapping("/refresh")
     public ResponseEntity<RefreshResponse> refreshUserToken(@RequestBody RefreshCommand refreshCommand) {
         return ResponseEntity.ok(userService.refreshUserToken(refreshCommand));
