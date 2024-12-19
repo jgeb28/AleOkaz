@@ -2,16 +2,17 @@ package pl.aleokaz.backend.user;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import lombok.NonNull;
-
 import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.HashSet;
+
+import lombok.NonNull;
 import java.util.UUID;
 
 @Service
@@ -61,6 +62,7 @@ public class UserService {
      *                                    lub emailu istnieje.
      */
     @PreAuthorize("permitAll()")
+
     public UserDto registerUser(@NonNull RegisterCommand registerCommand) {
         final var username = registerCommand.username();
         if (userRepository.existsByUsername(username)) {
@@ -76,6 +78,7 @@ public class UserService {
         }
 
         // TODO(michalciechan): Minimalna entropia hasła?
+
 
         final var passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
         final var password = registerCommand.password();
