@@ -1,6 +1,7 @@
 package pl.aleokaz.backend.recovery;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.stereotype.Service;
 
 import pl.aleokaz.backend.user.UserRepository;
@@ -44,7 +45,9 @@ public class RecoveryService {
 
         if (recoveryTokenService.verifyRecoveryToken(checkTokenCommand)) {
             User user = userRepository.findByEmail(resetPasswordCommand.email());
-            user.password(resetPasswordCommand.password());
+            final var passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+            final var encodedPassword = passwordEncoder.encode(String.valueOf(resetPasswordCommand.password()));
+            user.password(encodedPassword);
             userRepository.save(user);
             RecoveryToken recoveryToken = tokenRepository.findByUserId(user.id());
             tokenRepository.delete(recoveryToken);

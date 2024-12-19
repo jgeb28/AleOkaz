@@ -36,7 +36,6 @@ public class RecoveryTokenService {
         RecoveryToken existingToken = tokenRepository.findByUserId(user.id());
         if (existingToken != null) {
             tokenRepository.delete(existingToken);
-            System.out.println("Existing token: " + existingToken.token());
         }
         tokenRepository.save(recoveryToken);
         return recoveryToken;
