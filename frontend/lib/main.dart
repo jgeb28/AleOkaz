@@ -8,7 +8,7 @@ class MyApp extends StatelessWidget {
   const MyApp({
     this.username,
     super.key,
-    });
+  });
   final String? username;
 
   @override
@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
                   ElevatedButton(
                     onPressed: () {
                       Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => const RegisterScreen()));
+                          builder: (context) => RegisterScreen()));
                     },
                     child: const Text('To register'),
                   ),
@@ -40,7 +40,7 @@ class MyApp extends StatelessWidget {
                     },
                     child: const Text('To login'),
                   ),
-                  Text( username != null ? 'Welcome, $username' : ''),
+                  Text(username != null ? 'Welcome, $username' : ''),
                 ],
               );
             },

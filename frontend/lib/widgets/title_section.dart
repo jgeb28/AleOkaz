@@ -11,20 +11,20 @@ class TitleSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(32),
+      padding: const EdgeInsets.only(top: 20, bottom: 20),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
-        children:[
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: Text(
-                    name,
-                    style: const TextStyle(
-                      fontFamily: 'Righteous',
-                      fontSize: 48,
-                    ),
-                  ),
-                ),
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: Text(
+              name,
+              style: const TextStyle(
+                fontFamily: 'Righteous',
+                fontSize: 48,
+              ),
+            ),
+          ),
         ],
       ),
     );
