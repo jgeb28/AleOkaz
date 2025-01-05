@@ -15,6 +15,9 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -46,6 +49,14 @@ public class User {
     @CollectionTable(name = "user_role")
     @Column(name = "role")
     private Set<UserRole> roles;
+
+    @ManyToMany
+    @JoinTable(
+            name= "user_friends",
+            joinColumns= @JoinColumn(name= "user_id"),
+            inverseJoinColumns= @JoinColumn(name= "friend_id")
+    )
+    private Set<User> friends;
 
     @Builder
     public User(UUID id, String email, String username, String password, Set<UserRole> roles) {
