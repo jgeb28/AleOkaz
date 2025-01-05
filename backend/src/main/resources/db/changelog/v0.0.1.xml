@@ -99,6 +99,11 @@
         </not>
     </preConditions>
     <createTable tableName="user_friends">
+        <column name="id" type="uuid">
+            <constraints nullable="false" primaryKey="true" primaryKeyName="pk_user_friends"/>
+        </column>
+        <column name="is_active" type="boolean">
+            <constraints nullable="false"/>
         <column name="user_id" type="uuid">
             <constraints nullable="false"/>
         </column>

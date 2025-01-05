@@ -4,8 +4,11 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import pl.aleokaz.backend.friends.Friendship;
+
 import org.hibernate.validator.constraints.UniqueElements;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -18,6 +21,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -50,13 +54,8 @@ public class User {
     @Column(name = "role")
     private Set<UserRole> roles;
 
-    @ManyToMany
-    @JoinTable(
-            name= "user_friends",
-            joinColumns= @JoinColumn(name= "user_id"),
-            inverseJoinColumns= @JoinColumn(name= "friend_id")
-    )
-    private Set<User> friends;
+    @OneToMany(mappedBy="user", cascade = CascadeType.ALL)
+    private Set<Friendship> friends;
 
     @Builder
     public User(UUID id, String email, String username, String password, Set<UserRole> roles) {
