@@ -1,3 +1,4 @@
+import 'package:ale_okaz/screens/reset_password/reset_password.dart';
 import 'package:ale_okaz/widgets/auth_button.dart';
 import 'package:ale_okaz/widgets/label_input.dart';
 import 'package:ale_okaz/widgets/title_section.dart';
@@ -38,13 +39,8 @@ class _LoginFormState extends State<LoginForm> {
   void submit() async {
     if (_formKey.currentState!.validate()) {
       try {
-<<<<<<< HEAD
         await _authService.login(_usernameController.text, _passwordController.text);
         showSnackBar("Zalogowano Pomyślnie", Colors.green);
-=======
-        await _authService.login(_emailController.text, _passwordController.text);
-        showErrorSnackBar("Text");
->>>>>>> loginUI
       } catch (e) {
         clearInputs();
         showSnackBar('Wystąpił błąd podczas logowania: $e', Colors.red);
@@ -75,7 +71,10 @@ class _LoginFormState extends State<LoginForm> {
               isObscured: true,
             ),
             TextButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => const ResetPasswordScreen()));
+              },
               child: const Text(
                 'Zapomniałeś hasło?',
                 style: TextStyle(
