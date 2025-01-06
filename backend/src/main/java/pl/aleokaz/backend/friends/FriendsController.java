@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import pl.aleokaz.backend.recovery.ResponseMsgDto;
 
+//TODO(marcin): Change when authentication is implemented
 @RestController
 @RequestMapping("/api/friends")
 public class FriendsController {
