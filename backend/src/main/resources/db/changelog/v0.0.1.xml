@@ -104,6 +104,7 @@
         </column>
         <column name="is_active" type="boolean">
             <constraints nullable="false"/>
+        </column>
         <column name="user_id" type="uuid">
             <constraints nullable="false"/>
         </column>
