@@ -7,11 +7,23 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import pl.aleokaz.backend.exceptions.UserNotFoundException;
 import pl.aleokaz.backend.user.User;
 import pl.aleokaz.backend.user.UserRepository;
 
 @Service
 public class FriendsService {
+
+    public enum FriendStatus {
+        SENT_FRIEND_REQUEST,
+        ACCEPTED_FRIEND_REQUEST,
+        TRIED_TO_ADD_YOURSELF,
+        FRIENDSHIP_EXISTS,
+        FRIENDSHIP_ALREADY_ACCEPTED,
+        ALREADY_SENT_FRIEND_REQUEST,
+        FRIEND_REMOVED,
+        NO_FRIENDSHIP_TO_REMOVE,
+    }
 
     @Autowired
     private UserRepository userRepository;
@@ -19,30 +31,43 @@ public class FriendsService {
     @Autowired
     private FriendshipRepository friendshipRepository;
     
-    public void addFriend(FriendCommand addFriendCommand, UUID userId){
-        String firendUsername = addFriendCommand.username();
-        User friend = userRepository.findByUsername(firendUsername);
+    public FriendStatus addFriend(FriendCommand addFriendCommand, UUID userId) throws UserNotFoundException {
+        String friendUsername = addFriendCommand.username();
+        User friend = userRepository.findByUsername(friendUsername);
+        if(friend == null) throw new UserNotFoundException("username", friendUsername);
         User user = userRepository.getReferenceById(userId);
+        if(user == null) throw new UserNotFoundException("id", userId.toString());
+        if(user.id() == friend.id()) return FriendStatus.TRIED_TO_ADD_YOURSELF;
+
         Optional<Friendship> existingFriendship = friendshipRepository.findSymmetricalFriendship(user.id(), friend.id());
         if (existingFriendship.isEmpty()) {
             Friendship friendship = new Friendship(user, friend, false);
             friendshipRepository.save(friendship);
-            return;
+            return FriendStatus.SENT_FRIEND_REQUEST;
         }
         Friendship friendship = existingFriendship.get(); 
         if (friendship.friend().id() == userId){
+            if(friendship.isActive()) return FriendStatus.FRIENDSHIP_ALREADY_ACCEPTED;
             friendship.isActive(true);
             friendshipRepository.save(friendship);
+            return FriendStatus.ACCEPTED_FRIEND_REQUEST;
         }
+        return friendship.isActive() ? FriendStatus.FRIENDSHIP_EXISTS : FriendStatus.ALREADY_SENT_FRIEND_REQUEST;
     }
 
-    public void removeFriend(FriendCommand removeFriendCommand, UUID userId){
-        String firendUsername = removeFriendCommand.username();
-        User friend = userRepository.findByUsername(firendUsername);
-        Optional<Friendship> friendshipOp = friendshipRepository.findSymmetricalFriendship(userId, friend.id());
-        if (friendshipOp.isPresent()) {
-            friendshipRepository.delete(friendshipOp.get());
+    public FriendStatus removeFriend(FriendCommand removeFriendCommand, UUID userId) throws UserNotFoundException {
+        String friendUsername = removeFriendCommand.username();
+        User friend = userRepository.findByUsername(friendUsername);
+        if(friend == null) throw new UserNotFoundException("username", friendUsername);
+        User user = userRepository.getReferenceById(userId);
+        if(user == null) throw new UserNotFoundException("id", userId.toString());
+
+        Optional<Friendship> existingFriendship = friendshipRepository.findSymmetricalFriendship(user.id(), friend.id());
+        if (existingFriendship.isPresent()) {
+            friendshipRepository.delete(existingFriendship.get());
+            return FriendStatus.FRIEND_REMOVED;
         }
+        return FriendStatus.NO_FRIENDSHIP_TO_REMOVE;
     }
 
     public List<FriendDTO> getFriends(UUID userId){

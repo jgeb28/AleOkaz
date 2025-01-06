@@ -1,11 +1,13 @@
 package pl.aleokaz.backend.friends;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,32 +21,32 @@ public class FriendsController {
     @Autowired
     private FriendsService friendsService;
 
-    @GetMapping("/all")
-    public ResponseEntity<List<FriendDTO>> findUserById() {
+    @GetMapping("/all/{id}")
+    public ResponseEntity<List<FriendDTO>> findUserById(@PathVariable UUID id) {
         try {
-            return ResponseEntity.ok().body(friendsService.getFriends(null)); //TODO: Get friend Id from verification
+            return ResponseEntity.ok().body(friendsService.getFriends(id)); //TODO: Get friend Id from verification
         } catch (Exception e) {
             return null;
         }
     }
-
-    @PostMapping("/add")
-    public ResponseEntity<ResponseMsgDto> registerUser(@RequestBody FriendCommand addFriendCommand) {
+    
+    @PostMapping("/add/{id}")
+    public ResponseEntity<ResponseMsgDto> registerUser(@RequestBody FriendCommand addFriendCommand, @PathVariable UUID id) {
         try {
-            friendsService.addFriend(addFriendCommand, null); //TODO: Get friend Id from verification
-            return ResponseEntity.ok().body(ResponseMsgDto.builder().message("Added a friend.").build());
+            FriendsService.FriendStatus status = friendsService.addFriend(addFriendCommand, id); //TODO: Get friend Id from verification
+            return ResponseEntity.ok().body(ResponseMsgDto.builder().message(status.name()).build());
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(ResponseMsgDto.builder().message("An issue occured while adding a friend.").build());
+            return ResponseEntity.badRequest().body(ResponseMsgDto.builder().message("ERROR").build());
         }
     }
 
-    @PostMapping("/remove")
-    public ResponseEntity<ResponseMsgDto> loginUser(@RequestBody FriendCommand removeFriendCommand) {
+    @PostMapping("/remove/{id}")
+    public ResponseEntity<ResponseMsgDto> loginUser(@RequestBody FriendCommand removeFriendCommand, @PathVariable UUID id) {
         try {
-            friendsService.removeFriend(removeFriendCommand, null); //TODO: Get friend Id from verification
-            return ResponseEntity.ok().body(ResponseMsgDto.builder().message("Recovery code sent.").build());
+            FriendsService.FriendStatus status =  friendsService.removeFriend(removeFriendCommand, id); //TODO: Get friend Id from verification
+            return ResponseEntity.ok().body(ResponseMsgDto.builder().message(status.name()).build());
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(ResponseMsgDto.builder().message("An issue occured while generating recovery code.").build());
+            return ResponseEntity.badRequest().body(ResponseMsgDto.builder().message("ERROR").build());
         }
     }
 }

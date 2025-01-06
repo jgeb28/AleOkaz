@@ -33,8 +33,8 @@ public class Friendship {
 
     public FriendDTO toFriendDTO(UUID currentUserId){
         return user().id().equals(currentUserId) ? 
-            FriendDTO.builder().friend_id(friend().id()).is_accepted(isActive()).build() :
-            FriendDTO.builder().friend_id(user().id()).is_accepted(isActive()).build();
+            FriendDTO.builder().friend_id(friend().id()).is_accepted(isActive()).is_sender(true).build() :
+            FriendDTO.builder().friend_id(user().id()).is_accepted(isActive()).is_sender(false).build();
     }
 
     public Friendship(User user, User friend, boolean isActive) {
