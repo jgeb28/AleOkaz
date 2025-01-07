@@ -17,6 +17,7 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
   final _codeController = TextEditingController();
   final _emailController = TextEditingController();
   final _authService = AuthService();
+  bool showCodeInput = false;
 
   @override
   void dispose() {
@@ -42,6 +43,9 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
     } else {
       try {
         await _authService.sendToken(_emailController.text);
+        setState(() {
+          showCodeInput = true; 
+        });
       } catch (e) {
         showSnackBar('Wystąpił błąd podczas resetowania $e', Colors.red);
       }
@@ -82,24 +86,29 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
                    return value == null ? "Wypełnij pole" : null;
                 }
             ),
-            TextButton(
-              onPressed: sendToken,
-              child: const Text(
-                'Wyślij ponownie kod',
-                style: TextStyle(
-                  color: Color(0xFF0C4010),
-                  fontWeight: FontWeight.bold,
+            showCodeInput ? Column(
+              children: [
+                LabelInput(
+                    labelName: "Kod resetu",
+                    controller: _codeController,
+                    validator: (String? value) {
+                        return value == null ? "Wypełnij pole" : null;
+                    }
                 ),
-              ),
-            ),
-            LabelInput(
-                labelName: "Kod resetu",
-                controller: _codeController,
-                validator: (String? value) {
-                   return value == null ? "Wypełnij pole" : null;
-                }
-            ),
-            AuthButton(label: "Zatwierdź", onPressed: submit)
+                TextButton(
+                  onPressed: sendToken,
+                  child: const Text(
+                    'Wyślij ponownie kod',
+                    style: TextStyle(
+                      color: Color(0xFF0C4010),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ) :const SizedBox(),
+            AuthButton(label: showCodeInput ? "Zatwierdź" : "Wyślij kod",
+             onPressed: showCodeInput ? submit : sendToken)
           ],
         )
     );
