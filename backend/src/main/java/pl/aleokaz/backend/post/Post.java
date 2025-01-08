@@ -4,13 +4,12 @@ import jakarta.persistence.*;
 import lombok.*;
 import pl.aleokaz.backend.user.User;
 
-import java.sql.Date;
+import java.util.Date;
 import java.util.UUID;
 
 @Entity
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -35,6 +34,16 @@ public class Post {
     @NonNull
     private User author;
 
-
     //TODO shares, sharedBy, privacy, comments, fishingSpot
+
+    @Builder
+    public Post(UUID id, String title, String content, String imageUrl, Date createdAt, Date editedAt, User author) {
+        this.id = id;
+        this.title = title;
+        this.content = content;
+        this.imageUrl = imageUrl;
+        this.createdAt = createdAt;
+        this.editedAt = editedAt;
+        this.author = author;
+    }
 }
