@@ -2,19 +2,19 @@ package pl.aleokaz.backend.post;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 import pl.aleokaz.backend.user.User;
 import pl.aleokaz.backend.user.UserRepository;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.Base64;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 import java.io.File;
 import java.nio.file.Path;
+import java.util.stream.Collectors;
 
 @Service
 public class PostService {
@@ -24,17 +24,17 @@ public class PostService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private PostMapper postMapper;
+
     private static final String IMAGE_UPLOAD_DIR = "uploads/images/";
 
     public PostDto createPost(UUID userId, PostCommand postCommand) throws IOException {
-        // Fetch the author from the database
         User author = userRepository.findById(userId)
             .orElseThrow(() -> new RuntimeException("Author not found"));
 
-        // Save the image to the server
         String imageUrl = saveImage(postCommand.imageBase64());
 
-        // Create a new Post object
         Post post = Post.builder()
             .title(postCommand.title())
             .content(postCommand.content())
@@ -45,17 +45,45 @@ public class PostService {
 
         Post savedPost = postRepository.save(post);
 
-        PostDto postDto = PostDto.builder()
-            .id(savedPost.id())
-            .title(savedPost.title())
-            .content(savedPost.content())
-            .imageUrl(savedPost.imageUrl())
-            .createdAt(savedPost.createdAt())
-            .editedAt(savedPost.editedAt())
-            .authorId(savedPost.author().id())
-            .build();
+        return postMapper.convertPostToPostDto(savedPost);
+    }
 
-        return postDto;
+    public List<PostDto> getAllUserPosts(UUID userId) throws IOException {
+        List<Post> posts = postRepository.findByAuthorId(userId);
+
+        return posts.stream()
+            .map(post -> postMapper.convertPostToPostDto(post))
+            .collect(Collectors.toList());
+    }
+
+    public PostDto getPostById(UUID postId) throws IOException {
+        Post post = postRepository.findById(postId)
+            .orElseThrow(() -> new RuntimeException("Post not found"));
+
+        return postMapper.convertPostToPostDto(post);
+    }
+
+    public PostDto updatePost(UUID postId, UpdatePostCommand updatePostCommand) throws IOException {
+        Post post = postRepository.findById(postId)
+            .orElseThrow(() -> new RuntimeException("Post not found"));
+
+        post.content(updatePostCommand.content());
+        post.title(updatePostCommand.title());
+
+        Post savedPost = postRepository.save(post);
+
+        return postMapper.convertPostToPostDto(savedPost);
+    }
+
+    public PostDto deletePost(UUID userId, UUID postId) throws IOException {
+        Post post = postRepository.findById(postId)
+            .orElseThrow(() -> new RuntimeException("Post not found"));
+
+        PostDto responsePost = postMapper.convertPostToPostDto(post);
+
+        postRepository.delete(post);
+
+        return responsePost;
     }
 
     private String saveImage(String imageBase64) throws IOException {
