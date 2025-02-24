@@ -36,6 +36,20 @@ cp .env.example .env
 ## Endpointy
 
 ### Reset hasła
-POST /api/recovery email, Wysłanie tokenu\
-POST /api/recovery/verifyToken   email, token   Zweryfikowanie tokenu\
-POST /api/recovery/resetPassword email, token, password    Ustawienie nowego hasła
+POST /api/recovery                  {email}                     Wysłanie tokenu\
+POST /api/recovery/verifyToken      {email, token}              Zweryfikowanie tokenu\
+POST /api/recovery/resetPassword    {email, token, password}    Ustawienie nowego hasła
+
+### Znajomi
+GET  /api/friends/all                       Lista wszystkich znajomych\
+POST /api/friends/add       {username}      Dodanie znajomego\
+POST /api/firends/remove    {username}      Usunięcie znajomego
+
+response codes: SENT_FRIEND_REQUEST,
+        ACCEPTED_FRIEND_REQUEST,
+        TRIED_TO_ADD_YOURSELF,
+        FRIENDSHIP_EXISTS,
+        FRIENDSHIP_ALREADY_ACCEPTED,
+        ALREADY_SENT_FRIEND_REQUEST,
+        FRIEND_REMOVED,
+        NO_FRIENDSHIP_TO_REMOVE,
