@@ -30,21 +30,16 @@ class _LoginFormState extends State<LoginForm> {
   }
 
   void showSnackBar(e, Color color) {
-    ScaffoldMessenger.of(context).showSnackBar( SnackBar(
-            backgroundColor: color,
-            content: Center(child: Text('$e'))));
+    ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(backgroundColor: color, content: Center(child: Text('$e'))));
   }
 
   void submit() async {
     if (_formKey.currentState!.validate()) {
       try {
-<<<<<<< HEAD
-        await _authService.login(_usernameController.text, _passwordController.text);
+        await _authService.login(
+            _usernameController.text, _passwordController.text);
         showSnackBar("Zalogowano Pomyślnie", Colors.green);
-=======
-        await _authService.login(_emailController.text, _passwordController.text);
-        showErrorSnackBar("Text");
->>>>>>> loginUI
       } catch (e) {
         clearInputs();
         showSnackBar('Wystąpił błąd podczas logowania: $e', Colors.red);
@@ -63,14 +58,13 @@ class _LoginFormState extends State<LoginForm> {
                 labelName: "Nazwa Użytkownika",
                 controller: _usernameController,
                 validator: (String? value) {
-                   return value == null ? "Wypełnij pole" : null;
-                }
-            ),
+                  return value == null ? "Wypełnij pole" : null;
+                }),
             LabelInput(
               labelName: "Hasło",
               controller: _passwordController,
               validator: (String? value) {
-                  return value == null ? "Wypełnij pole" : null;
+                return value == null ? "Wypełnij pole" : null;
               },
               isObscured: true,
             ),
@@ -86,7 +80,6 @@ class _LoginFormState extends State<LoginForm> {
             ),
             AuthButton(label: "Zaloguj się", onPressed: submit)
           ],
-        )
-    );
+        ));
   }
 }
