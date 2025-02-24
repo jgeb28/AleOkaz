@@ -45,7 +45,13 @@ GET  /api/friends/all                       Lista wszystkich znajomych\
 POST /api/friends/add       {username}      Dodanie znajomego\
 POST /api/firends/remove    {username}      Usunięcie znajomego
 
-response codes: SENT_FRIEND_REQUEST,
+FriendDTO:
+        UUID friend_id,
+        boolean is_accepted,
+        boolean is_sender
+
+Kody odpowiedzi: 
+        SENT_FRIEND_REQUEST,
         ACCEPTED_FRIEND_REQUEST,
         TRIED_TO_ADD_YOURSELF,
         FRIENDSHIP_EXISTS,
