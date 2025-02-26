@@ -59,3 +59,6 @@ Kody odpowiedzi:
         ALREADY_SENT_FRIEND_REQUEST,
         FRIEND_REMOVED,
         NO_FRIENDSHIP_TO_REMOVE,
+
+# TODO:
+- (Marcin): Zabezpieczenie kafka wiadomości przed awarią systemu
