@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import pl.aleokaz.backend.exceptions.UserNotFoundException;
+import pl.aleokaz.backend.kafka.KafkaService;
 import pl.aleokaz.backend.user.User;
 import pl.aleokaz.backend.user.UserRepository;
 
@@ -30,6 +31,9 @@ public class FriendsService {
 
     @Autowired
     private FriendshipRepository friendshipRepository;
+
+    @Autowired
+    private KafkaService kafkaService;
     
     public FriendStatus addFriend(FriendCommand addFriendCommand, UUID userId) throws UserNotFoundException {
         String friendUsername = addFriendCommand.username();
@@ -43,6 +47,7 @@ public class FriendsService {
         if (existingFriendship.isEmpty()) {
             Friendship friendship = new Friendship(user, friend, false);
             friendshipRepository.save(friendship);
+            kafkaService.sendMessage("notification", friend, "Friend request from " + user.username());
             return FriendStatus.SENT_FRIEND_REQUEST;
         }
         Friendship friendship = existingFriendship.get(); 
@@ -50,6 +55,7 @@ public class FriendsService {
             if(friendship.isActive()) return FriendStatus.FRIENDSHIP_ALREADY_ACCEPTED;
             friendship.isActive(true);
             friendshipRepository.save(friendship);
+            kafkaService.sendMessage("notification", friend, "Friend request accepted by " + user.username());
             return FriendStatus.ACCEPTED_FRIEND_REQUEST;
         }
         return friendship.isActive() ? FriendStatus.FRIENDSHIP_EXISTS : FriendStatus.ALREADY_SENT_FRIEND_REQUEST;
@@ -65,6 +71,7 @@ public class FriendsService {
         Optional<Friendship> existingFriendship = friendshipRepository.findSymmetricalFriendship(user.id(), friend.id());
         if (existingFriendship.isPresent()) {
             friendshipRepository.delete(existingFriendship.get());
+            kafkaService.sendMessage("notification", friend, "Removed from friends by " + user.username());
             return FriendStatus.FRIEND_REMOVED;
         }
         return FriendStatus.NO_FRIENDSHIP_TO_REMOVE;
