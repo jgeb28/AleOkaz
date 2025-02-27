@@ -3,6 +3,8 @@ package pl.aleokaz.backend.kafka;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.KafkaHeaders;
+import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Service;
 
 import pl.aleokaz.backend.user.User;
@@ -22,7 +24,7 @@ public class KafkaService {
 
     //przykładowy listener
     @KafkaListener(topics = "notification", groupId = "aleokaz")
-    public void listen(String message) {
-        System.out.println("Received message: " + message);
+    public void listen(String message, @Header(name = KafkaHeaders.RECEIVED_KEY, required = false) String key) {
+        System.out.println("Received message: " + message + " Key:" + key);
     }
 }
