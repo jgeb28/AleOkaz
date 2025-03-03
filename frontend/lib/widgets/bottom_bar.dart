@@ -1,5 +1,8 @@
+import 'package:ale_okaz/screens/posts/take_picture.dart';
+import 'package:ale_okaz/utils/camera_provider.dart';
 import 'package:ale_okaz/utils/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class BottomBar extends StatelessWidget {
   const BottomBar({super.key});
@@ -24,14 +27,20 @@ class BottomBar extends StatelessWidget {
             ),
             Expanded(
               child: InkWell(
-                onTap: () => {},
+                onTap: () => {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => TakePictureScreen(
+                          camera: Provider.of<CameraProvider>(context)
+                              .cameras
+                              .first)))
+                },
                 child: const SizedBox.expand(child: Icon(Icons.photo_camera)),
               ),
             ),
             Expanded(
               child: InkWell(
                 onTap: () => {},
-                child: SizedBox.expand(child: Icon(Icons.account_circle)),
+                child: const SizedBox.expand(child: Icon(Icons.account_circle)),
               ),
             )
           ]))),

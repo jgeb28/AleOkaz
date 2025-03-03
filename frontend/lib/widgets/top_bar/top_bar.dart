@@ -1,5 +1,6 @@
 import 'package:ale_okaz/utils/colors.dart';
 import 'package:ale_okaz/widgets/title_section.dart';
+import 'package:ale_okaz/widgets/top_bar/title_text.dart';
 import 'package:flutter/material.dart';
 
 class TopBar extends StatelessWidget implements PreferredSizeWidget {
@@ -13,10 +14,9 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
       backgroundColor: componentColor,
-      title: const TitleSection(
-        name: "AleOkaz",
-        fontSize: 24,
-      ),
+      centerTitle: true,
+      titleSpacing: 0,
+      title: const TitleText(),
       automaticallyImplyLeading: hasBackButton,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
