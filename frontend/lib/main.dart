@@ -1,3 +1,4 @@
+import 'package:ale_okaz/screens/home.dart';
 import 'package:ale_okaz/screens/register/register.dart';
 import 'package:ale_okaz/screens/login/login.dart';
 import 'package:flutter/material.dart';
@@ -41,6 +42,12 @@ class MyApp extends StatelessWidget {
                     child: const Text('To login'),
                   ),
                   Text(username != null ? 'Welcome, $username' : ''),
+                  ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => const Home()));
+                      },
+                      child: const Text('To home'))
                 ],
               );
             },

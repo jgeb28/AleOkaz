@@ -67,4 +67,14 @@ class AuthService {
     await storage.delete(key: 'accessToken');
     await storage.delete(key: 'refreshToken');
   }
+
+  Future<bool> isLoggedIn() async {
+    final accessToken = await storage.read(key: 'accessToken');
+
+    if (accessToken != null) {
+      return true;
+    }
+
+    return false;
+  }
 }
