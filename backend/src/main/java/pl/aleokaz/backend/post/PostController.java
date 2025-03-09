@@ -61,7 +61,7 @@ public class PostController {
         @RequestPart("post") PostCommand postCommand) {
         //TODO Czy można zmieniać obraz posta?
 
-        UUID currentUserId = (UUID) authentication.getPrincipal();
+        UUID currentUserId = UUID.fromString((String) authentication.getPrincipal());
 
         try {
             PostDto post = postService.updatePost(currentUserId, postId, postCommand);
@@ -76,7 +76,7 @@ public class PostController {
     @DeleteMapping("/{postId}")
     public ResponseEntity<PostDto> deletePost(Authentication authentication, @PathVariable UUID postId) {
 
-        UUID currentUserId = (UUID) authentication.getPrincipal();
+        UUID currentUserId = UUID.fromString((String) authentication.getPrincipal());
 
         try {
             PostDto deletedPost = postService.deletePost(currentUserId, postId);

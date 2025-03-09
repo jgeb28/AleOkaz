@@ -9,6 +9,7 @@ import pl.aleokaz.backend.user.UserRepository;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
@@ -28,7 +29,7 @@ public class PostService {
     @Autowired
     private PostMapper postMapper;
 
-    private static final String IMAGE_UPLOAD_DIR = "uploads/images/";
+    private static final String IMAGE_UPLOAD_DIR = "src/main/resources/static/uploads/";
 
     public PostDto createPost(UUID userId, PostCommand postCommand, MultipartFile image) throws IOException {
         User author = userRepository.findById(userId)
@@ -52,10 +53,7 @@ public class PostService {
         Post post = postRepository.findById(postId)
             .orElseThrow(() -> new RuntimeException("Post not found"));
 
-        User author = userRepository.findById(userId)
-            .orElseThrow(() -> new RuntimeException("Author not found"));
-
-        if(userId != post.author().id()) {
+        if(!userId.toString().equals(post.author().id().toString())) {
             throw new RuntimeException("You are not authorized to update this post");
         }
 
@@ -74,7 +72,7 @@ public class PostService {
         User author = userRepository.findById(userId)
             .orElseThrow(() -> new RuntimeException("Author not found"));
 
-        if(userId != post.author().id()) {
+        if(!userId.toString().equals(post.author().id().toString())) {
             throw new RuntimeException("You are not authorized to delete this post");
         }
 
@@ -83,14 +81,6 @@ public class PostService {
         postRepository.delete(post);
 
         return responsePost;
-    }
-
-    public List<PostDto> getAllUserPosts(UUID userId) {
-        List<Post> posts = postRepository.findByAuthorId(userId);
-
-        return posts.stream()
-            .map(post -> postMapper.convertPostToPostDto(post))
-            .collect(Collectors.toList());
     }
 
     public List<PostDto> getAllPosts() {
@@ -108,10 +98,6 @@ public class PostService {
         return postMapper.convertPostToPostDto(post);
     }
 
-
-
-
-
     private String saveImage(MultipartFile image) throws IOException {
         // Ensure the upload directory exists
         File directory = new File(IMAGE_UPLOAD_DIR);
@@ -121,10 +107,10 @@ public class PostService {
 
         // Generate a unique filename
         String filename = UUID.randomUUID() + "-" + image.getOriginalFilename();
-        Path filePath = Paths.get(IMAGE_UPLOAD_DIR + filename);
+        Path filePath = Paths.get(IMAGE_UPLOAD_DIR, filename); // Correct way to join paths
 
         // Save the file
-        Files.write(filePath, image.getBytes());
+        Files.copy(image.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
         // Return the relative path (or absolute URL if needed)
         return "/uploads/" + filename;
