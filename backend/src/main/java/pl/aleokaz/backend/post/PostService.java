@@ -2,6 +2,7 @@ package pl.aleokaz.backend.post;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import pl.aleokaz.backend.user.User;
 import pl.aleokaz.backend.user.UserRepository;
 
@@ -29,11 +30,11 @@ public class PostService {
 
     private static final String IMAGE_UPLOAD_DIR = "uploads/images/";
 
-    public PostDto createPost(UUID userId, PostCommand postCommand) throws IOException {
+    public PostDto createPost(UUID userId, PostCommand postCommand, MultipartFile image) throws IOException {
         User author = userRepository.findById(userId)
             .orElseThrow(() -> new RuntimeException("Author not found"));
 
-        String imageUrl = saveImage(postCommand.imageBase64());
+        String imageUrl = saveImage(image);
 
         Post post = Post.builder()
             .title(postCommand.title())
@@ -48,36 +49,36 @@ public class PostService {
         return postMapper.convertPostToPostDto(savedPost);
     }
 
-    public List<PostDto> getAllUserPosts(UUID userId) throws IOException {
-        List<Post> posts = postRepository.findByAuthorId(userId);
-
-        return posts.stream()
-            .map(post -> postMapper.convertPostToPostDto(post))
-            .collect(Collectors.toList());
-    }
-
-    public PostDto getPostById(UUID postId) throws IOException {
+    public PostDto updatePost(UUID userId, UUID postId, PostCommand postCommand) {
         Post post = postRepository.findById(postId)
             .orElseThrow(() -> new RuntimeException("Post not found"));
 
-        return postMapper.convertPostToPostDto(post);
-    }
+        User author = userRepository.findById(userId)
+            .orElseThrow(() -> new RuntimeException("Author not found"));
 
-    public PostDto updatePost(UUID postId, UpdatePostCommand updatePostCommand) throws IOException {
-        Post post = postRepository.findById(postId)
-            .orElseThrow(() -> new RuntimeException("Post not found"));
+        if(userId != post.author().id()) {
+            throw new RuntimeException("You are not authorized to update this post");
+        }
 
-        post.content(updatePostCommand.content());
-        post.title(updatePostCommand.title());
+        post.content(postCommand.content());
+        post.title(postCommand.title());
+        post.editedAt(new Date());
 
         Post savedPost = postRepository.save(post);
 
         return postMapper.convertPostToPostDto(savedPost);
     }
 
-    public PostDto deletePost(UUID userId, UUID postId) throws IOException {
+    public PostDto deletePost(UUID userId, UUID postId) {
         Post post = postRepository.findById(postId)
             .orElseThrow(() -> new RuntimeException("Post not found"));
+
+        User author = userRepository.findById(userId)
+            .orElseThrow(() -> new RuntimeException("Author not found"));
+
+        if(userId != post.author().id()) {
+            throw new RuntimeException("You are not authorized to delete this post");
+        }
 
         PostDto responsePost = postMapper.convertPostToPostDto(post);
 
@@ -86,21 +87,48 @@ public class PostService {
         return responsePost;
     }
 
-    private String saveImage(String imageBase64) throws IOException {
-        // Ensure the directory exists
+    public List<PostDto> getAllUserPosts(UUID userId) {
+        List<Post> posts = postRepository.findByAuthorId(userId);
+
+        return posts.stream()
+            .map(post -> postMapper.convertPostToPostDto(post))
+            .collect(Collectors.toList());
+    }
+
+    public List<PostDto> getAllPosts() {
+        List<Post> posts = postRepository.findAll();
+
+        return posts.stream()
+            .map(post -> postMapper.convertPostToPostDto(post))
+            .collect(Collectors.toList());
+    }
+
+    public PostDto getPostById(UUID postId) {
+        Post post = postRepository.findById(postId)
+            .orElseThrow(() -> new RuntimeException("Post not found"));
+
+        return postMapper.convertPostToPostDto(post);
+    }
+
+
+
+
+
+    private String saveImage(MultipartFile image) throws IOException {
+        // Ensure the upload directory exists
         File directory = new File(IMAGE_UPLOAD_DIR);
         if (!directory.exists()) {
             directory.mkdirs();
         }
 
-        byte[] decodedBytes = Base64.getDecoder().decode(imageBase64);
-
-        // Generate a unique filename and save the file
-        String filename = UUID.randomUUID() + ".png"; // You can change the extension based on the image type
+        // Generate a unique filename
+        String filename = UUID.randomUUID() + "-" + image.getOriginalFilename();
         Path filePath = Paths.get(IMAGE_UPLOAD_DIR + filename);
-        Files.write(filePath, decodedBytes);
 
-        // Return the relative path to the saved image
-        return filePath.toString();
+        // Save the file
+        Files.write(filePath, image.getBytes());
+
+        // Return the relative path (or absolute URL if needed)
+        return "/uploads/" + filename;
     }
 }
