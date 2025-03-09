@@ -29,6 +29,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         String authHeader = request.getHeader("Authorization");
+        HttpServletRequest httpRequest = (HttpServletRequest) request;
+        String method = httpRequest.getMethod();
+        String path = httpRequest.getRequestURI();
+
+        //metoda GET w /api/posts możliwa bez autentykacji
+        if (path.startsWith("/api/posts") && ("GET".equals(method))) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7); //Remove "Bearer " prefix

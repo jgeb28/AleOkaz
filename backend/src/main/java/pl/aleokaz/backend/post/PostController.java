@@ -1,6 +1,5 @@
 package pl.aleokaz.backend.post;
 
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -8,7 +7,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
@@ -24,20 +22,9 @@ public class PostController {
             List<PostDto> posts = postService.getAllPosts();
             return new ResponseEntity<>(posts, HttpStatus.OK);
         } catch (Exception e) {
-            e.printStackTrace();
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
-//    @GetMapping
-//    public ResponseEntity<List<PostDto>> getAllPosts(@PathVariable UUID userId) {
-//        try {
-//            List<PostDto> posts = postService.getAllUserPosts(userId);
-//            return new ResponseEntity<>(posts, HttpStatus.OK);
-//        } catch (Exception e) {
-//            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-//    }
 
     @GetMapping("/{postId}")
     public ResponseEntity<PostDto> getPost(@PathVariable UUID postId) {
