@@ -99,9 +99,6 @@
             <column name="id" type="uuid">
                 <constraints primaryKey="true" primaryKeyName="post_pk" nullable="false" />
             </column>
-            <column name="title" type="text">
-                <constraints nullable="false" />
-            </column>
             <column name="content" type="text">
                 <constraints nullable="false" />
             </column>
@@ -128,9 +125,6 @@
         <createTable tableName="post_comment">
             <column name="id" type="uuid">
                 <constraints primaryKey="true" primaryKeyName="post_comment_pk" nullable="false" />
-            </column>
-            <column name="title" type="text">
-                <constraints nullable="false" />
             </column>
             <column name="content" type="text">
                 <constraints nullable="false" />

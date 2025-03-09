@@ -37,7 +37,6 @@ public class PostService {
         String imageUrl = saveImage(image);
 
         Post post = Post.builder()
-            .title(postCommand.title())
             .content(postCommand.content())
             .imageUrl(imageUrl)
             .createdAt(new Date())
@@ -61,7 +60,6 @@ public class PostService {
         }
 
         post.content(postCommand.content());
-        post.title(postCommand.title());
         post.editedAt(new Date());
 
         Post savedPost = postRepository.save(post);

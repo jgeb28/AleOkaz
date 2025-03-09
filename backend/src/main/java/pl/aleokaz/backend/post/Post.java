@@ -16,9 +16,6 @@ public class Post {
     private UUID id;
 
     @NonNull
-    private String title;
-
-    @NonNull
     private String content;
 
     @NonNull
@@ -37,9 +34,8 @@ public class Post {
     //TODO shares, sharedBy, privacy, comments, fishingSpot
 
     @Builder
-    public Post(UUID id, String title, String content, String imageUrl, Date createdAt, Date editedAt, User author) {
+    public Post(UUID id, String content, String imageUrl, Date createdAt, Date editedAt, User author) {
         this.id = id;
-        this.title = title;
         this.content = content;
         this.imageUrl = imageUrl;
         this.createdAt = createdAt;

@@ -17,9 +17,6 @@ public class PostComment {
     private UUID id;
 
     @NonNull
-    private String title;
-
-    @NonNull
     private String content;
 
     @NonNull

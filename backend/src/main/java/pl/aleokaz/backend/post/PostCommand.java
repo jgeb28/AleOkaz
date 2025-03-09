@@ -9,8 +9,8 @@ import java.util.UUID;
 @Data
 @Builder
 public class PostCommand {
-    @NonNull
-    private String title;
+    private Void __ignore;
+
     @NonNull
     private String content;
 }

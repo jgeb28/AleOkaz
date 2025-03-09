@@ -9,7 +9,6 @@ import java.util.UUID;
 @Builder
 public record PostDto(
     @NonNull UUID id,
-    @NonNull String title,
     @NonNull String content,
     @NonNull String imageUrl,
     @NonNull Date createdAt,

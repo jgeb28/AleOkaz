@@ -7,7 +7,6 @@ public class PostMapper {
     public PostDto convertPostToPostDto(Post post) {
         return PostDto.builder()
             .id(post.id())
-            .title(post.title())
             .content(post.content())
             .imageUrl(post.imageUrl())
             .createdAt(post.createdAt())
