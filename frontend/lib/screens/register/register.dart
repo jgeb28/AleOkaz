@@ -10,7 +10,7 @@ class RegisterScreen extends StatelessWidget {
 
   void onPressed(BuildContext context) {
     Navigator.of(context)
-        .push(MaterialPageRoute(builder: (context) => (LoginScreen())));
+        .push(MaterialPageRoute(builder: (context) => (const LoginScreen())));
   }
 
   @override

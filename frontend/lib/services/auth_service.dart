@@ -8,11 +8,7 @@ class AuthService {
   Future<void> login(String username, String password) async {
     try {
       final response = await http.post(
-<<<<<<< HEAD
         Uri.parse('http://10.0.2.2:8080/api/users/login'),
-=======
-        Uri.parse('http://10.0.2.2:8080/login'),
->>>>>>> loginUI
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -41,16 +37,31 @@ class AuthService {
 
   }
 
+  Future<bool> isTokenExpired(String token) async {
+    if (token.isEmpty) return true; 
+
+    try {
+      final parts = token.split('.');
+      if (parts.length != 3) return true; 
+
+      final payload = json.decode(utf8.decode(base64Url.decode(parts[1])));
+      final exp = payload['exp'];
+
+      if (exp == null) return true; 
+
+      final expiryDate = DateTime.fromMillisecondsSinceEpoch(exp * 1000);
+      return DateTime.now().isAfter(expiryDate);
+    } catch (e) {
+      return true; 
+    }
+  }
+
   Future<void> refreshAccessToken() async {
     final refreshToken = await storage.read(key: 'refreshToken');
     if (refreshToken != null) {
       try {
        final response = await http.post(
-<<<<<<< HEAD
         Uri.parse('http://10.0.2.2:8080/api/users/refresh'),
-=======
-        Uri.parse('http://localhost:8080/api/refresh'),
->>>>>>> loginUI
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },

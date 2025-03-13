@@ -38,13 +38,8 @@ class _LoginFormState extends State<LoginForm> {
   void submit() async {
     if (_formKey.currentState!.validate()) {
       try {
-<<<<<<< HEAD
         await _authService.login(_usernameController.text, _passwordController.text);
         showSnackBar("Zalogowano Pomyślnie", Colors.green);
-=======
-        await _authService.login(_emailController.text, _passwordController.text);
-        showErrorSnackBar("Text");
->>>>>>> loginUI
       } catch (e) {
         clearInputs();
         showSnackBar('Wystąpił błąd podczas logowania: $e', Colors.red);
