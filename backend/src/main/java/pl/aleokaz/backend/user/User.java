@@ -1,5 +1,6 @@
 package pl.aleokaz.backend.user;
 
+import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,8 +23,10 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
+import pl.aleokaz.backend.post.Post;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -54,8 +57,9 @@ public class User {
     @Column(name = "role")
     private Set<UserRole> roles;
 
-    @OneToMany(mappedBy="user", cascade = CascadeType.ALL)
-    private Set<Friendship> friends;
+
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Post> posts;
 
     @Builder
     public User(UUID id, String email, String username, String password, Set<UserRole> roles) {
