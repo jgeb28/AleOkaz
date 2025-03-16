@@ -59,7 +59,6 @@ public class PostController {
         Authentication authentication,
         @PathVariable UUID postId,
         @RequestPart("post") PostCommand postCommand) {
-        //TODO Czy można zmieniać obraz posta?
 
         UUID currentUserId = UUID.fromString((String) authentication.getPrincipal());
 
