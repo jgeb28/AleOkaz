@@ -92,8 +92,8 @@
         constraintName="fk_user_recovery_token"
         referencedColumnNames="id"
         referencedTableName="user" />
-</changeSet>
-<changeSet id="4" author="marcinmarszewski">
+    </changeSet>
+    <changeSet id="4" author="marcinmarszewski">
     <preConditions onFail="MARK_RAN">
         <not>
             <tableExists tableName="user_friends" />
@@ -125,9 +125,7 @@
             constraintName="user_friends_friend_fk"
             referencedTableName="user"
             referencedColumnNames="id" />
-</changeSet>
     </changeSet>
-
     <changeSet id="4" author="grzegorz-sawicki">
         <createTable tableName="post">
             <column name="id" type="uuid">
@@ -190,5 +188,4 @@
             referencedTableName="post"
             referencedColumnNames="id" />
     </changeSet>
-
 </databaseChangeLog>

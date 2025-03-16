@@ -5,9 +5,8 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,29 +23,32 @@ public class FriendsController {
     @Autowired
     private FriendsService friendsService;
 
-    @GetMapping("/all/{id}")
-    public ResponseEntity<List<FriendDTO>> getFriends(@PathVariable UUID id) {
+    @GetMapping("/all")
+    public ResponseEntity<List<FriendDTO>> getFriends(Authentication authentication) {
         try {
-            return ResponseEntity.ok().body(friendsService.getFriends(id)); //TODO: Get friend Id from verification
+            UUID currentUserId = UUID.fromString((String) authentication.getPrincipal());
+            return ResponseEntity.ok().body(friendsService.getFriends(currentUserId));
         } catch (Exception e) {
             return null;
         }
     }
     
-    @PostMapping("/add/{id}")
-    public ResponseEntity<ResponseMsgDto> addFriend(@RequestBody FriendCommand addFriendCommand, @PathVariable UUID id) {
+    @PostMapping("/add")
+    public ResponseEntity<ResponseMsgDto> addFriend(Authentication authentication, @RequestBody FriendCommand addFriendCommand) {
         try {
-            FriendsService.FriendStatus status = friendsService.addFriend(addFriendCommand, id); //TODO: Get friend Id from verification
+            UUID currentUserId = UUID.fromString((String) authentication.getPrincipal());
+            FriendsService.FriendStatus status = friendsService.addFriend(addFriendCommand, currentUserId);
             return ResponseEntity.ok().body(ResponseMsgDto.builder().message(status.name()).build());
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(ResponseMsgDto.builder().message("ERROR").build());
         }
     }
 
-    @PostMapping("/remove/{id}")
-    public ResponseEntity<ResponseMsgDto> removeFriends(@RequestBody FriendCommand removeFriendCommand, @PathVariable UUID id) {
+    @PostMapping("/remove")
+    public ResponseEntity<ResponseMsgDto> removeFriends(Authentication authentication, @RequestBody FriendCommand removeFriendCommand) {
         try {
-            FriendsService.FriendStatus status =  friendsService.removeFriend(removeFriendCommand, id); //TODO: Get friend Id from verification
+            UUID currentUserId = UUID.fromString((String) authentication.getPrincipal());
+            FriendsService.FriendStatus status =  friendsService.removeFriend(removeFriendCommand, currentUserId);
             return ResponseEntity.ok().body(ResponseMsgDto.builder().message(status.name()).build());
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(ResponseMsgDto.builder().message("ERROR").build());
