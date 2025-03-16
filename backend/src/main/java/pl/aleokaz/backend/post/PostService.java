@@ -1,11 +1,13 @@
 package pl.aleokaz.backend.post;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import pl.aleokaz.backend.user.User;
 import pl.aleokaz.backend.user.UserRepository;
 import pl.aleokaz.backend.user.AuthorizationException;
+import pl.aleokaz.backend.post.ImageService;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -30,7 +32,8 @@ public class PostService {
     @Autowired
     private PostMapper postMapper;
 
-    private static final String IMAGE_UPLOAD_DIR = "src/main/resources/static/uploads/";
+    @Autowired
+    private ImageService imageService;
 
     public PostDto createPost(UUID userId, PostCommand postCommand, MultipartFile image) throws AuthorizationException {
         User author = userRepository.findById(userId)
@@ -38,7 +41,7 @@ public class PostService {
 
         String imageUrl;
         try {
-            imageUrl = saveImage(image);
+            imageUrl = imageService.saveImage(image);
         } catch (IOException ioe) {
             return null;
         }
@@ -102,23 +105,5 @@ public class PostService {
             .orElseThrow(() -> new RuntimeException("Post not found"));
 
         return postMapper.convertPostToPostDto(post);
-    }
-
-    private String saveImage(MultipartFile image) throws IOException {
-        // Ensure the upload directory exists
-        File directory = new File(IMAGE_UPLOAD_DIR);
-        if (!directory.exists()) {
-            directory.mkdirs();
-        }
-
-        // Generate a unique filename
-        String filename = UUID.randomUUID() + "-" + image.getOriginalFilename();
-        Path filePath = Paths.get(IMAGE_UPLOAD_DIR, filename); // Correct way to join paths
-
-        // Save the file
-        Files.copy(image.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-
-        // Return the relative path (or absolute URL if needed)
-        return "/uploads/" + filename;
     }
 }
