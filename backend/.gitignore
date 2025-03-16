@@ -28,4 +28,4 @@ build/
 
 # Inne pliki
 .env
-/uploads/
+uploads/
