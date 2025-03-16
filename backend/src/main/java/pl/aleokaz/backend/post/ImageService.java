@@ -18,10 +18,12 @@ public class ImageService {
 
     private Environment environment;
     private final String imageUploadDir;
+    private final String domainUrl;
 
     public ImageService(Environment environment) {
         this.environment = environment;
         imageUploadDir = this.environment.getProperty("aleokaz.image.upload.dir");
+        domainUrl = this.environment.getProperty("aleokaz.base.url");
     }
 
     public String saveImage(MultipartFile image) throws IOException {
@@ -35,6 +37,6 @@ public class ImageService {
 
         Files.copy(image.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
-        return "/uploads/" + filename;
+        return domainUrl + "/uploads/" + filename;
     }
 }
