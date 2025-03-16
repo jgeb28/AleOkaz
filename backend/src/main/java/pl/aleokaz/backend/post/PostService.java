@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import pl.aleokaz.backend.user.User;
 import pl.aleokaz.backend.user.UserRepository;
+import pl.aleokaz.backend.user.AuthorizationException;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -31,11 +32,16 @@ public class PostService {
 
     private static final String IMAGE_UPLOAD_DIR = "src/main/resources/static/uploads/";
 
-    public PostDto createPost(UUID userId, PostCommand postCommand, MultipartFile image) throws IOException {
+    public PostDto createPost(UUID userId, PostCommand postCommand, MultipartFile image) throws AuthorizationException {
         User author = userRepository.findById(userId)
             .orElseThrow(() -> new RuntimeException("Author not found"));
 
-        String imageUrl = saveImage(image);
+        String imageUrl;
+        try {
+            imageUrl = saveImage(image);
+        } catch (IOException ioe) {
+            return null;
+        }
 
         Post post = Post.builder()
             .content(postCommand.content())
@@ -49,12 +55,12 @@ public class PostService {
         return postMapper.convertPostToPostDto(savedPost);
     }
 
-    public PostDto updatePost(UUID userId, UUID postId, PostCommand postCommand) {
+    public PostDto updatePost(UUID userId, UUID postId, PostCommand postCommand) throws AuthorizationException {
         Post post = postRepository.findById(postId)
             .orElseThrow(() -> new RuntimeException("Post not found"));
 
         if(!userId.toString().equals(post.author().id().toString())) {
-            throw new RuntimeException("You are not authorized to update this post");
+            throw new AuthorizationException(userId.toString());
         }
 
         post.content(postCommand.content());
@@ -65,7 +71,7 @@ public class PostService {
         return postMapper.convertPostToPostDto(savedPost);
     }
 
-    public PostDto deletePost(UUID userId, UUID postId) {
+    public PostDto deletePost(UUID userId, UUID postId) throws AuthorizationException {
         Post post = postRepository.findById(postId)
             .orElseThrow(() -> new RuntimeException("Post not found"));
 
@@ -73,7 +79,7 @@ public class PostService {
             .orElseThrow(() -> new RuntimeException("Author not found"));
 
         if(!userId.toString().equals(post.author().id().toString())) {
-            throw new RuntimeException("You are not authorized to delete this post");
+            throw new AuthorizationException(userId.toString());
         }
 
         PostDto responsePost = postMapper.convertPostToPostDto(post);
