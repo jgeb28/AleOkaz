@@ -15,8 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import pl.aleokaz.backend.recovery.ResponseMsgDto;
 
-//TODO(marcin): Change when authentication is implemented
-//TODO(marcin): Kafka messaging about friendship
 //TODO(marcin): Add tests
 @RestController
 @RequestMapping("/api/friends")

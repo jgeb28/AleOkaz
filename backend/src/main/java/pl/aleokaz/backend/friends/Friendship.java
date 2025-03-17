@@ -31,10 +31,11 @@ public class Friendship {
         return user().id().equals(currentUserId) ? friend().id() : user().id();
     }
 
+    //TODO(marcin): Jak będą zdjęcia użytkowników to dodać
     public FriendDTO toFriendDTO(UUID currentUserId){
         return user().id().equals(currentUserId) ? 
-            FriendDTO.builder().friend_id(friend().id()).is_accepted(isActive()).is_sender(true).build() :
-            FriendDTO.builder().friend_id(user().id()).is_accepted(isActive()).is_sender(false).build();
+            FriendDTO.builder().username(friend().username()).avatar_url("avatar_url").is_accepted(isActive()).is_sender(true).build() :
+            FriendDTO.builder().username(user().username()).avatar_url("avatar_url").is_accepted(isActive()).is_sender(false).build();
     }
 
     public Friendship(User user, User friend, boolean isActive) {

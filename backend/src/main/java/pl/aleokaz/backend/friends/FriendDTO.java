@@ -7,7 +7,8 @@ import lombok.NonNull;
 
 @Builder
 record FriendDTO(
-        @NonNull UUID friend_id,
+        @NonNull String username,
+        @NonNull String avatar_url,
         boolean is_accepted,
         boolean is_sender) {
 }
