@@ -83,5 +83,4 @@ public class FriendsService {
             .map(friendship -> friendship.toFriendDTO(userId)).toList();
         return friendDTOs;
     }
-
 }
