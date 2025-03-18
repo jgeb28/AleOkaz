@@ -1,4 +1,5 @@
 import 'package:ale_okaz/screens/home.dart';
+import 'package:ale_okaz/screens/posts/create_post.dart';
 import 'package:ale_okaz/screens/posts/take_picture.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
@@ -41,7 +42,7 @@ class MyApp extends StatelessWidget {
         GetPage(name: '/login', page: () => const LoginScreen()),
         GetPage(name: '/profile', page: () => const ProfileScreen()),
         GetPage(name: '/take-picture', page: () => const TakePictureScreen()),
-        GetPage(name: '/home', page: () => const Home())
+        GetPage(name: '/home', page: () => const Home()),
       ],
       home: const LoginScreen(),
     );

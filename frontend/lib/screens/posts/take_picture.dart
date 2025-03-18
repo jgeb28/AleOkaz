@@ -1,3 +1,5 @@
+import 'package:ale_okaz/screens/layout.dart';
+import 'package:ale_okaz/screens/posts/create_post.dart';
 import 'package:ale_okaz/utils/colors.dart';
 import 'package:ale_okaz/widgets/bottom_bar.dart';
 import 'package:ale_okaz/widgets/top_bar/top_bar.dart';
@@ -38,48 +40,49 @@ class _TakePictureScreenState extends State<TakePictureScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: primaryBackgroundColor,
-      appBar: const TopBar(
-        hasBackButton: true,
-      ),
-      bottomNavigationBar: const BottomBar(),
-      body: FutureBuilder<void>(
-        future: _initializeControllerFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            return Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12.0),
-                  child: CameraPreview(_controller)),
-            );
-          } else {
-            return const Center(child: CircularProgressIndicator());
-          }
-        },
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.all(15.0),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(50.0),
-          child: SizedBox(
-            width: 70,
-            height: 70,
-            child: FloatingActionButton(
-              backgroundColor: buttonBackgroundColor,
-              child: const Icon(Icons.circle,
-                  size: 60, color: primaryBackgroundColor),
-              onPressed: () async {
-                try {
-                  await _initializeControllerFuture;
+    return Layout(
+      body: Scaffold(
+        body: FutureBuilder<void>(
+          future: _initializeControllerFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ClipRRect(
+                    borderRadius: BorderRadius.circular(12.0),
+                    child: CameraPreview(_controller)),
+              );
+            } else {
+              return const Center(child: CircularProgressIndicator());
+            }
+          },
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+        floatingActionButton: Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(50.0),
+            child: SizedBox(
+              width: 70,
+              height: 70,
+              child: FloatingActionButton(
+                backgroundColor: buttonBackgroundColor,
+                child: const Icon(Icons.circle,
+                    size: 60, color: primaryBackgroundColor),
+                onPressed: () async {
+                  try {
+                    await _initializeControllerFuture;
 
-                  final image = await _controller.takePicture();
-                } catch (e) {
-                  print(e);
-                }
-              },
+                    final image = await _controller.takePicture();
+
+                    Get.to(() => CreatePost(
+                          imagePath: image.path,
+                        ));
+                  } catch (e) {
+                    print(e);
+                  }
+                },
+              ),
             ),
           ),
         ),

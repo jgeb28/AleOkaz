@@ -10,7 +10,9 @@ class Home extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Scaffold(
       backgroundColor: primaryBackgroundColor,
-      appBar: TopBar(),
+      appBar: TopBar(
+        hasBackButton: true,
+      ),
       bottomNavigationBar: BottomBar(),
     );
   }
