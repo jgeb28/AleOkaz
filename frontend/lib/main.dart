@@ -1,20 +1,25 @@
 import 'package:ale_okaz/screens/home.dart';
+import 'package:ale_okaz/screens/posts/take_picture.dart';
+import 'package:camera/camera.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
+import 'package:ale_okaz/services/internet_controller.dart';
+
+import 'package:ale_okaz/screens/profile/profile.dart';
 import 'package:ale_okaz/screens/register/register.dart';
 import 'package:ale_okaz/screens/login/login.dart';
-import 'package:ale_okaz/utils/camera_provider.dart';
-import 'package:flutter/material.dart';
-import 'package:camera/camera.dart';
-import 'package:provider/provider.dart';
+import 'package:ale_okaz/screens/essentials/no_connection.dart';
 
-Future<void> main() async {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   final cameras = await availableCameras();
 
-  runApp(ChangeNotifierProvider(
-    create: (context) => CameraProvider(cameras),
-    child: const MyApp(),
-  ));
+  Get.put(cameras.first, permanent: true);
+  Get.put(InternetController(), permanent: true);
+
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -26,46 +31,19 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      // Root widget
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('My Home Page'),
-        ),
-        body: Center(
-          child: Builder(
-            builder: (context) {
-              return Column(
-                children: [
-                  const Text('Hello, World!'),
-                  const SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => RegisterScreen()));
-                    },
-                    child: const Text('To register'),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => const LoginScreen()));
-                    },
-                    child: const Text('To login'),
-                  ),
-                  Text(username != null ? 'Welcome, $username' : ''),
-                  ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => const Home()));
-                      },
-                      child: const Text('To home'))
-                ],
-              );
-            },
-          ),
-        ),
-      ),
+    return GetMaterialApp(
+      debugShowCheckedModeBanner: false,
+      initialRoute: '/',
+      getPages: [
+        GetPage(name: '/', page: () => const MyApp()),
+        GetPage(name: '/no-connection', page: () => const NoConnectionScreen()),
+        GetPage(name: '/register', page: () => const RegisterScreen()),
+        GetPage(name: '/login', page: () => const LoginScreen()),
+        GetPage(name: '/profile', page: () => const ProfileScreen()),
+        GetPage(name: '/take-picture', page: () => const TakePictureScreen()),
+        GetPage(name: '/home', page: () => const Home())
+      ],
+      home: const LoginScreen(),
     );
   }
 }

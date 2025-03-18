@@ -1,8 +1,6 @@
-import 'package:ale_okaz/screens/posts/take_picture.dart';
-import 'package:ale_okaz/utils/camera_provider.dart';
 import 'package:ale_okaz/utils/colors.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:get/get.dart';
 
 class BottomBar extends StatelessWidget {
   const BottomBar({super.key});
@@ -27,13 +25,7 @@ class BottomBar extends StatelessWidget {
             ),
             Expanded(
               child: InkWell(
-                onTap: () => {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => TakePictureScreen(
-                          camera: Provider.of<CameraProvider>(context)
-                              .cameras
-                              .first)))
-                },
+                onTap: () => {Get.toNamed('/take-picture')},
                 child: const SizedBox.expand(child: Icon(Icons.photo_camera)),
               ),
             ),
