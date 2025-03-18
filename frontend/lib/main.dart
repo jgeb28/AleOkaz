@@ -1,10 +1,12 @@
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
+import 'package:ale_okaz/services/internet_controller.dart';
+
 import 'package:ale_okaz/screens/profile/profile.dart';
 import 'package:ale_okaz/screens/register/register.dart';
 import 'package:ale_okaz/screens/login/login.dart';
-import 'package:ale_okaz/screens/no_connection.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:ale_okaz/services/internet_controller.dart';
+import 'package:ale_okaz/screens/essentials/no_connection.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,42 +34,7 @@ class MyApp extends StatelessWidget {
         GetPage(name: '/profile', page: () => const ProfileScreen()),
 
       ],
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('My Home Page'),
-        ),
-        body: Center(
-          child: Builder(
-            builder: (context) {
-              return Column(
-                children: [
-                  const Text('Hello, World!'),
-                  const SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: () {
-                      Get.toNamed('/register');
-                    },
-                    child: const Text('To register'),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      Get.toNamed('/login');
-                    },
-                    child: const Text('To login'),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      Get.toNamed('/profile');
-                    },
-                    child: const Text('To profile'),
-                  ),
-                  Text(username != null ? 'Welcome, $username' : ''),
-                ],
-              );
-            },
-          ),
-        ),
-      ),
+      home: const LoginScreen(),
     );
   }
 }

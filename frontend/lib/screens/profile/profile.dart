@@ -1,11 +1,13 @@
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'package:ale_okaz/utils/colors.dart';
 import 'package:ale_okaz/screens/profile/fishing_spots_tab.dart';
 import 'package:ale_okaz/screens/profile/friends_tab.dart';
 import 'package:ale_okaz/screens/profile/posts_tab.dart';
 import 'package:ale_okaz/screens/profile/profile_tab.dart';
 import 'package:ale_okaz/widgets/bottom_navbar.dart';
-import 'package:flutter/material.dart';
-import 'package:ale_okaz/utils/colors.dart';
-import 'package:get/get.dart';
 
 
 class ProfileScreen extends StatefulWidget {
@@ -18,6 +20,11 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateMixin {
 
   late final TabController _tabController;
+
+  Future<String> _getUsername() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('username') ?? "";
+  }
 
   @override
   void initState() {
@@ -36,11 +43,20 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
     return(
         Scaffold(
           appBar:AppBar(
-            title: const Text('Joanna',
-            style: TextStyle(
-                  fontFamily: 'Righteous',
-                  fontSize: 16,
-                ),),
+            title: FutureBuilder<String>(
+              future: _getUsername(),
+
+              builder:(context, snapshot) { 
+                String username = "";
+                if(snapshot.hasData) {
+                  username = snapshot.data!;
+                }
+                return Text(username,
+                  style: const TextStyle(
+                        fontFamily: 'Righteous',
+                        fontSize: 16,
+                      ),);}
+            ),
             centerTitle: true,
             backgroundColor: primaryBackgroundColor,
             leading: Container(
@@ -76,7 +92,7 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
                     labelColor: Colors.black,
                     unselectedLabelColor: Colors.black,
                     indicatorColor: tabGreenColor,
-                    tabs: <Widget>[
+                    tabs: const <Widget> [
                       Tab(text: 'Profil'),
                       Tab(text: 'Posty'),
                       Tab(text: 'Łowiska'),

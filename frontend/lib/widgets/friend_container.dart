@@ -5,9 +5,11 @@ class FriendContainer extends StatelessWidget {
 
   final String friendName;
   final Image? friendImage = null;
+  final Function onSelected;
 
   const FriendContainer({
     required this.friendName,
+    required this.onSelected,
     super.key});
 
   @override
@@ -42,16 +44,8 @@ class FriendContainer extends StatelessWidget {
                 ],
               ),
               PopupMenuButton<String>(
-                onSelected: (String choice) {
-                  if(choice == "delete") {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('TO DO: Usunięcie Znajomego')),
-                    );
-                  } else if (choice == "profile") {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('TO DO: Przejście do profilu znajomego')),
-                    );
-                  }
+                onSelected: (String choice) {  
+                  onSelected(choice);
                 },
                 icon: const Icon(Icons.more_horiz, color: tabGreenColor,),
                 itemBuilder: 

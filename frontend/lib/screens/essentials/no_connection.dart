@@ -1,5 +1,7 @@
-import 'package:ale_okaz/widgets/bottom_navbar.dart';
 import 'package:flutter/material.dart';
+
+import 'package:ale_okaz/utils/colors.dart';
+import 'package:ale_okaz/widgets/bottom_navbar.dart';
 
 class NoConnectionScreen extends StatelessWidget {
   const NoConnectionScreen({super.key});
@@ -7,11 +9,28 @@ class NoConnectionScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        centerTitle: true,
+        leading: null,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(40),
+            bottomRight: Radius.circular(40),
+          )),
+        backgroundColor: offWhiteColor,
+        title: const Text('AleOkaz',
+        style: TextStyle(
+          fontFamily: 'Righteous',
+          fontSize: 42,
+      ),),
+    ),
       body: const Center(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            SizedBox(
+              height: 80,
+            ),
             Text('Brak połączenia z internetem',
               textAlign: TextAlign.center,
               style: TextStyle(
