@@ -5,6 +5,7 @@ class Button extends StatelessWidget {
   final VoidCallback onPressed;
   final String label;
   final double width;
+  final Icon? icon;
 
   // todo: add custom width that user can provide, default to double.maxFinite
   // add icon support
@@ -13,6 +14,7 @@ class Button extends StatelessWidget {
     required this.label,
     required this.onPressed,
     this.width = double.maxFinite,
+    this.icon,
     super.key,
   });
 
@@ -21,7 +23,7 @@ class Button extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(top: 20, bottom: 8),
       child: SizedBox(
-          width: 100,
+          width: width,
           height: 50,
           child: FilledButton(
               style: FilledButton.styleFrom(

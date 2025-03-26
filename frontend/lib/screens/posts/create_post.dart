@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:ale_okaz/screens/layout.dart';
 import 'package:ale_okaz/screens/posts/create_post_form.dart';
 import 'package:ale_okaz/utils/colors.dart';
-import 'package:ale_okaz/widgets/button.dart';
 import 'package:flutter/material.dart';
 
 class CreatePost extends StatelessWidget {
@@ -27,7 +26,6 @@ class CreatePost extends StatelessWidget {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      // Interactive image preview
                       GestureDetector(
                         onTap: () => _showFullScreenImage(context),
                         child: ConstrainedBox(
@@ -47,7 +45,6 @@ class CreatePost extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 20),
-                      // Form
                       const CreatePostForm(),
                     ],
                   ),
