@@ -31,9 +31,9 @@ public class PostController {
 
     @PostMapping(consumes = "multipart/form-data")
     public ResponseEntity<PostDto> createPost(
-        Authentication authentication,
-        @RequestPart("post") PostCommand post,
-        @RequestParam(value = "image", required = true) MultipartFile image) {
+            Authentication authentication,
+            @RequestPart("post") PostCommand post,
+            @RequestParam(value = "image", required = true) MultipartFile image) {
 
         UUID currentUserId = UUID.fromString((String) authentication.getPrincipal());
 
@@ -49,9 +49,9 @@ public class PostController {
 
     @PutMapping("/{postId}")
     public ResponseEntity<PostDto> updatePost(
-        Authentication authentication,
-        @PathVariable UUID postId,
-        @RequestPart("post") PostCommand postCommand) {
+            Authentication authentication,
+            @PathVariable UUID postId,
+            @RequestPart("post") PostCommand postCommand) {
 
         UUID currentUserId = UUID.fromString((String) authentication.getPrincipal());
 
@@ -78,6 +78,29 @@ public class PostController {
         } catch (RuntimeException re) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
+    }
+
+    @PutMapping("/{postId}/reactions")
+    public ResponseEntity<Void> setPostReaction(
+            Authentication authentication,
+            @PathVariable UUID postId) {
+        final UUID userId = UUID.fromString((String) authentication.getPrincipal());
+
+        // TODO: Wczytanie typu reakcji z @RequestBody.
+        postService.setPostReaction(postId, userId, PostReactionType.LIKE);
+
+        return ResponseEntity.ok(null);
+    }
+
+    @DeleteMapping("/{postId}/reactions")
+    public ResponseEntity<Void> unreactToPost(
+            Authentication authentication,
+            @PathVariable UUID postId) {
+        final UUID userId = UUID.fromString((String) authentication.getPrincipal());
+
+        postService.deletePostReaction(postId, userId);
+
+        return ResponseEntity.ok(null);
     }
 
 }

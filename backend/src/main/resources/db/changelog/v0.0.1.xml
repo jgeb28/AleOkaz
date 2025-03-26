@@ -188,4 +188,35 @@
             referencedTableName="post"
             referencedColumnNames="id" />
     </changeSet>
+
+    <changeSet id="6" author="michalciechan">
+        <createTable tableName="post_reaction">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" primaryKeyName="post_reaction_pk" nullable="false" />
+            </column>
+            <column name="post_id" type="uuid">
+                <constraints nullable="false" />
+            </column>
+            <column name="author_id" type="uuid">
+                <constraints nullable="false" />
+            </column>
+            <column name="type" type="text">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint
+            baseTableName="post_reaction"
+            baseColumnNames="post_id"
+            constraintName="fk_post_reaction_post"
+            referencedTableName="post"
+            referencedColumnNames="id" />
+        <addForeignKeyConstraint
+            baseTableName="post_reaction"
+            baseColumnNames="author_id"
+            constraintName="fk_post_reaction_author"
+            referencedTableName="user"
+            referencedColumnNames="id" />
+        <addUniqueConstraint tableName="post_reaction" columnNames="post_id,author_id" />
+    </changeSet>
 </databaseChangeLog>
