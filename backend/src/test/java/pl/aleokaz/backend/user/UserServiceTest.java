@@ -29,7 +29,7 @@ public class UserServiceTest {
     @Mock
     private VerificationRepository verificationRepository;
 
-    @Mock
+    @Spy
     private JwtTokenProvider jwtTokenProvider;
 
     @Test

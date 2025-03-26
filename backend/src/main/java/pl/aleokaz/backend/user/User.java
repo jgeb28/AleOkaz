@@ -62,7 +62,12 @@ public class User {
     private List<Post> posts;
 
     @Builder
-    public User(UUID id, String email, String username, String password, Set<UserRole> roles) {
+    public User(
+            UUID id,
+            @NonNull String email,
+            @NonNull String username,
+            @NonNull String password,
+            @NonNull Set<UserRole> roles) {
         this.id = id;
         this.username = username;
         this.email = email;
