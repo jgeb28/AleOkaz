@@ -1,10 +1,8 @@
-import 'dart:developer';
-
-import 'package:ale_okaz/services/auth_service.dart';
 import 'package:ale_okaz/services/post_service.dart';
 import 'package:ale_okaz/widgets/button.dart';
 import 'package:ale_okaz/widgets/label_input.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class CreatePostForm extends StatefulWidget {
   final String imagePath;
@@ -28,13 +26,26 @@ class CreatePostFormState extends State<CreatePostForm> {
     super.dispose();
   }
 
+  void showSnackBar(e, Color color) {
+    ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(backgroundColor: color, content: Center(child: Text('$e'))));
+  }
+
   Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
       try {
         var response = await _postService.createPost(
-            "/api/posts", _descriptionController.text, widget.imagePath);
-        print(response);
-      } catch (e) {}
+            "api/posts", _descriptionController.text, widget.imagePath);
+
+        if (response['error'] == true) {
+          showSnackBar("Error: ${response['message']}", Colors.red);
+        } else {
+          showSnackBar("Created post", Colors.green);
+          Get.toNamed('/home');
+        }
+      } catch (e) {
+        showSnackBar("Error: ${e}", Colors.red);
+      }
     }
   }
 

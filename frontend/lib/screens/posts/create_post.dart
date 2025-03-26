@@ -45,7 +45,7 @@ class CreatePost extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 20),
-                      const CreatePostForm(),
+                      CreatePostForm(imagePath: imagePath),
                     ],
                   ),
                 ),
