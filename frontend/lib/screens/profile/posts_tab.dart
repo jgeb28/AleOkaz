@@ -3,7 +3,11 @@ import 'package:ale_okaz/widgets/post_container.dart';
 import 'package:flutter/material.dart';
 
 class PostsTab extends StatelessWidget {
-  const PostsTab({super.key});
+  const PostsTab({
+    required this.isMyProfile,
+    super.key});
+
+  final bool isMyProfile;
 
   static List<Post> posts = 
   [

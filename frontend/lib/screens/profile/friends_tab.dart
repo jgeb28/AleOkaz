@@ -5,10 +5,17 @@ import 'package:ale_okaz/services/auth_service.dart';
 import 'package:ale_okaz/widgets/friend_container.dart';
 import 'package:ale_okaz/widgets/my_dropdown_menu.dart';
 import 'package:ale_okaz/widgets/my_search_bar.dart';
+import 'package:get/get.dart';
 
 class FriendsTab extends StatefulWidget {
-  const FriendsTab({super.key});
-
+  final String? username;
+  final bool isMyProfile;
+  
+  const FriendsTab({
+    required this.isMyProfile,
+    required this.username,
+    super.key});
+  
   @override
   State<FriendsTab> createState() => _FriendsTabState();
 }
@@ -36,28 +43,39 @@ class _FriendsTabState extends State<FriendsTab> {
     String query = searchController.text;
 
     if (query.isEmpty) {
-        filteredFriendsList = friendsNames;
-      } else {
-        filteredFriendsList = friendsNames
-            .where((friend) =>
-                friend.toLowerCase().startsWith(query.toLowerCase()))
-            .toList();
-      };
+      filteredFriendsList = friendsNames;
+    } else {
+      filteredFriendsList = friendsNames
+          .where(
+              (friend) => friend.toLowerCase().startsWith(query.toLowerCase()))
+          .toList();
+    }
 
-      if (currentSortOption == 'default') {
-      filteredFriendsList.sort((a, b) => b.toLowerCase().compareTo(a.toLowerCase()));
-      } else if (currentSortOption == 'alphabetical') {
-        filteredFriendsList.sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
-      }
+    if (currentSortOption == 'default') {
+      filteredFriendsList
+          .sort((a, b) => b.toLowerCase().compareTo(a.toLowerCase()));
+    } else if (currentSortOption == 'alphabetical') {
+      filteredFriendsList
+          .sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
+    }
 
     return filteredFriendsList;
   }
 
   Future<List<String>> getAllFriends() async {
     try {
-      dynamic response = await _authService.sendGETRequest(
-        'http://10.0.2.2:8080/api/friends/all',
+      dynamic response;
+
+      if(widget.isMyProfile == true) {
+        response = await _authService.sendGETRequest(
+          'http://10.0.2.2:8080/api/friends/all',
       );
+      }
+      else {
+        response = await _authService.sendGETRequest(
+          "http://10.0.2.2:8080/api/friends/all/$widget.username",
+        );
+      }
 
       List<String> friendNames = List<String>.from(
           response.map((friend) => friend['username'] as String));
@@ -67,14 +85,44 @@ class _FriendsTabState extends State<FriendsTab> {
     }
   }
 
+  Future<void> _addFriend() async {
+    try {
+      await _authService.sendPOSTRequest(
+        'http://10.0.2.2:8080/api/friends/add',
+        {'username': widget.username},
+      );
+      Get.snackbar('Sukcess', 'Pomyślnie dodano znajomego',
+      backgroundColor: Colors.green,
+      );
+    } catch (ex) {
+      Get.snackbar('Błąd', "Coś poszło nie tak w trakcie dodawania znajomego : $ex",
+      backgroundColor: Colors.red,
+      );
+    }
+  }
+
+  Future<void> _deleteFriend() async {
+    try {
+      await _authService.sendPOSTRequest(
+        'http://10.0.2.2:8080/api/friends/delete',
+        {'username': widget.username},
+      );
+      Get.snackbar('Sukcess', 'Pomyślnie dodano znajomego',
+      backgroundColor: Colors.green,
+      );
+    } catch (ex) {
+      Get.snackbar('Błąd', "Coś poszło nie tak w trakcie dodawania znajomego : $ex",
+      backgroundColor: Colors.red,
+      );
+    }
+  }
+
   @override
   void initState() {
     super.initState();
-    searchController.addListener(
-      () {
+    searchController.addListener(() {
       setState(() {});
-      }
-    );
+    });
   }
 
   @override
@@ -109,26 +157,30 @@ class _FriendsTabState extends State<FriendsTab> {
                   return const Center(child: Text("No friends found."));
                 }
 
+                Map<String,String> friendOptions =  widget.isMyProfile ? {
+                  'profile': 'Profil',
+                  'delete': 'Usuń'
+                } : {
+                   'profile': 'Profil',
+                   'add': 'Dodaj'
+                };
+
                 List<String> friendsList = snapshot.data!;
-                List<String> filteredFriendsList = _filterAndSortFriends(friendsList);
+                List<String> filteredFriendsList =
+                    _filterAndSortFriends(friendsList);
 
                 return ListView(
                   children: filteredFriendsList.map((String name) {
                     return FriendContainer(
                       friendName: name,
+                      friendOptions: friendOptions,
                       onSelected: (String choice) async {
                         if (choice == 'delete') {
-                          try {
-                            await _authService.sendPOSTRequest(
-                              'http://10.0.2.2:8080/api/friends/remove',
-                              {'username': name},
-                            );
-                            setState(() {});
-                          } catch (ex) {
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                backgroundColor: Colors.red,
-                                content: Center(child: Text('$ex'))));
-                          }
+                          _addFriend();
+                        } else if (choice == 'profile') {
+                          Get.toNamed("/profile/$name");
+                        } else if (choice == 'add') {
+                           _deleteFriend();
                         }
                       },
                     );
