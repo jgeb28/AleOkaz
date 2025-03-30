@@ -73,10 +73,11 @@ class FriendsTabViewModel extends GetxController {
   Future<void> deleteFriend(String username) async {
     try {
       await _restService.sendPOSTRequest(
-        'http://10.0.2.2:8080/api/friends/delete',
+        'http://10.0.2.2:8080/api/friends/remove',
         {'username': username},
       );
       Get.snackbar('Sukcess', 'Pomyślnie usunięto znajomego', backgroundColor: Get.theme.primaryColor);
+      await getAllFriends(true, null);
     } catch (ex) {
       Get.snackbar('Błąd', "Błąd usuwania znajomego: $ex", backgroundColor: Colors.red);
     }

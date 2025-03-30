@@ -9,10 +9,28 @@ import 'package:ale_okaz/widgets/bottom_navbar.dart';
 import 'package:ale_okaz/widgets/profile_tabs.dart';
 import 'package:ale_okaz/view_models/profile/profile_view_model.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   ProfileScreen({super.key});
 
-  final ProfileViewModel viewModel = Get.put(ProfileViewModel());
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  late ProfileViewModel viewModel;
+
+  @override
+  void initState() {
+    Get.delete<ProfileViewModel>();
+    viewModel = Get.put(ProfileViewModel());
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    Get.delete<ProfileViewModel>();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

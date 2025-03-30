@@ -7,17 +7,35 @@ import 'package:ale_okaz/widgets/my_dropdown_menu.dart';
 import 'package:ale_okaz/widgets/my_search_bar.dart';
 import 'package:get/get.dart';
 
-class FriendsTab extends StatelessWidget {
+class FriendsTab extends StatefulWidget {
   final String? username;
   final bool isMyProfile;
 
   FriendsTab({required this.isMyProfile, required this.username, super.key});
 
-  final FriendsTabViewModel viewModel = Get.put(FriendsTabViewModel());
+  @override
+  State<FriendsTab> createState() => _FriendsTabState();
+}
+
+class _FriendsTabState extends State<FriendsTab> {
+  late FriendsTabViewModel viewModel;
+
+  @override
+  void initState() {
+    Get.delete<FriendsTabViewModel>();
+    viewModel = Get.put(FriendsTabViewModel());
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    Get.delete<FriendsTabViewModel>();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    viewModel.getAllFriends(isMyProfile, username);
+    viewModel.getAllFriends(widget.isMyProfile, widget.username);
 
     return Column(
       children: [
@@ -42,7 +60,7 @@ class FriendsTab extends StatelessWidget {
               return const Center(child: Text("No friends found."));
             }
 
-            Map<String, String> friendOptions = isMyProfile
+            Map<String, String> friendOptions = widget.isMyProfile
                 ? {'profile': 'Profil', 'delete': 'Usuń'}
                 : {'profile': 'Profil', 'add': 'Dodaj'};
 

@@ -34,23 +34,12 @@ class MyApp extends StatelessWidget {
         GetPage(name: '/no-connection', page: () => const NoConnectionScreen()),
         GetPage(name: '/register', page: () => RegisterScreen()),
         GetPage(name: '/login', page: () => LoginScreen()),
-        GetPage(name: '/profile', page: () => ProfileScreen(), binding: ProfilePageDispose()),
-        GetPage(name: '/profile/:username', page: () => ProfileScreen(), binding: ProfilePageDispose())
+        GetPage(name: '/profile', page: () => ProfileScreen()),
+        GetPage(name: '/profile/:username', page: () => ProfileScreen())
         
 
       ],
       home: LoginScreen(),
     );
-  }
-}
-
-class ProfilePageDispose extends Bindings {
-  @override
-  void dependencies() {
-    Get.delete<ProfileViewModel>();
-    Get.delete<ProfileTabViewModel>();
-    Get.delete<FriendsTabViewModel>();
-    //Get.delete<PostsTabViewModel>();
-    //Get.delete<FishingSpotsTabViewModel>();
   }
 }

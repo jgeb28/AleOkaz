@@ -3,17 +3,36 @@ import 'package:ale_okaz/view_models/profile/profile_tab_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class ProfileTab extends StatelessWidget {
+class ProfileTab extends StatefulWidget {
   final bool isMyProfile;
   final String? username;
   
   ProfileTab({required this.isMyProfile, required this.username, super.key});
 
-  final ProfileTabViewModel viewModel = Get.put(ProfileTabViewModel());
+  @override
+  State<ProfileTab> createState() => _ProfileTabState();
+}
+
+class _ProfileTabState extends State<ProfileTab> {
+  late ProfileTabViewModel viewModel;
+
+  @override
+  void initState() {
+    Get.delete<ProfileTabViewModel>();
+    viewModel = Get.put(ProfileTabViewModel());
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    Get.delete<ProfileTabViewModel>();
+    super.dispose();
+  }
+
 
   @override
   Widget build(BuildContext context) {
-    viewModel.username.value = username ?? "Loading...";
+    viewModel.username.value = widget.username ?? "Loading...";
 
     return Column(
       children: [
@@ -33,7 +52,7 @@ class ProfileTab extends StatelessWidget {
           width: double.infinity,
           decoration: const BoxDecoration(color: offWhiteColor),
           child: Obx(() {
-            return isMyProfile
+            return widget.isMyProfile
                 ? Stack(
                     children: [
                       Align(
@@ -77,7 +96,7 @@ class ProfileTab extends StatelessWidget {
         
         const SizedBox(height: 40),
         
-        isMyProfile
+        widget.isMyProfile
             ? FilledButton(
                 onPressed: () {},
                 style: FilledButton.styleFrom(
