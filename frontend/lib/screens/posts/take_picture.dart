@@ -104,7 +104,7 @@ class _TakePictureScreenState extends State<TakePictureScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             IconButton(
-                iconSize: 40,
+                iconSize: 30,
                 onPressed: toggleFlashlight,
                 icon: Icon(_isFlashOn ? Icons.flash_on : Icons.flash_off),
                 color: buttonBackgroundColor),
@@ -134,7 +134,7 @@ class _TakePictureScreenState extends State<TakePictureScreen> {
               ),
             ),
             IconButton(
-                iconSize: 40,
+                iconSize: 30,
                 onPressed: switchCamera,
                 icon: const Icon(Icons.cameraswitch_outlined,
                     color: buttonBackgroundColor))

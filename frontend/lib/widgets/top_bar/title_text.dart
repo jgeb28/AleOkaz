@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class TitleText extends StatelessWidget {
   final String fontFamily;
@@ -8,7 +9,11 @@ class TitleText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text('AleOkaz',
-        style: TextStyle(fontFamily: fontFamily, fontSize: fontSize));
+    return TextButton(
+      onPressed: () => Get.toNamed('/home'),
+      child: Text('AleOkaz',
+          style: TextStyle(
+              fontFamily: fontFamily, fontSize: fontSize, color: Colors.black)),
+    );
   }
 }

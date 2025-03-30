@@ -12,6 +12,7 @@ class CreatePost extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Layout(
+      hasBackButton: true,
       body: Scaffold(
         backgroundColor: primaryBackgroundColor,
         body: LayoutBuilder(

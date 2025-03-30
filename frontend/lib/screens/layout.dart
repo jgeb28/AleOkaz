@@ -5,15 +5,16 @@ import 'package:flutter/material.dart';
 
 class Layout extends StatelessWidget {
   final Widget body;
-  const Layout({super.key, required this.body});
+  final bool hasBackButton;
+  const Layout({super.key, required this.body, this.hasBackButton = false});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: primaryBackgroundColor,
-      appBar: const TopBar(), // Your custom TopBar
-      body: body, // Dynamic content passed from each screen
-      bottomNavigationBar: const BottomBar(), // Your custom BottomBar
+      appBar: TopBar(hasBackButton: hasBackButton),
+      body: body,
+      bottomNavigationBar: const BottomBar(),
     );
   }
 }
