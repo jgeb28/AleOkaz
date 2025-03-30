@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:ale_okaz/services/auth_service.dart';
+import 'package:ale_okaz/models/services/rest_service.dart';
 
 
 class FishingSpotsTab extends StatefulWidget {
@@ -13,7 +13,7 @@ class FishingSpotsTab extends StatefulWidget {
 class _FishingSpotsTabState extends State<FishingSpotsTab> {
 
   TextEditingController addController = TextEditingController();
-  final _authService = AuthService();
+  final RestService _restService = RestService();
 
    @override
   void dispose() {
@@ -31,7 +31,7 @@ class _FishingSpotsTabState extends State<FishingSpotsTab> {
         ),
         OutlinedButton(onPressed: () async {
           String username = addController.text;
-          await _authService.sendPOSTRequest(
+          await _restService.sendPOSTRequest(
             'http://10.0.2.2:8080/api/friends/add',
             {'username': username},
           );

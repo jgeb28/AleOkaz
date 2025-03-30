@@ -2,10 +2,11 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:ale_okaz/models/data/user.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
-class AuthService {
+class AuthService extends GetxService {
   final storage = const FlutterSecureStorage();
 
   Future<void> login(String username, String password) async {
@@ -37,67 +38,6 @@ class AuthService {
       }
     } catch (e) {
       throw ('Wystąpił błąd: $e');
-    }
-  }
-
-  Future<dynamic> sendGETRequest(String url) async {
-    try {
-      String? accessToken = await storage.read(key: 'accessToken');
-      if (accessToken == null) {
-        throw 'Brak Tokenu uwierzytelniającego';
-      }
-
-      if (await isTokenExpired(accessToken)) {
-        await refreshAccessToken();
-        accessToken = await storage.read(key: 'accessToken');
-      }
-
-      final response = await http.get(
-        Uri.parse(url),
-        headers: {
-          'Content-Type': 'application/json',
-          "Authorization": "Bearer $accessToken",
-        },
-      );
-
-      if (response.statusCode == 200) {
-        return jsonDecode(response.body);
-      } else {
-        throw 'Błędna odpowiedź serwera - ${response.statusCode}';
-      }
-    } catch (e) {
-      return 'Wystąpił błąd: $e';
-    }
-  }
-
-  Future<dynamic> sendPOSTRequest(String url, Map<String, dynamic> body) async {
-    try {
-      String? accessToken = await storage.read(key: 'accessToken');
-      if (accessToken == null) {
-        throw 'Brak Tokenu uwierzytelniającego';
-      }
-
-      if (await isTokenExpired(accessToken)) {
-        await refreshAccessToken();
-        accessToken = await storage.read(key: 'accessToken');
-      }
-
-      final response = await http.post(
-        Uri.parse(url),
-        headers: {
-          'Content-Type': 'application/json; charset=UTF-8',
-          "Authorization": "Bearer $accessToken",
-        },
-        body: jsonEncode(body),
-      );
-
-      if (response.statusCode == 200) {
-        return jsonDecode(response.body);
-      } else {
-        throw 'Błędna odpowiedź serwera - ${response.statusCode}';
-      }
-    } catch (e) {
-      return 'Wystąpił błąd: $e';
     }
   }
 
@@ -146,6 +86,35 @@ class AuthService {
 
     logout();
   }
+
+  Future<User> createUser(String username, String email, String password) async {
+  final uri = Uri.parse(
+      'http://10.0.2.2:8080/api/users'); // Replace with your server IP
+
+  try {
+    final response = await http.post(
+      uri,
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        'username': username,
+        'email': email,
+        'password': password,
+      }),
+    );
+
+    if (response.statusCode == 201) {
+      return User.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+    } else {
+      final error = jsonDecode(response.body) as Map<String, dynamic>;
+      throw Exception(
+          'Failed to create user: ${error['message'] ?? 'Unknown error'}');
+    }
+  } catch (e) {
+    throw Exception('An error occurred: $e');
+  }
+}
 
   Future<void> logout() async {
     clearTokens();
