@@ -1,6 +1,5 @@
 import 'package:ale_okaz/utils/validator.dart';
 import 'package:ale_okaz/view_models/register/register_view_model.dart';
-import 'package:ale_okaz/views/login/login_view.dart';
 import 'package:ale_okaz/utils/colors.dart';
 import 'package:ale_okaz/widgets/auth_button.dart';
 import 'package:ale_okaz/widgets/label_input.dart';
@@ -10,23 +9,15 @@ import 'package:sign_in_button/sign_in_button.dart';
 import 'package:ale_okaz/widgets/line_divider.dart';
 import 'package:flutter/material.dart';
 
-class RegisterScreen extends StatefulWidget {
+class RegisterScreen extends StatelessWidget {
 
   RegisterScreen({super.key});
-
-  @override
-  State<RegisterScreen> createState() => _RegisterScreenState();
-}
-
-class _RegisterScreenState extends State<RegisterScreen> {
-  final _formKey = GlobalKey<FormState>();
- 
 
   final validator = Validator();
 
   @override
   Widget build(BuildContext context) {
-    final RegisterViewModel viewModel = Get.put(RegisterViewModel(formKey: _formKey));
+    final RegisterViewModel viewModel = Get.put(RegisterViewModel());
     final horizonalMargin = MediaQuery.of(context).size.width * 0.15;
     final verticalMargin = MediaQuery.of(context).size.height * 0;
 
@@ -40,7 +31,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 child: Column(
                   children: [
                     Form(
-                      key: _formKey,
+                      key: viewModel.formKey,
                       child: Column(
                         children: [
                           const TitleSection(name: "AleOkaz"),
@@ -83,7 +74,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         style: FilledButton.styleFrom(
                             backgroundColor: Colors.transparent,
                             foregroundColor: smallTextColor),
-                        onPressed: () => Get.toNamed('/login'),
+                        onPressed: () => Get.offAllNamed('/login'),
                         child: const Text("Posiadam już konto",
                             style: TextStyle(fontWeight: FontWeight.bold))),
                     const LineDivider(),

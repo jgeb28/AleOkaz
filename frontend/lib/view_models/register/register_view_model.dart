@@ -3,9 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class RegisterViewModel extends GetxController {
-  RegisterViewModel({required this.formKey});
 
-  final GlobalKey<FormState> formKey; 
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final AuthService authService = AuthService();
   final usernameController = TextEditingController();
   final emailController = TextEditingController();
@@ -13,6 +12,7 @@ class RegisterViewModel extends GetxController {
   final repeatedPasswordController = TextEditingController();
 
   var isLoading = false.obs;
+
 
   @override
   void onClose() {

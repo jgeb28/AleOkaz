@@ -13,20 +13,12 @@ import 'package:ale_okaz/widgets/line_divider.dart';
 
 
 
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends StatelessWidget {
   LoginScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
-}
-
-class _LoginScreenState extends State<LoginScreen> {
-  final _formKey = GlobalKey<FormState>();
-  
-
-  @override
   Widget build(BuildContext context) {
-    final LoginViewModel loginViewModel = Get.put(LoginViewModel(formKey: _formKey));
+    final LoginViewModel loginViewModel = Get.put(LoginViewModel());
     final horizonalMargin = MediaQuery.of(context).size.width * 0.15;
 
     return Scaffold(
@@ -37,7 +29,7 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Column(
             children: [
               Form(
-                key: _formKey,
+                key: loginViewModel.formKey,
                 child: Column(
                   children: [
                     const TitleSection(name: "AleOkaz"),
@@ -72,7 +64,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 padding: const EdgeInsets.only(top: 8, bottom: 8),
                 child: TextButton(
                   onPressed: () {
-                    Get.toNamed('/register');
+                    Get.offAllNamed('/register');
                   },
                   child: const Text(
                     'Stwórz nowe konto',

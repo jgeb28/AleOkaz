@@ -31,7 +31,7 @@ class FriendsTabViewModel extends GetxController {
           List<String>.from(response.map((friend) => friend['username'] as String));
       _applyFilters();
     } catch (e) {
-      Get.snackbar('Error', 'Error fetching friends: $e', backgroundColor: Colors.red);
+      Get.snackbar('Błąd', 'Error fetching friends: $e', backgroundColor: Colors.red);
     }
   }
 
@@ -64,7 +64,7 @@ class FriendsTabViewModel extends GetxController {
         'http://10.0.2.2:8080/api/friends/add',
         {'username': username},
       );
-      Get.snackbar('Sukcess', 'Pomyślnie dodano znajomego', backgroundColor: Get.theme.primaryColor);
+      Get.snackbar('Sukcess', 'Pomyślnie dodano znajomego', backgroundColor: Colors.green);
     } catch (ex) {
       Get.snackbar('Błąd', "Błąd dodawania znajomego: $ex", backgroundColor: Colors.red);
     }
@@ -76,7 +76,7 @@ class FriendsTabViewModel extends GetxController {
         'http://10.0.2.2:8080/api/friends/remove',
         {'username': username},
       );
-      Get.snackbar('Sukcess', 'Pomyślnie usunięto znajomego', backgroundColor: Get.theme.primaryColor);
+      Get.snackbar('Sukcess', 'Pomyślnie usunięto znajomego', backgroundColor: Colors.green);
       await getAllFriends(true, null);
     } catch (ex) {
       Get.snackbar('Błąd', "Błąd usuwania znajomego: $ex", backgroundColor: Colors.red);

@@ -5,11 +5,10 @@ import 'package:ale_okaz/models/services/auth_service.dart';
 class LoginViewModel extends GetxController {
   final AuthService authService = AuthService(); 
 
-  LoginViewModel({required this.formKey}); // Accept form key as an argument
-
-  final GlobalKey<FormState> formKey; 
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>(); 
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
+
 
   void submit() async {
     if (formKey.currentState!.validate()) {
@@ -18,8 +17,8 @@ class LoginViewModel extends GetxController {
           usernameController.text,
           passwordController.text,
         );
-        //Get.offAllNamed('/profile');
-        Get.toNamed('/profile');
+        Get.offAllNamed('/profile');
+        //Get.toNamed('/profile');
       } catch (e) {
         clearInputs();
         //Get.snackbar("Błąd", 'Wystąpił błąd podczas logowania',backgroundColor: Colors.red);
