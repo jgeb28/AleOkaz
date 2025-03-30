@@ -1,7 +1,6 @@
 import 'package:ale_okaz/screens/layout.dart';
 import 'package:ale_okaz/screens/posts/create_post.dart';
 import 'package:ale_okaz/utils/colors.dart';
-import 'package:ale_okaz/widgets/bottom_bar.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -53,21 +52,26 @@ class _TakePictureScreenState extends State<TakePictureScreen> {
 
   Future<void> _initializeCamera() async {
     _cameras = await availableCameras();
-    CameraDescription cameraDescription = Get.find<CameraDescription>();
+    CameraDescription cameraDescription;
+    try {
+      cameraDescription = Get.find<CameraDescription>();
+    } catch (e) {
+      cameraDescription = _cameras.first;
+    }
 
     _controller = CameraController(
       cameraDescription,
       ResolutionPreset.medium,
     );
 
-    _initializeControllerFuture = _controller.initialize();
+    await _controller.initialize();
     setState(() {});
   }
 
   @override
   void initState() {
     super.initState();
-    _initializeCamera();
+    _initializeControllerFuture = _initializeCamera();
   }
 
   @override
