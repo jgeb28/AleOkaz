@@ -31,7 +31,7 @@ public class FriendsController {
             UUID currentUserId = UUID.fromString((String) authentication.getPrincipal());
             return ResponseEntity.ok().body(friendsService.getFriends(currentUserId));
         } catch (Exception e) {
-            return null;
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseMsgDto.builder().message("An error occurred while fetching friends").build());
         }
     }
     
