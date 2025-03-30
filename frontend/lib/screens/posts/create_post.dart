@@ -30,7 +30,7 @@ class CreatePost extends StatelessWidget {
                         onTap: () => _showFullScreenImage(context),
                         child: ConstrainedBox(
                           constraints: BoxConstraints(
-                            maxHeight: MediaQuery.of(context).size.height * 0.4,
+                            maxHeight: MediaQuery.of(context).size.height * 0.5,
                           ),
                           child: AspectRatio(
                             aspectRatio: 1,

@@ -11,7 +11,7 @@ class AuthService {
   Future<void> login(String username, String password) async {
     try {
       final response = await http.post(
-        Uri.parse('http://10.0.2.2:8080/api/users/login'),
+        Uri.parse('http://192.168.0.14:8080/api/users/login'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },

@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 
 class PostService {
-  final String serverUrl = "http://10.0.2.2:8080";
+  final String serverUrl = "http://192.168.0.14:8080";
   final _authService = AuthService();
   final storage = const FlutterSecureStorage();
 
