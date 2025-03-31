@@ -1,12 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:ale_okaz/services/auth_service.dart';
+import 'package:ale_okaz/utils/ip.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 
 class PostService {
-  final String serverUrl = "http://192.168.0.14:8080";
+  final String serverUrl = "$ip:8080";
   final _authService = AuthService();
   final storage = const FlutterSecureStorage();
 

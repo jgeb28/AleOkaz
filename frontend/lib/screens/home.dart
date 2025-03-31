@@ -10,12 +10,34 @@ class Home extends StatelessWidget {
   const Home({super.key});
 
   static List<Post> posts = [
-    const Post(description: "Lorem ipsum"),
-    const Post(description: "Lorem ipsum"),
-    const Post(description: "Lorem ipsum"),
-    const Post(description: "Lorem ipsum"),
-    const Post(description: "Lorem ipsum"),
-    const Post(description: "Lorem ipsum"),
+    const Post(
+      description: "Lorem ipsum",
+      isLiked: true,
+    ),
+    const Post(
+      description: "Lorem ipsum",
+      isLiked: false,
+    ),
+    const Post(
+      description: "Lorem ipsum",
+      isLiked: true,
+    ),
+    const Post(
+      description: "Lorem ipsum",
+      isLiked: true,
+    ),
+    const Post(
+      description: "Lorem ipsum",
+      isLiked: true,
+    ),
+    const Post(
+      description: "Lorem ipsum",
+      isLiked: true,
+    ),
+    const Post(
+      description: "Lorem ipsum",
+      isLiked: true,
+    ),
   ];
 
   @override
