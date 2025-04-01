@@ -42,6 +42,7 @@ POST /api/recovery/resetPassword    {email, token, password}    Ustawienie noweg
 
 ### Znajomi
 GET  /api/friends/all                       Lista wszystkich znajomych\
+GET  /api/friends/allof/{username}                       Lista wszystkich zaakceptowanych znajomych użytkownika o nicku\
 POST /api/friends/add       {username}      Dodanie znajomego\
 POST /api/friends/remove    {username}      Usunięcie znajomego
 FriendDTO:

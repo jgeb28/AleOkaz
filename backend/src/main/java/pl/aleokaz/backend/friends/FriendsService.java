@@ -83,4 +83,15 @@ public class FriendsService {
             .map(friendship -> friendship.toFriendDTO(userId)).toList();
         return friendDTOs;
     }
+
+    public List<FriendDTO> getFriendsOfUser(String username){
+        User user = userRepository.findByUsername(username);
+        if(user == null) return List.of();
+        List<Friendship> friendships = friendshipRepository.findAllByUserId(user.id());
+        List<FriendDTO> friendDTOs = friendships.stream()
+            .filter(friendship -> friendship.isActive())
+            .map(friendship -> friendship.toFriendDTO(user.id()))
+            .toList();
+        return friendDTOs;
+    }
 }

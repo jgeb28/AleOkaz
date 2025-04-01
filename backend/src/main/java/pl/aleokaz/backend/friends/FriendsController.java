@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import pl.aleokaz.backend.recovery.ResponseMsgDto;
 
@@ -31,10 +32,19 @@ public class FriendsController {
             UUID currentUserId = UUID.fromString((String) authentication.getPrincipal());
             return ResponseEntity.ok().body(friendsService.getFriends(currentUserId));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseMsgDto.builder().message("An error occurred while fetching friends").build());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(List.of());
         }
     }
-    
+
+    @GetMapping("/allof/{username}")
+    public ResponseEntity<List<FriendDTO>> getFriendsOfUser(@PathVariable String username){
+        try {
+            return ResponseEntity.ok().body(friendsService.getFriendsOfUser(username));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(List.of());
+        }
+    }
+
     @PostMapping("/add")
     public ResponseEntity<ResponseMsgDto> addFriend(Authentication authentication, @RequestBody FriendCommand addFriendCommand) {
         try {
