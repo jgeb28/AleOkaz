@@ -62,7 +62,7 @@ public class PostService {
         Post post = postRepository.findById(postId)
             .orElseThrow(() -> new RuntimeException("Post not found"));
 
-        if(!userId.toString().equals(post.author().id().toString())) {
+        if(!userId.equals(post.author().id())) {
             throw new AuthorizationException(userId.toString());
         }
 
