@@ -40,6 +40,8 @@ public class PostController {
         try {
             PostDto createdPost = postService.createPost(currentUserId, post, image);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdPost);
+        } catch (PostSaveException pse) {
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(null);
         } catch (RuntimeException re) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
