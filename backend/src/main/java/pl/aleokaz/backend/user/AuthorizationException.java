@@ -4,7 +4,7 @@ import lombok.NonNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-@ResponseStatus(value = HttpStatus.BAD_REQUEST)
+@ResponseStatus(value = HttpStatus.FORBIDDEN)
 public class AuthorizationException extends RuntimeException {
     public AuthorizationException(@NonNull String userId) {
         super(formatMessage(userId), null);

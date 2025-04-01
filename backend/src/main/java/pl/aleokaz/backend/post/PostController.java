@@ -69,8 +69,8 @@ public class PostController {
         UUID currentUserId = UUID.fromString((String) authentication.getPrincipal());
 
         try {
-            PostDto deletedPost = postService.deletePost(currentUserId, postId);
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedPost);
+            postService.deletePost(currentUserId, postId);
+            return ResponseEntity.noContent().build();
         } catch (AuthorizationException ae) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
         } catch (RuntimeException re) {
