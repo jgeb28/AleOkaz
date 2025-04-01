@@ -93,7 +93,39 @@
         referencedColumnNames="id"
         referencedTableName="user" />
     </changeSet>
-
+    <changeSet id="4" author="marcinmarszewski">
+    <preConditions onFail="MARK_RAN">
+        <not>
+            <tableExists tableName="user_friends" />
+        </not>
+    </preConditions>
+    <createTable tableName="user_friends">
+        <column name="id" type="uuid">
+            <constraints nullable="false" primaryKey="true" primaryKeyName="pk_user_friends"/>
+        </column>
+        <column name="is_active" type="boolean">
+            <constraints nullable="false"/>
+        </column>
+        <column name="user_id" type="uuid">
+            <constraints nullable="false"/>
+        </column>
+        <column name="friend_id" type="uuid">
+            <constraints nullable="false"/>
+        </column>
+    </createTable>
+    <addForeignKeyConstraint
+            baseTableName="user_friends"
+            baseColumnNames="user_id"
+            constraintName="user_friends_user_fk"
+            referencedTableName="user"
+            referencedColumnNames="id" />
+    <addForeignKeyConstraint
+            baseTableName="user_friends"
+            baseColumnNames="friend_id"
+            constraintName="user_friends_friend_fk"
+            referencedTableName="user"
+            referencedColumnNames="id" />
+    </changeSet>
     <changeSet id="4" author="grzegorz-sawicki">
         <createTable tableName="post">
             <column name="id" type="uuid">
@@ -156,5 +188,4 @@
             referencedTableName="post"
             referencedColumnNames="id" />
     </changeSet>
-
 </databaseChangeLog>

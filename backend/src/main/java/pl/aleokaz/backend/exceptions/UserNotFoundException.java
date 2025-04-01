@@ -1,7 +1,7 @@
-package pl.aleokaz.backend.recovery;
+package pl.aleokaz.backend.exceptions;
 
 public class UserNotFoundException extends RuntimeException {
-    UserNotFoundException(String field, String value) {
+    public UserNotFoundException(String field, String value) {
         super(formatMessage(field, value), null);
     }
 

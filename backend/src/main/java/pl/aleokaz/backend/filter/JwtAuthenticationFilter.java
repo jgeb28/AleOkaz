@@ -34,7 +34,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String path = httpRequest.getRequestURI();
 
         //metoda GET w /api/posts możliwa bez autentykacji
-        if (path.startsWith("/api/posts") && ("GET".equals(method))) {
+        if (( path.startsWith("/api/posts") || path.startsWith("/api/friends/allof")) && ("GET".equals(method))) {
             filterChain.doFilter(request, response);
             return;
         }
