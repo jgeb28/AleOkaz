@@ -6,38 +6,16 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
 @Entity
 @Data
-@Builder
+@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
-public class Post {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
-
-    @NonNull
-    private String content;
-
+public class Post extends Interaction {
     @NonNull
     private String imageUrl;
-
-    @NonNull
-    private Date createdAt;
-
-    private Date editedAt;
-
-    @ManyToOne
-    @JoinColumn(name = "author_id", nullable = false)
-    @NonNull
-    private User author;
-
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
-    @NonNull
-    private Set<PostReaction> reactions = new HashSet<>();
 
     @Builder
     public Post(
@@ -48,12 +26,7 @@ public class Post {
             Date editedAt,
             User author,
             Set<PostReaction> reactions) {
-        this.id = id;
-        this.content = content;
+        super(id, content, createdAt, editedAt, author, reactions);
         this.imageUrl = imageUrl;
-        this.createdAt = createdAt;
-        this.editedAt = editedAt;
-        this.author = author;
-        this.reactions = new HashSet<>(reactions);
     }
 }

@@ -219,4 +219,14 @@
             referencedColumnNames="id" />
         <addUniqueConstraint tableName="post_reaction" columnNames="post_id,author_id" />
     </changeSet>
+
+    <changeSet id="8" author="michalciechan">
+        <dropTable tableName="post_comment" />
+
+        <dropNotNullConstraint tableName="post" columnName="image_url" />
+
+        <addColumn tableName="post">
+            <column name="type" type="text"></column>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

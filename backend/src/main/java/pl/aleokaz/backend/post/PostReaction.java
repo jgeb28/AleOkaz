@@ -39,5 +39,5 @@ public class PostReaction {
     @ManyToOne(optional = false)
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    private Post post;
+    private Interaction post;
 }
