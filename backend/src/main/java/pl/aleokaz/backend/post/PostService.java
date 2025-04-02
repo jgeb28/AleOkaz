@@ -34,7 +34,7 @@ public class PostService {
     @Autowired
     private ImageService imageService;
 
-    public PostDto createPost(UUID userId, PostCommand postCommand, MultipartFile image) throws RuntimeException, PostSaveException {
+    public PostDto createPost(UUID userId, PostCommand postCommand, MultipartFile image) throws PostSaveException {
         User author = userRepository.findById(userId)
             .orElseThrow(() -> new RuntimeException("Author not found"));
 

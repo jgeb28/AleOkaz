@@ -42,8 +42,6 @@ public class PostController {
             return ResponseEntity.status(HttpStatus.CREATED).body(createdPost);
         } catch (PostSaveException pse) {
             return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(null);
-        } catch (RuntimeException re) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
     }
 
@@ -60,8 +58,6 @@ public class PostController {
             return ResponseEntity.ok().body(post);
         } catch (AuthorizationException ae) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
-        } catch (RuntimeException re) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
     }
 
@@ -75,10 +71,7 @@ public class PostController {
             return ResponseEntity.noContent().build();
         } catch (AuthorizationException ae) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
-        } catch (RuntimeException re) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-        }
-    }
+        }    }
 
     @PutMapping("/{postId}/reactions")
     public ResponseEntity<Void> setPostReaction(
