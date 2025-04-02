@@ -24,7 +24,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @Data
-@Entity(name = "post")
+@Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "type")
 @NoArgsConstructor
@@ -46,9 +46,9 @@ public abstract class Interaction {
     @NonNull
     private User author;
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "interaction", cascade = CascadeType.ALL)
     @NonNull
-    private Set<PostReaction> reactions;
+    private Set<Reaction> reactions;
 
     public Interaction(
             UUID id,
@@ -56,7 +56,7 @@ public abstract class Interaction {
             @NonNull Date createdAt,
             Date editedAt,
             @NonNull User author,
-            Set<PostReaction> reactions) {
+            Set<Reaction> reactions) {
         this.id = id;
         this.content = content;
         this.createdAt = createdAt;

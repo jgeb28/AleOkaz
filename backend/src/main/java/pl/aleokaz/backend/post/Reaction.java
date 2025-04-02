@@ -23,13 +23,13 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class PostReaction {
+public class Reaction {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @NonNull
-    private PostReactionType type;
+    private ReactionType type;
 
     @NonNull
     @ManyToOne(optional = false)
@@ -39,5 +39,5 @@ public class PostReaction {
     @ManyToOne(optional = false)
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    private Interaction post;
+    private Interaction interaction;
 }

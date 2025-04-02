@@ -71,7 +71,8 @@ public class PostController {
             return ResponseEntity.noContent().build();
         } catch (AuthorizationException ae) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
-        }    }
+        }
+    }
 
     @PutMapping("/{postId}/reactions")
     public ResponseEntity<Void> setPostReaction(
@@ -80,7 +81,7 @@ public class PostController {
         final UUID userId = UUID.fromString((String) authentication.getPrincipal());
 
         // TODO: Wczytanie typu reakcji z @RequestBody.
-        postService.setPostReaction(postId, userId, PostReactionType.LIKE);
+        postService.setPostReaction(postId, userId, ReactionType.LIKE);
 
         return ResponseEntity.ok(null);
     }

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 public class PostMapper {
     public PostDto convertPostToPostDto(Post post) {
         final Map<String, Integer> reactions = new HashMap<>();
-        for (final PostReactionType type : PostReactionType.values()) {
+        for (final ReactionType type : ReactionType.values()) {
             reactions.put(type.name(), 0);
         }
 

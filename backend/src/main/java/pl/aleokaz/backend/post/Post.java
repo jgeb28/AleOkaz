@@ -25,7 +25,7 @@ public class Post extends Interaction {
             Date createdAt,
             Date editedAt,
             User author,
-            Set<PostReaction> reactions) {
+            Set<Reaction> reactions) {
         super(id, content, createdAt, editedAt, author, reactions);
         this.imageUrl = imageUrl;
     }

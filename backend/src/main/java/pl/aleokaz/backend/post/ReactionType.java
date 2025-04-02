@@ -1,5 +1,5 @@
 package pl.aleokaz.backend.post;
 
-public enum PostReactionType {
+public enum ReactionType {
     LIKE
 }

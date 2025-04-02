@@ -1,6 +1,5 @@
 package pl.aleokaz.backend.post;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
@@ -57,12 +56,12 @@ public class PostServiceTest {
         when(postRepository.findById(post.id()))
                 .thenReturn(Optional.of(post));
 
-        postService.setPostReaction(post.id(), author.id(), PostReactionType.LIKE);
+        postService.setPostReaction(post.id(), author.id(), ReactionType.LIKE);
 
         verify(postRepository).save(
                 argThat(savedPost -> savedPost.reactions().stream()
-                        .anyMatch(reaction -> reaction.type().equals(PostReactionType.LIKE) &&
+                        .anyMatch(reaction -> reaction.type().equals(ReactionType.LIKE) &&
                                 reaction.author().equals(author) &&
-                                reaction.post().equals(post))));
+                                reaction.interaction().equals(post))));
     }
 }

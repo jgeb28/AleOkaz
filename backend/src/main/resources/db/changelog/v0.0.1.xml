@@ -229,4 +229,9 @@
             <column name="type" type="text"></column>
         </addColumn>
     </changeSet>
+
+    <changeSet id="9" author="michalciechan">
+        <renameTable oldTableName="post" newTableName="interaction" />
+        <renameTable oldTableName="post_reaction" newTableName="reaction" />
+    </changeSet>
 </databaseChangeLog>
