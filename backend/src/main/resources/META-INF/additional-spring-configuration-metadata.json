@@ -9,6 +9,11 @@
             "name": "aleokaz.admin.password",
             "type": "java.lang.String",
             "description": "Admin password"
+        },
+        {
+            "name": "aleokaz.image.upload.dir",
+            "type": "java.lang.String",
+            "description": "Image upload directory for posts"
         }
     ]
 }

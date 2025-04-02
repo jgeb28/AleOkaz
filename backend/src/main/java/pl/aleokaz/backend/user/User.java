@@ -1,11 +1,15 @@
 package pl.aleokaz.backend.user;
 
+import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import pl.aleokaz.backend.friends.Friendship;
+
 import org.hibernate.validator.constraints.UniqueElements;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -15,8 +19,14 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
+import pl.aleokaz.backend.post.Post;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -46,6 +56,10 @@ public class User {
     @CollectionTable(name = "user_role")
     @Column(name = "role")
     private Set<UserRole> roles;
+
+
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Post> posts;
 
     @Builder
     public User(UUID id, String email, String username, String password, Set<UserRole> roles) {
