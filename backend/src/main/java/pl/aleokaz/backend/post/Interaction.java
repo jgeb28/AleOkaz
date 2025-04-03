@@ -46,9 +46,13 @@ public abstract class Interaction {
     @NonNull
     private User author;
 
-    @OneToMany(mappedBy = "interaction", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "interaction", cascade = CascadeType.ALL, orphanRemoval = true)
     @NonNull
     private Set<Reaction> reactions;
+
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
+    @NonNull
+    private Set<PostComment> comments;
 
     public Interaction(
             UUID id,
@@ -56,7 +60,8 @@ public abstract class Interaction {
             @NonNull Date createdAt,
             Date editedAt,
             @NonNull User author,
-            Set<Reaction> reactions) {
+            Set<Reaction> reactions,
+            Set<PostComment> comments) {
         this.id = id;
         this.content = content;
         this.createdAt = createdAt;
@@ -67,6 +72,12 @@ public abstract class Interaction {
             this.reactions = new HashSet<>();
         } else {
             this.reactions = new HashSet<>(reactions);
+        }
+
+        if (comments == null) {
+            this.comments = new HashSet<>();
+        } else {
+            this.comments = new HashSet<>(comments);
         }
     }
 }

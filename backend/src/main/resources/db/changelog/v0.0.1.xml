@@ -233,5 +233,6 @@
     <changeSet id="9" author="michalciechan">
         <renameTable oldTableName="post" newTableName="interaction" />
         <renameTable oldTableName="post_reaction" newTableName="reaction" />
+        <renameColumn tableName="reaction" oldColumnName="post_id" newColumnName="interaction_id" />
     </changeSet>
 </databaseChangeLog>

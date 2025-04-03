@@ -115,7 +115,7 @@ public class PostService {
         final var post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
 
-        final Set<Reaction> reactions = new HashSet<>(post.reactions());
+        final Set<Reaction> reactions = post.reactions();
         reactions.removeIf(reaction -> reaction.author().id().equals(userId));
         reactions.add(Reaction.builder()
                 .type(reactionType)
