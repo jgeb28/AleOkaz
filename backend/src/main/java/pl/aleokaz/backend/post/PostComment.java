@@ -1,38 +1,36 @@
 package pl.aleokaz.backend.post;
 
-import jakarta.persistence.*;
-import lombok.*;
 import pl.aleokaz.backend.user.User;
 
-import java.sql.Date;
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.util.Date;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
 @Data
+@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
-@AllArgsConstructor
-public class PostComment {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
-
+public class PostComment extends Interaction {
     @NonNull
-    private String content;
+    @ManyToOne(optional = false)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    private Interaction parent;
 
-    @NonNull
-    private String imageUrl;
-
-    @NonNull
-    private Date createdAt;
-
-    private Date editedAt;
-
-    @ManyToOne
-    @JoinColumn(name = "author_id")
-    @NonNull
-    private User author;
-
-    @ManyToOne
-    @JoinColumn(name = "post_id")
-    private Post post;
+    @Builder
+    public PostComment(
+            UUID id,
+            @NonNull Interaction parent,
+            @NonNull String content,
+            @NonNull Date createdAt,
+            Date editedAt,
+            @NonNull User author,
+            Set<Reaction> reactions,
+            Set<PostComment> comments) {
+        super(id, content, createdAt, editedAt, author, reactions, comments);
+        this.parent = parent;
+    }
 }
