@@ -15,9 +15,8 @@ public class KafkaController {
     private KafkaService kafkaService;
 
     @PostMapping("/send")
-    public String sendMessage(@RequestParam("message") String message) {
-        kafkaService.sendMessage("notification", message);
-        kafkaTemplate.send("notification", "id1", message);
+    public String sendMessage(@RequestParam("message") String message, @RequestParam("to") String to) {
+        kafkaService.sendMessage("notification", to, message);
         return "Message sent: " + message;
     }
 
