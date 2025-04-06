@@ -19,12 +19,12 @@ public class InteractionMapper {
                 .authorId(post.author().id())
                 .reactions(convertReactionsToReactionsDto(post.reactions()))
                 .comments(new HashSet<>(post.comments().stream()
-                        .map(this::convertPostCommentToPostCommentDto)
+                        .map(this::convertCommentToCommentDto)
                         .toList()))
                 .build();
     }
 
-    public CommentDto convertPostCommentToPostCommentDto(Comment comment) {
+    public CommentDto convertCommentToCommentDto(Comment comment) {
         final Map<String, Integer> reactions = new HashMap<>();
         for (final ReactionType type : ReactionType.values()) {
             reactions.put(type.name(), 0);
@@ -45,7 +45,7 @@ public class InteractionMapper {
                 .authorId(comment.author().id())
                 .reactions(convertReactionsToReactionsDto(comment.reactions()))
                 .comments(new HashSet<>(comment.comments().stream()
-                        .map(this::convertPostCommentToPostCommentDto)
+                        .map(this::convertCommentToCommentDto)
                         .toList()))
                 .build();
     }

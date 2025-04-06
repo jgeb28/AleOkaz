@@ -42,7 +42,7 @@ public class CommentService {
                 .build();
         comment = commentRepository.save(comment);
 
-        return postMapper.convertPostCommentToPostCommentDto(comment);
+        return postMapper.convertCommentToCommentDto(comment);
     }
 
     public CommentDto updateComment(@NonNull UUID userId, @NonNull UpdateCommentCommand command) {
@@ -58,7 +58,7 @@ public class CommentService {
 
         comment = commentRepository.save(comment);
 
-        return postMapper.convertPostCommentToPostCommentDto(comment);
+        return postMapper.convertCommentToCommentDto(comment);
     }
 
     public void deleteComment(@NonNull UUID userId, @NonNull UUID commentId) {
