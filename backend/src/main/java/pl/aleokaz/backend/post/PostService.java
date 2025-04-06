@@ -9,11 +9,11 @@ import jakarta.transaction.Transactional;
 import lombok.NonNull;
 import pl.aleokaz.backend.user.User;
 import pl.aleokaz.backend.user.UserRepository;
+import pl.aleokaz.backend.exceptions.UserNotFoundException;
 import pl.aleokaz.backend.user.AuthorizationException;
 
 import java.io.IOException;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -23,7 +23,13 @@ import java.util.stream.Collectors;
 @Transactional
 public class PostService {
     @Autowired
+    private InteractionRepository interactionRepository;
+
+    @Autowired
     private PostRepository postRepository;
+
+    @Autowired
+    private PostCommentRepository postCommentRepository;
 
     @Autowired
     private UserRepository userRepository;
