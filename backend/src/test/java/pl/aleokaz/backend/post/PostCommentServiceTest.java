@@ -22,7 +22,7 @@ public class PostCommentServiceTest {
         private CommentService postCommentService;
 
         @Spy
-        private PostMapper postMapper;
+        private InteractionMapper postMapper;
 
         @Mock
         private PostRepository postRepository;

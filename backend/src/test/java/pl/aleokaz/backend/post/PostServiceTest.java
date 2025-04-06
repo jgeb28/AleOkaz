@@ -20,48 +20,48 @@ import java.util.UUID;
 
 @ExtendWith(MockitoExtension.class)
 public class PostServiceTest {
-    @InjectMocks
-    private PostService postService;
+        @InjectMocks
+        private PostService postService;
 
-    @Spy
-    private PostMapper postMapper;
+        @Spy
+        private InteractionMapper postMapper;
 
-    @Mock
-    private PostRepository postRepository;
+        @Mock
+        private PostRepository postRepository;
 
-    @Mock
-    private UserRepository userRepository;
+        @Mock
+        private UserRepository userRepository;
 
-    @Test
-    public void shouldSetPostReaction() throws Exception {
-        final var author = User.builder()
-                .id(UUID.randomUUID())
-                .username("user")
-                .email("user@example.com")
-                .password("")
-                .roles(new HashSet<>())
-                .build();
-        final var post = Post.builder()
-                .id(UUID.randomUUID())
-                .content("Lorem ipsum dolor sit amet")
-                .imageUrl("https://example.com/image.jpg")
-                .createdAt(new Date())
-                .editedAt(new Date())
-                .author(author)
-                .reactions(new HashSet<>())
-                .build();
+        @Test
+        public void shouldSetPostReaction() throws Exception {
+                final var author = User.builder()
+                                .id(UUID.randomUUID())
+                                .username("user")
+                                .email("user@example.com")
+                                .password("")
+                                .roles(new HashSet<>())
+                                .build();
+                final var post = Post.builder()
+                                .id(UUID.randomUUID())
+                                .content("Lorem ipsum dolor sit amet")
+                                .imageUrl("https://example.com/image.jpg")
+                                .createdAt(new Date())
+                                .editedAt(new Date())
+                                .author(author)
+                                .reactions(new HashSet<>())
+                                .build();
 
-        when(userRepository.findById(author.id()))
-                .thenReturn(Optional.of(author));
-        when(postRepository.findById(post.id()))
-                .thenReturn(Optional.of(post));
+                when(userRepository.findById(author.id()))
+                                .thenReturn(Optional.of(author));
+                when(postRepository.findById(post.id()))
+                                .thenReturn(Optional.of(post));
 
-        postService.setPostReaction(post.id(), author.id(), ReactionType.LIKE);
+                postService.setPostReaction(post.id(), author.id(), ReactionType.LIKE);
 
-        verify(postRepository).save(
-                argThat(savedPost -> savedPost.reactions().stream()
-                        .anyMatch(reaction -> reaction.type().equals(ReactionType.LIKE) &&
-                                reaction.author().equals(author) &&
-                                reaction.interaction().equals(post))));
-    }
+                verify(postRepository).save(
+                                argThat(savedPost -> savedPost.reactions().stream()
+                                                .anyMatch(reaction -> reaction.type().equals(ReactionType.LIKE) &&
+                                                                reaction.author().equals(author) &&
+                                                                reaction.interaction().equals(post))));
+        }
 }

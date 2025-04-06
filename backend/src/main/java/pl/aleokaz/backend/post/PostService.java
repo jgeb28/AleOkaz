@@ -35,7 +35,7 @@ public class PostService {
     private UserRepository userRepository;
 
     @Autowired
-    private PostMapper postMapper;
+    private InteractionMapper postMapper;
 
     @Autowired
     private ImageService imageService;

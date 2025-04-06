@@ -7,7 +7,7 @@ import java.util.Map;
 import org.springframework.stereotype.Service;
 
 @Service
-public class PostMapper {
+public class InteractionMapper {
     public PostDto convertPostToPostDto(Post post) {
         final Map<String, Integer> reactions = new HashMap<>();
         for (final ReactionType type : ReactionType.values()) {

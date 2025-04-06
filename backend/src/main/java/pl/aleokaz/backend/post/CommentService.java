@@ -26,7 +26,7 @@ public class CommentService {
     private InteractionRepository interactionRepository;
 
     @Autowired
-    private PostMapper postMapper;
+    private InteractionMapper postMapper;
 
     public CommentDto createComment(@NonNull UUID userId, @NonNull CreateCommentCommand command) {
         final var author = userRepository.findById(userId)
