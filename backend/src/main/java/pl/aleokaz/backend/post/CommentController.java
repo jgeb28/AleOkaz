@@ -16,6 +16,9 @@ public class CommentController {
     @Autowired
     private CommentService commentService;
 
+    @Autowired
+    private ReactionService reactionService;
+
     @PostMapping
     public ResponseEntity<CommentDto> createComment(
             Authentication authentication,
@@ -57,5 +60,28 @@ public class CommentController {
         } catch (AuthorizationException ae) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
         }
+    }
+
+    @PutMapping("/{commentId}/reactions")
+    public ResponseEntity<Void> setPostReaction(
+            Authentication authentication,
+            @PathVariable UUID commentId) {
+        final UUID userId = UUID.fromString((String) authentication.getPrincipal());
+
+        // TODO: Wczytanie typu reakcji z @RequestBody.
+        reactionService.setReaction(userId, new ReactionCommand(commentId, ReactionType.LIKE));
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{commentId}/reactions")
+    public ResponseEntity<Void> deletePostReaction(
+            Authentication authentication,
+            @PathVariable UUID commentId) {
+        final UUID userId = UUID.fromString((String) authentication.getPrincipal());
+
+        reactionService.deleteReaction(userId, commentId);
+
+        return ResponseEntity.noContent().build();
     }
 }

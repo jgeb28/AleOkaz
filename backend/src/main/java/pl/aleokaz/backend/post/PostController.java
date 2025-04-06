@@ -17,6 +17,9 @@ public class PostController {
     @Autowired
     private PostService postService;
 
+    @Autowired
+    private ReactionService reactionService;
+
     @GetMapping
     public ResponseEntity<List<PostDto>> getAllPosts() {
         List<PostDto> posts = postService.getAllPosts();
@@ -81,20 +84,19 @@ public class PostController {
         final UUID userId = UUID.fromString((String) authentication.getPrincipal());
 
         // TODO: Wczytanie typu reakcji z @RequestBody.
-        postService.setPostReaction(postId, userId, ReactionType.LIKE);
+        reactionService.setReaction(userId, new ReactionCommand(postId, ReactionType.LIKE));
 
-        return ResponseEntity.ok(null);
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{postId}/reactions")
-    public ResponseEntity<Void> unreactToPost(
+    public ResponseEntity<Void> deletePostReaction(
             Authentication authentication,
             @PathVariable UUID postId) {
         final UUID userId = UUID.fromString((String) authentication.getPrincipal());
 
-        postService.deletePostReaction(postId, userId);
+        reactionService.deleteReaction(userId, postId);
 
-        return ResponseEntity.ok(null);
+        return ResponseEntity.noContent().build();
     }
-
 }

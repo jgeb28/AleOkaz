@@ -1,7 +1,6 @@
 package pl.aleokaz.backend.post;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -9,7 +8,6 @@ import jakarta.transaction.Transactional;
 import lombok.NonNull;
 import pl.aleokaz.backend.user.User;
 import pl.aleokaz.backend.user.UserRepository;
-import pl.aleokaz.backend.exceptions.UserNotFoundException;
 import pl.aleokaz.backend.user.AuthorizationException;
 
 import java.io.IOException;
@@ -23,13 +21,7 @@ import java.util.stream.Collectors;
 @Transactional
 public class PostService {
     @Autowired
-    private InteractionRepository interactionRepository;
-
-    @Autowired
     private PostRepository postRepository;
-
-    @Autowired
-    private CommentRepository postCommentRepository;
 
     @Autowired
     private UserRepository userRepository;
@@ -110,41 +102,5 @@ public class PostService {
                 .orElseThrow(() -> new RuntimeException("Post not found"));
 
         return postMapper.convertPostToPostDto(post);
-    }
-
-    public void setPostReaction(
-            @NonNull UUID postId,
-            @NonNull UUID userId,
-            @NonNull ReactionType reactionType) {
-        final var author = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        final var post = postRepository.findById(postId)
-                .orElseThrow(() -> new RuntimeException("Post not found"));
-
-        final Set<Reaction> reactions = post.reactions();
-        reactions.removeIf(reaction -> reaction.author().id().equals(userId));
-        reactions.add(Reaction.builder()
-                .type(reactionType)
-                .author(author)
-                .interaction(post)
-                .build());
-
-        post.reactions(reactions);
-
-        postRepository.save(post);
-    }
-
-    public void deletePostReaction(@NonNull UUID postId, @NonNull UUID userId) {
-        if (!userRepository.existsById(userId)) {
-            throw new RuntimeException("User not found");
-        }
-
-        final var post = postRepository.findById(postId)
-                .orElseThrow(() -> new RuntimeException("Post not found"));
-
-        final Set<Reaction> reactions = post.reactions();
-        reactions.removeIf(reaction -> reaction.author().id().equals(userId));
-
-        postRepository.save(post);
     }
 }

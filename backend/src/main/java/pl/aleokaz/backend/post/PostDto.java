@@ -4,18 +4,17 @@ import lombok.Builder;
 import lombok.NonNull;
 
 import java.util.Date;
-import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
 @Builder
 public record PostDto(
-                @NonNull UUID id,
-                @NonNull String content,
-                @NonNull String imageUrl,
-                @NonNull Date createdAt,
-                Date editedAt,
-                @NonNull UUID authorId,
-                @NonNull Map<String, Integer> reactions,
-                @NonNull Set<CommentDto> comments) {
+        @NonNull UUID id,
+        @NonNull String content,
+        @NonNull String imageUrl,
+        @NonNull Date createdAt,
+        Date editedAt,
+        @NonNull UUID authorId,
+        @NonNull ReactionsDto reactions,
+        @NonNull Set<CommentDto> comments) {
 }
