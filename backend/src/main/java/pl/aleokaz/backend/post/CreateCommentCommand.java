@@ -8,7 +8,7 @@ import lombok.NonNull;
 
 @Data
 @AllArgsConstructor
-public class CreatePostCommentCommand {
+public class CreateCommentCommand {
     private UUID parentId;
 
     @NonNull

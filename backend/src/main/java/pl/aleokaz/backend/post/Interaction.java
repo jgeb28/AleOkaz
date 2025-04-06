@@ -52,7 +52,7 @@ public abstract class Interaction {
 
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
     @NonNull
-    private Set<PostComment> comments;
+    private Set<Comment> comments;
 
     public Interaction(
             UUID id,
@@ -61,7 +61,7 @@ public abstract class Interaction {
             Date editedAt,
             @NonNull User author,
             Set<Reaction> reactions,
-            Set<PostComment> comments) {
+            Set<Comment> comments) {
         this.id = id;
         this.content = content;
         this.createdAt = createdAt;

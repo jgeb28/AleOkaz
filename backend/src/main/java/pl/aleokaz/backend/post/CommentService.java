@@ -15,12 +15,12 @@ import java.util.UUID;
 
 @Service
 @Transactional
-public class PostCommentService {
+public class CommentService {
     @Autowired
     private UserRepository userRepository;
 
     @Autowired
-    private PostCommentRepository postCommentRepository;
+    private CommentRepository commentRepository;
 
     @Autowired
     private InteractionRepository interactionRepository;
@@ -28,25 +28,25 @@ public class PostCommentService {
     @Autowired
     private PostMapper postMapper;
 
-    public PostCommentDto createPostComment(@NonNull UUID userId, @NonNull CreatePostCommentCommand command) {
+    public CommentDto createComment(@NonNull UUID userId, @NonNull CreateCommentCommand command) {
         final var author = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("id", userId.toString()));
         final var parent = interactionRepository.findById(command.parentId())
                 .orElseThrow(() -> new RuntimeException("Interaction not found"));
 
-        var comment = PostComment.builder()
+        var comment = Comment.builder()
                 .content(command.content())
                 .createdAt(new Date())
                 .author(author)
                 .parent(parent)
                 .build();
-        comment = postCommentRepository.save(comment);
+        comment = commentRepository.save(comment);
 
         return postMapper.convertPostCommentToPostCommentDto(comment);
     }
 
-    public PostCommentDto updatePostComment(@NonNull UUID userId, @NonNull UpdatePostCommentCommand command) {
-        var comment = postCommentRepository.findById(command.commentId())
+    public CommentDto updateComment(@NonNull UUID userId, @NonNull UpdateCommentCommand command) {
+        var comment = commentRepository.findById(command.commentId())
                 .orElseThrow(() -> new RuntimeException("Comment not found"));
 
         if (!userId.equals(comment.author().id())) {
@@ -56,13 +56,13 @@ public class PostCommentService {
         comment.content(command.content());
         comment.editedAt(new Date());
 
-        comment = postCommentRepository.save(comment);
+        comment = commentRepository.save(comment);
 
         return postMapper.convertPostCommentToPostCommentDto(comment);
     }
 
-    public void deletePostComment(@NonNull UUID userId, @NonNull UUID commentId) {
-        final var comment = postCommentRepository.findById(commentId)
+    public void deleteComment(@NonNull UUID userId, @NonNull UUID commentId) {
+        final var comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new RuntimeException("Comment not found"));
 
         if (!userId.equals(comment.author().id())) {
@@ -70,7 +70,6 @@ public class PostCommentService {
         }
 
         // TODO: Nie usuwać podkomentarzy tylko zrobić coś (ale co?).
-        postCommentRepository.delete(comment);
+        commentRepository.delete(comment);
     }
-
 }

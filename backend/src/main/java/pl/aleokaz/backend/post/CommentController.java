@@ -12,18 +12,18 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/comments")
-public class PostCommentController {
+public class CommentController {
     @Autowired
-    private PostCommentService postCommentService;
+    private CommentService commentService;
 
     @PostMapping
-    public ResponseEntity<PostCommentDto> createPostComment(
+    public ResponseEntity<CommentDto> createComment(
             Authentication authentication,
-            @RequestBody CreatePostCommentCommand command) {
+            @RequestBody CreateCommentCommand command) {
         final var currentUserId = UUID.fromString((String) authentication.getPrincipal());
 
         try {
-            final var createdComment = postCommentService.createPostComment(currentUserId, command);
+            final var createdComment = commentService.createComment(currentUserId, command);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdComment);
         } catch (AuthorizationException ae) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
@@ -31,16 +31,16 @@ public class PostCommentController {
     }
 
     @PutMapping("/{commentId}")
-    public ResponseEntity<PostCommentDto> updatePostComment(
+    public ResponseEntity<CommentDto> updateComment(
             Authentication authentication,
             @PathVariable UUID commentId,
-            @RequestBody UpdatePostCommentCommand command) {
+            @RequestBody UpdateCommentCommand command) {
         final var currentUserId = UUID.fromString((String) authentication.getPrincipal());
 
         command.commentId(commentId);
         System.out.println("Command: " + command);
         try {
-            final var comment = postCommentService.updatePostComment(currentUserId, command);
+            final var comment = commentService.updateComment(currentUserId, command);
             return ResponseEntity.ok().body(comment);
         } catch (AuthorizationException ae) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
@@ -48,11 +48,11 @@ public class PostCommentController {
     }
 
     @DeleteMapping("/{commentId}")
-    public ResponseEntity<Void> deletePost(Authentication authentication, @PathVariable UUID commentId) {
+    public ResponseEntity<Void> deleteComment(Authentication authentication, @PathVariable UUID commentId) {
         final var currentUserId = UUID.fromString((String) authentication.getPrincipal());
 
         try {
-            postCommentService.deletePostComment(currentUserId, commentId);
+            commentService.deleteComment(currentUserId, commentId);
             return ResponseEntity.noContent().build();
         } catch (AuthorizationException ae) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);

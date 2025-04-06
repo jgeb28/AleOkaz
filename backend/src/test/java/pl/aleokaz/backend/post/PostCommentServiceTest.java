@@ -18,50 +18,50 @@ import pl.aleokaz.backend.user.User;
 import pl.aleokaz.backend.user.UserRepository;
 
 public class PostCommentServiceTest {
-    @InjectMocks
-    private PostCommentService postCommentService;
+        @InjectMocks
+        private CommentService postCommentService;
 
-    @Spy
-    private PostMapper postMapper;
+        @Spy
+        private PostMapper postMapper;
 
-    @Mock
-    private PostRepository postRepository;
+        @Mock
+        private PostRepository postRepository;
 
-    @Mock
-    private PostCommentRepository postCommentRepository;
+        @Mock
+        private CommentRepository postCommentRepository;
 
-    @Mock
-    private UserRepository userRepository;
+        @Mock
+        private UserRepository userRepository;
 
-    @Test
-    public void shouldCreatePostComment() throws Exception {
-        final var author = User.builder()
-                .id(UUID.randomUUID())
-                .username("user")
-                .email("user@example.com")
-                .password("")
-                .roles(new HashSet<>())
-                .build();
-        final var post = Post.builder()
-                .id(UUID.randomUUID())
-                .content("Lorem ipsum dolor sit amet")
-                .imageUrl("https://example.com/image.jpg")
-                .createdAt(new Date())
-                .editedAt(new Date())
-                .author(author)
-                .reactions(new HashSet<>())
-                .build();
+        @Test
+        public void shouldCreatePostComment() throws Exception {
+                final var author = User.builder()
+                                .id(UUID.randomUUID())
+                                .username("user")
+                                .email("user@example.com")
+                                .password("")
+                                .roles(new HashSet<>())
+                                .build();
+                final var post = Post.builder()
+                                .id(UUID.randomUUID())
+                                .content("Lorem ipsum dolor sit amet")
+                                .imageUrl("https://example.com/image.jpg")
+                                .createdAt(new Date())
+                                .editedAt(new Date())
+                                .author(author)
+                                .reactions(new HashSet<>())
+                                .build();
 
-        when(userRepository.findById(author.id()))
-                .thenReturn(Optional.of(author));
-        when(postRepository.findById(post.id()))
-                .thenReturn(Optional.of(post));
+                when(userRepository.findById(author.id()))
+                                .thenReturn(Optional.of(author));
+                when(postRepository.findById(post.id()))
+                                .thenReturn(Optional.of(post));
 
-        final var command = new CreatePostCommentCommand(post.id(), "More dolor sit amet");
+                final var command = new CreateCommentCommand(post.id(), "More dolor sit amet");
 
-        postCommentService.createPostComment(author.id(), command);
+                postCommentService.createComment(author.id(), command);
 
-        verify(postCommentRepository).save(
-                argThat(savedComment -> savedComment.content().equals(command.content())));
-    }
+                verify(postCommentRepository).save(
+                                argThat(savedComment -> savedComment.content().equals(command.content())));
+        }
 }

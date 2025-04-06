@@ -29,7 +29,7 @@ public class PostService {
     private PostRepository postRepository;
 
     @Autowired
-    private PostCommentRepository postCommentRepository;
+    private CommentRepository postCommentRepository;
 
     @Autowired
     private UserRepository userRepository;

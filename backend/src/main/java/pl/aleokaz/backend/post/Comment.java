@@ -13,7 +13,7 @@ import java.util.UUID;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
-public class PostComment extends Interaction {
+public class Comment extends Interaction {
     @NonNull
     @ManyToOne(optional = false)
     @EqualsAndHashCode.Exclude
@@ -21,7 +21,7 @@ public class PostComment extends Interaction {
     private Interaction parent;
 
     @Builder
-    public PostComment(
+    public Comment(
             UUID id,
             @NonNull Interaction parent,
             @NonNull String content,
@@ -29,7 +29,7 @@ public class PostComment extends Interaction {
             Date editedAt,
             @NonNull User author,
             Set<Reaction> reactions,
-            Set<PostComment> comments) {
+            Set<Comment> comments) {
         super(id, content, createdAt, editedAt, author, reactions, comments);
         this.parent = parent;
     }

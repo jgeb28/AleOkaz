@@ -35,7 +35,7 @@ public class PostMapper {
                 .build();
     }
 
-    public PostCommentDto convertPostCommentToPostCommentDto(PostComment comment) {
+    public CommentDto convertPostCommentToPostCommentDto(Comment comment) {
         final Map<String, Integer> reactions = new HashMap<>();
         for (final ReactionType type : ReactionType.values()) {
             reactions.put(type.name(), 0);
@@ -48,7 +48,7 @@ public class PostMapper {
                     reactions.get(type) + 1);
         }
 
-        return PostCommentDto.builder()
+        return CommentDto.builder()
                 .id(comment.id())
                 .content(comment.content())
                 .createdAt(comment.createdAt())
