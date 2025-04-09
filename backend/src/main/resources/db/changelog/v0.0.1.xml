@@ -238,4 +238,10 @@
             <column name="parent_id" type="uuid"></column>
         </addColumn>
     </changeSet>
+
+    <changeSet id="10" author="Grzegorz-Sawicki">
+        <addColumn tableName="user">
+            <column name="profile_picture" type="text"></column>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

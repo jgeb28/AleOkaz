@@ -19,11 +19,13 @@ public class ImageService {
     private Environment environment;
     private final String imageUploadDir;
     private final String domainUrl;
+    private final String profilePictureUploadDir;
 
     public ImageService(Environment environment) {
         this.environment = environment;
         imageUploadDir = this.environment.getProperty("aleokaz.image.upload.dir");
         domainUrl = this.environment.getProperty("aleokaz.base.url");
+        profilePictureUploadDir = this.environment.getProperty("aleokaz.profile.picture.upload.dir");
     }
 
     public String saveImage(MultipartFile image) throws IOException {
@@ -38,5 +40,19 @@ public class ImageService {
         Files.copy(image.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
         return domainUrl + "/images/" + filename;
+    }
+
+    public String saveProfilePicture(MultipartFile profilePicture) throws IOException {
+        File directory = new File(profilePictureUploadDir);
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+
+        String filename = UUID.randomUUID() + "-" + profilePicture.getOriginalFilename();
+        Path filePath = Paths.get(profilePictureUploadDir, filename);
+
+        Files.copy(profilePicture.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+        return domainUrl + "/profilePicture/" + filename;
     }
 }

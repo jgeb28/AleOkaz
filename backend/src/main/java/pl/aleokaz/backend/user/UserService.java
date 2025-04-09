@@ -3,6 +3,7 @@ package pl.aleokaz.backend.user;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,6 +30,9 @@ public class UserService {
     private VerificationRepository verificationRepository;
 
     private JwtTokenProvider jwtTokenProvider;
+
+    @Value("${aleokaz.profile.picture.default}")
+    private String defaultProfilePicture;
 
     public UserService(@NonNull UserMapper userMapper,
             @NonNull UserRepository userRepository,
@@ -97,6 +101,7 @@ public class UserService {
                 .email(email)
                 .password(encodedPassword)
                 .roles(roles)
+                .profilePicture(defaultProfilePicture)
                 .build();
         user = userRepository.save(user);
 
