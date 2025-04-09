@@ -20,19 +20,25 @@ class BottomBar extends StatelessWidget {
             Expanded(
               child: InkWell(
                 onTap: () => {},
-                child: const SizedBox.expand(child: Icon(Icons.location_on)),
+                child: const SizedBox.expand(
+                    child: Icon(Icons.location_on, color: Colors.green)),
               ),
             ),
             Expanded(
               child: InkWell(
                 onTap: () => {Get.toNamed('/take-picture')},
-                child: const SizedBox.expand(child: Icon(Icons.photo_camera)),
+                child: const SizedBox.expand(
+                    child: Icon(
+                  Icons.photo_camera,
+                  color: Colors.green,
+                )),
               ),
             ),
             Expanded(
               child: InkWell(
                 onTap: () => {},
-                child: const SizedBox.expand(child: Icon(Icons.account_circle)),
+                child: const SizedBox.expand(
+                    child: Icon(Icons.account_circle, color: Colors.green)),
               ),
             )
           ]))),

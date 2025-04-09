@@ -5,7 +5,7 @@ import 'package:ale_okaz/screens/register/user.dart';
 
 Future<User> createUser(String username, String email, String password) async {
   final uri = Uri.parse(
-      'http://10.0.2.2:8080/api/users'); // Replace with your server IP
+      'http://192.168.0.14:8080/api/users'); // Replace with your server IP
 
   try {
     final response = await http.post(

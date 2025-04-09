@@ -1,5 +1,4 @@
 import 'package:ale_okaz/utils/colors.dart';
-import 'package:ale_okaz/widgets/title_section.dart';
 import 'package:ale_okaz/widgets/top_bar/title_text.dart';
 import 'package:flutter/material.dart';
 
@@ -27,5 +26,5 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize => Size.fromHeight(kToolbarHeight);
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }

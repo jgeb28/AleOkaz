@@ -2,6 +2,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:ale_okaz/utils/ip.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -11,7 +12,7 @@ class AuthService {
   Future<void> login(String username, String password) async {
     try {
       final response = await http.post(
-        Uri.parse('http://10.0.2.2:8080/api/users/login'),
+        Uri.parse('$ip:8080/api/users/login'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -125,7 +126,7 @@ class AuthService {
     if (refreshToken != null) {
       try {
         final response = await http.post(
-          Uri.parse('http://10.0.2.2:8080/api/users/refresh'),
+          Uri.parse('$ip:8080/api/users/refresh'),
           headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8',
           },
