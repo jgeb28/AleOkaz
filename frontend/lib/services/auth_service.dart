@@ -21,6 +21,7 @@ class AuthService {
           'password': password,
         }),
       );
+      print(response);
 
       if (response.statusCode == 200) {
         final accessToken = jsonDecode(response.body)['accessToken'];
