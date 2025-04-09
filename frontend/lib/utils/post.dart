@@ -4,30 +4,27 @@ class Post {
   final String imageUrl;
   final DateTime createdAt;
   final String authorId;
+  final int likes;
+  final String location;
 
   const Post(
       {required this.id,
       required this.content,
       required this.imageUrl,
       required this.createdAt,
-      required this.authorId});
+      required this.authorId,
+      required this.likes,
+      required this.location});
 
   factory Post.fromJson(Map<String, dynamic> json) {
-    return switch (json) {
-      {
-        'id': String id,
-        'content': String content,
-        'imageUrl': String imageUrl,
-        'createdAt': DateTime createdAt,
-        'authorId': String authorId
-      } =>
-        Post(
-            id: id,
-            content: content,
-            imageUrl: imageUrl,
-            createdAt: createdAt,
-            authorId: authorId),
-      _ => throw const FormatException('Failed to load post.'),
-    };
+    return Post(
+      id: json['id'] as String,
+      content: json['content'] as String,
+      imageUrl: json['imageUrl'] as String,
+      createdAt: DateTime.parse(json['createdAt'] as String),
+      authorId: json['authorId'] as String,
+      likes: json['likes'] as int? ?? 0,
+      location: json['location'] as String? ?? 'Unknown',
+    );
   }
 }

@@ -1,16 +1,16 @@
+import 'package:ale_okaz/utils/post.dart';
 import 'package:ale_okaz/widgets/posts/interaction_button.dart';
 import 'package:flutter/material.dart';
 
-class Post extends StatefulWidget {
-  final String description;
-  final bool isLiked;
-  const Post({required this.isLiked, required this.description, super.key});
+class PostCard extends StatefulWidget {
+  final Post post;
+  const PostCard({required this.post, super.key});
 
   @override
-  State<Post> createState() => _PostState();
+  State<PostCard> createState() => _PostState();
 }
 
-class _PostState extends State<Post> {
+class _PostState extends State<PostCard> {
   final String imageUrl = "https://picsum.photos/seed/142/600";
   late bool isLiked;
 
@@ -23,7 +23,7 @@ class _PostState extends State<Post> {
   @override
   void initState() {
     super.initState();
-    isLiked = widget.isLiked;
+    isLiked = false;
   }
 
   @override

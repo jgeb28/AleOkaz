@@ -2,9 +2,9 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:ale_okaz/services/auth_service.dart';
 import 'package:ale_okaz/utils/ip.dart';
+import 'package:ale_okaz/utils/post.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
-import 'package:ale_okaz/utils/post.dart';
 import 'package:http_parser/http_parser.dart';
 
 class PostService {
@@ -52,18 +52,20 @@ class PostService {
     }
   }
 
+  // for now it returns all posts (shouldn't be like that)
   Future<List<Post>> getPosts() async {
-    try {
-      final response = await http.get(Uri.parse('$serverUrl/api/posts'));
+    final response = await http.get(Uri.parse('$serverUrl/api/posts'));
 
-      if (response.statusCode == 200) {
-        final List<dynamic> jsonList = jsonDecode(response.body);
-        return jsonList.map((json) => Post.fromJson(json)).toList();
-      }
-    } catch (e) {
-      throw Exception('Wystąpił błąd: $e');
+    if (response.statusCode == 200) {
+      final List<dynamic> postsJson = jsonDecode(response.body);
+
+      print(postsJson);
+      final List<Post> posts =
+          postsJson.map((json) => Post.fromJson(json)).toList();
+      print(posts);
+      return posts;
+    } else {
+      throw Exception('Failed to load posts');
     }
-
-    return [];
   }
 }
