@@ -33,10 +33,10 @@ public class ImageService {
         }
 
         String filename = UUID.randomUUID() + "-" + image.getOriginalFilename();
-        Path filePath = Paths.get(imageUploadDir, filename); // Correct way to join paths
+        Path filePath = Paths.get(imageUploadDir, filename);
 
         Files.copy(image.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
-        return domainUrl + "/uploads/" + filename;
+        return domainUrl + "/images/" + filename;
     }
 }
