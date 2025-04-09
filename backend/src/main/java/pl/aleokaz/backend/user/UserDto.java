@@ -9,5 +9,6 @@ import java.util.UUID;
 record UserDto(
         @NonNull UUID id,
         @NonNull String username,
-        @NonNull String email) {
+        @NonNull String email,
+        @NonNull String profilePicture) {
 }

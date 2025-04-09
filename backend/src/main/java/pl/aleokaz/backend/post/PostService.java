@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.transaction.Transactional;
-import lombok.NonNull;
 import pl.aleokaz.backend.user.User;
 import pl.aleokaz.backend.user.UserRepository;
 import pl.aleokaz.backend.user.AuthorizationException;
@@ -13,7 +12,6 @@ import pl.aleokaz.backend.user.AuthorizationException;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -32,7 +30,7 @@ public class PostService {
     @Autowired
     private ImageService imageService;
 
-    public PostDto createPost(UUID userId, PostCommand postCommand, MultipartFile image) throws PostSaveException {
+    public PostDto createPost(UUID userId, PostCommand postCommand, MultipartFile image) throws ImageSaveException {
         User author = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Author not found"));
 
@@ -40,7 +38,7 @@ public class PostService {
         try {
             imageUrl = imageService.saveImage(image);
         } catch (IOException ioe) {
-            throw new PostSaveException();
+            throw new ImageSaveException();
         }
 
         Post post = Post.builder()

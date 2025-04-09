@@ -11,7 +11,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.NonNull;
+import org.springframework.web.multipart.MultipartFile;
+import pl.aleokaz.backend.post.ImageSaveException;
+import pl.aleokaz.backend.post.ImageService;
 
+import java.io.IOException;
 import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -34,14 +38,18 @@ public class UserService {
     @Value("${aleokaz.profile.picture.default}")
     private String defaultProfilePicture;
 
+    private ImageService imageService;
+
     public UserService(@NonNull UserMapper userMapper,
             @NonNull UserRepository userRepository,
             @NonNull VerificationRepository verificationRepository,
-                       @NonNull JwtTokenProvider jwtTokenProvider) {
+                       @NonNull JwtTokenProvider jwtTokenProvider,
+                       @NonNull ImageService imageService) {
         this.userMapper = userMapper;
         this.userRepository = userRepository;
         this.verificationRepository = verificationRepository;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.imageService = imageService;
     }
 
     /**
@@ -176,6 +184,32 @@ public class UserService {
         Optional<User> optionalUser = userRepository.findById(userId);
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
+            return userMapper.convertUserToUserDto(user);
+        }
+        else {
+            throw new IllegalArgumentException("User not found with ID: " + userId);
+        }
+    }
+
+    public UserDto updateUserInfo(UUID userId, UpdateInfoCommand updateInfoCommand, MultipartFile image) {
+        Optional<User> optionalUser = userRepository.findById(userId);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+
+            if(updateInfoCommand != null) {
+                if(!updateInfoCommand.username().isEmpty()) {
+                    user.username(updateInfoCommand.username());
+                }
+            }
+
+            if(image != null && !image.isEmpty()) {
+                try {
+                    user.profilePicture(imageService.saveProfilePicture(image));
+                } catch (IOException e) {
+                    throw new ImageSaveException();
+                }
+            }
+
             return userMapper.convertUserToUserDto(user);
         }
         else {

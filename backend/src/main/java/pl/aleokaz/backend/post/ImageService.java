@@ -34,7 +34,7 @@ public class ImageService {
             directory.mkdirs();
         }
 
-        String filename = UUID.randomUUID() + "-" + image.getOriginalFilename();
+        String filename = UUID.randomUUID() + ".jpg";
         Path filePath = Paths.get(imageUploadDir, filename);
 
         Files.copy(image.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
@@ -48,11 +48,11 @@ public class ImageService {
             directory.mkdirs();
         }
 
-        String filename = UUID.randomUUID() + "-" + profilePicture.getOriginalFilename();
+        String filename = UUID.randomUUID() + ".jpg";
         Path filePath = Paths.get(profilePictureUploadDir, filename);
 
         Files.copy(profilePicture.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
-        return domainUrl + "/profilePicture/" + filename;
+        return domainUrl + "/profile_pictures/" + filename;
     }
 }
