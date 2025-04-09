@@ -5,6 +5,9 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -37,10 +40,24 @@ public class ImageService {
         String filename = UUID.randomUUID() + ".jpg";
         Path filePath = Paths.get(imageUploadDir, filename);
 
-        Files.copy(image.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+        BufferedImage bufferedImage = ImageIO.read(image.getInputStream());
+
+        if (bufferedImage == null) {
+            throw new IOException("Invalid image file");
+        }
+
+        BufferedImage rgbImage = new BufferedImage(bufferedImage.getWidth(), bufferedImage.getHeight(), BufferedImage.TYPE_INT_RGB);
+
+        rgbImage.getGraphics().drawImage(bufferedImage, 0, 0, Color.WHITE, null);
+
+        boolean writeSuccess = ImageIO.write(rgbImage, "jpg", filePath.toFile());
+        if (!writeSuccess) {
+            throw new IOException("Failed to save image as JPG.");
+        }
 
         return domainUrl + "/images/" + filename;
     }
+
 
     public String saveProfilePicture(MultipartFile profilePicture) throws IOException {
         File directory = new File(profilePictureUploadDir);
@@ -51,8 +68,26 @@ public class ImageService {
         String filename = UUID.randomUUID() + ".jpg";
         Path filePath = Paths.get(profilePictureUploadDir, filename);
 
-        Files.copy(profilePicture.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+        BufferedImage originalImage = ImageIO.read(profilePicture.getInputStream());
+
+        if (originalImage == null) {
+            throw new IOException("Unsupported or corrupt image format.");
+        }
+
+        BufferedImage rgbImage = new BufferedImage(
+            originalImage.getWidth(),
+            originalImage.getHeight(),
+            BufferedImage.TYPE_INT_RGB
+        );
+
+        rgbImage.getGraphics().drawImage(originalImage, 0, 0, Color.WHITE, null);
+
+        boolean writeSuccess = ImageIO.write(rgbImage, "jpg", filePath.toFile());
+        if (!writeSuccess) {
+            throw new IOException("Failed to save image as JPG.");
+        }
 
         return domainUrl + "/profile_pictures/" + filename;
     }
+
 }

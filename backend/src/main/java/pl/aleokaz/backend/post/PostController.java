@@ -21,8 +21,17 @@ public class PostController {
     private ReactionService reactionService;
 
     @GetMapping
-    public ResponseEntity<List<PostDto>> getAllPosts() {
-        List<PostDto> posts = postService.getAllPosts();
+    public ResponseEntity<List<PostDto>> getAllPosts(
+        @RequestParam(required = false) UUID userId
+    ) {
+        List<PostDto> posts;
+
+        if (userId != null) {
+            posts = postService.getPostsByUserId(userId);
+        } else {
+            posts = postService.getAllPosts();
+        }
+        
         return new ResponseEntity<>(posts, HttpStatus.OK);
     }
 

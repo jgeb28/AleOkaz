@@ -95,6 +95,14 @@ public class PostService {
                 .collect(Collectors.toList());
     }
 
+    public List<PostDto> getPostsByUserId(UUID userId) {
+        List<Post> posts = postRepository.findByAuthorId(userId);
+
+        return posts.stream()
+            .map(post -> postMapper.convertPostToPostDto(post))
+            .collect(Collectors.toList());
+    }
+
     public PostDto getPostById(UUID postId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
