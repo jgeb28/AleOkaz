@@ -29,6 +29,9 @@ public class UserServiceTest {
     @Mock
     private VerificationRepository verificationRepository;
 
+    @Mock
+    private JwtTokenProvider jwtTokenProvider;
+
     @Test
     public void shouldRegisterUser() throws Exception {
         final Set<UserRole> roles = new HashSet<>();

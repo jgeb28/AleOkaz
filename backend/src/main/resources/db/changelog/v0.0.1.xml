@@ -62,7 +62,8 @@
             referencedTableName="user"
             referencedColumnNames="id" />
     </changeSet>
-<changeSet id="3" author="marcinmarszewski">
+
+    <changeSet id="3" author="marcinmarszewski">
     <preConditions onFail="MARK_RAN">
         <not>
             <tableExists tableName="recovery_token" />
@@ -85,11 +86,106 @@
             <constraints nullable="false" />
         </column>
     </createTable>
-    <addForeignKeyConstraint 
-        baseColumnNames="user_id" 
-        baseTableName="recovery_token" 
-        constraintName="fk_user_recovery_token" 
-        referencedColumnNames="id" 
+    <addForeignKeyConstraint
+        baseColumnNames="user_id"
+        baseTableName="recovery_token"
+        constraintName="fk_user_recovery_token"
+        referencedColumnNames="id"
         referencedTableName="user" />
-</changeSet>
+    </changeSet>
+    <changeSet id="4" author="marcinmarszewski">
+    <preConditions onFail="MARK_RAN">
+        <not>
+            <tableExists tableName="user_friends" />
+        </not>
+    </preConditions>
+    <createTable tableName="user_friends">
+        <column name="id" type="uuid">
+            <constraints nullable="false" primaryKey="true" primaryKeyName="pk_user_friends"/>
+        </column>
+        <column name="is_active" type="boolean">
+            <constraints nullable="false"/>
+        </column>
+        <column name="user_id" type="uuid">
+            <constraints nullable="false"/>
+        </column>
+        <column name="friend_id" type="uuid">
+            <constraints nullable="false"/>
+        </column>
+    </createTable>
+    <addForeignKeyConstraint
+            baseTableName="user_friends"
+            baseColumnNames="user_id"
+            constraintName="user_friends_user_fk"
+            referencedTableName="user"
+            referencedColumnNames="id" />
+    <addForeignKeyConstraint
+            baseTableName="user_friends"
+            baseColumnNames="friend_id"
+            constraintName="user_friends_friend_fk"
+            referencedTableName="user"
+            referencedColumnNames="id" />
+    </changeSet>
+    <changeSet id="4" author="grzegorz-sawicki">
+        <createTable tableName="post">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" primaryKeyName="post_pk" nullable="false" />
+            </column>
+            <column name="content" type="text">
+                <constraints nullable="false" />
+            </column>
+            <column name="image_url" type="text">
+                <constraints nullable="false" />
+            </column>
+            <column name="created_at" type="timestamp with time zone">
+                <constraints nullable="false" />
+            </column>
+            <column name="edited_at" type="timestamp with time zone" />
+            <column name="author_id" type="uuid">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <addForeignKeyConstraint
+            baseTableName="post"
+            baseColumnNames="author_id"
+            constraintName="fk_post_author"
+            referencedTableName="user"
+            referencedColumnNames="id" />
+    </changeSet>
+
+    <changeSet id="5" author="grzegorz-sawicki">
+        <createTable tableName="post_comment">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" primaryKeyName="post_comment_pk" nullable="false" />
+            </column>
+            <column name="content" type="text">
+                <constraints nullable="false" />
+            </column>
+            <column name="image_url" type="text">
+                <constraints nullable="false" />
+            </column>
+            <column name="created_at" type="timestamp with time zone">
+                <constraints nullable="false" />
+            </column>
+            <column name="edited_at" type="timestamp with time zone" />
+            <column name="author_id" type="uuid">
+                <constraints nullable="false" />
+            </column>
+            <column name="post_id" type="uuid">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <addForeignKeyConstraint
+            baseTableName="post_comment"
+            baseColumnNames="author_id"
+            constraintName="fk_post_comment_author"
+            referencedTableName="user"
+            referencedColumnNames="id" />
+        <addForeignKeyConstraint
+            baseTableName="post_comment"
+            baseColumnNames="post_id"
+            constraintName="fk_post_comment_to_post"
+            referencedTableName="post"
+            referencedColumnNames="id" />
+    </changeSet>
 </databaseChangeLog>
