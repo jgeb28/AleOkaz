@@ -85,7 +85,12 @@ public class ImageService {
             BufferedImage.TYPE_INT_RGB
         );
 
-        rgbImage.getGraphics().drawImage(originalImage, 0, 0, Color.WHITE, null);
+        Graphics2D graphics = (Graphics2D) rgbImage.getGraphics();
+        try {
+            graphics.drawImage(originalImage, 0, 0, Color.WHITE, null);
+        } finally {
+            graphics.dispose();
+        }
 
         boolean writeSuccess = ImageIO.write(rgbImage, "jpg", filePath.toFile());
         if (!writeSuccess) {
