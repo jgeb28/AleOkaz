@@ -48,7 +48,12 @@ public class ImageService {
 
         BufferedImage rgbImage = new BufferedImage(bufferedImage.getWidth(), bufferedImage.getHeight(), BufferedImage.TYPE_INT_RGB);
 
-        rgbImage.getGraphics().drawImage(bufferedImage, 0, 0, Color.WHITE, null);
+        Graphics2D graphics = rgbImage.createGraphics();
+        try {
+            graphics.drawImage(bufferedImage, 0, 0, Color.WHITE, null);
+        } finally {
+            graphics.dispose();
+        }
 
         boolean writeSuccess = ImageIO.write(rgbImage, "jpg", filePath.toFile());
         if (!writeSuccess) {
