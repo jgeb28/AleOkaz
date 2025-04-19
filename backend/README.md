@@ -60,5 +60,24 @@ Kody odpowiedzi:
         FRIEND_REMOVED,
         NO_FRIENDSHIP_TO_REMOVE,
 
+### Użytkownik
+GET     /api/users/info/{id}                                   AUTH, Zwraca informacje o użytkowniku
+POST    /api/users             {username, email, password}     Rejestracja nowego użytkownika\
+POST    /api/users/login       {username, password}            Logowanie użytkownika\
+POST    /api/users/refresh     {refreshToken}                  Uzyskaj nowy access token
+PUT     /api/users/info/{id}   FORM DATA:                      AUTH, Aktualizuje nazwę lub profilowe użytkownika
+                                    userInfo {username},
+                                    image
+
+### Posty
+GET     /api/posts?userId={userId}                             Zwraca wszystkie posty z możliwością wybrania konkretnego autora opcją ?userId
+GET     /api/posts/{postId}                                    Zwraca dany post
+POST    /api/posts             FORM DATA:                      AUTH, Tworzy nowy post
+                                    post {content},
+                                    image
+PUT     /api/posts/{postId}    {content}                       AUTH, Aktualizuje treść posta
+DELETE  /api/posts/{postId}                                    AUTH, Usuwa post
+
+
 # TODO:
 - (Marcin): Zabezpieczenie kafka wiadomości przed awarią systemu

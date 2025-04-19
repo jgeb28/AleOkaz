@@ -14,6 +14,16 @@
             "name": "aleokaz.image.upload.dir",
             "type": "java.lang.String",
             "description": "Image upload directory for posts"
+        },
+        {
+            "name": "aleokaz.profile.picture.upload.dir",
+            "type": "java.lang.String",
+            "description": "Image upload directory for user profile pictures"
+        },
+        {
+            "name": "aleokaz.profile.picture.default",
+            "type": "java.lang.String",
+            "description": "Default user profile picture"
         }
     ]
 }

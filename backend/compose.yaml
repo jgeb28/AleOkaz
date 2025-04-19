@@ -43,7 +43,7 @@ services:
         window: 1m
     stop_grace_period: 1m
     healthcheck:
-      test: pg_isready --username postgres || exit 1
+      test: pg_isready --username aleokaz || exit 1
       start_period: 1m
       start_interval: 1s
 

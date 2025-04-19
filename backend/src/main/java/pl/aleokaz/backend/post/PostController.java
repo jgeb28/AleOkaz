@@ -17,9 +17,21 @@ public class PostController {
     @Autowired
     private PostService postService;
 
+    @Autowired
+    private ReactionService reactionService;
+
     @GetMapping
-    public ResponseEntity<List<PostDto>> getAllPosts() {
-        List<PostDto> posts = postService.getAllPosts();
+    public ResponseEntity<List<PostDto>> getAllPosts(
+        @RequestParam(required = false) UUID userId
+    ) {
+        List<PostDto> posts;
+
+        if (userId != null) {
+            posts = postService.getPostsByUserId(userId);
+        } else {
+            posts = postService.getAllPosts();
+        }
+        
         return new ResponseEntity<>(posts, HttpStatus.OK);
     }
 
@@ -31,27 +43,25 @@ public class PostController {
 
     @PostMapping(consumes = "multipart/form-data")
     public ResponseEntity<PostDto> createPost(
-        Authentication authentication,
-        @RequestPart("post") PostCommand post,
-        @RequestParam(value = "image", required = true) MultipartFile image) {
+            Authentication authentication,
+            @RequestPart("post") PostCommand post,
+            @RequestParam(value = "image", required = true) MultipartFile image) {
 
         UUID currentUserId = UUID.fromString((String) authentication.getPrincipal());
 
         try {
             PostDto createdPost = postService.createPost(currentUserId, post, image);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdPost);
-        } catch (PostSaveException pse) {
+        } catch (ImageSaveException pse) {
             return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(null);
-        } catch (RuntimeException re) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
     }
 
     @PutMapping("/{postId}")
     public ResponseEntity<PostDto> updatePost(
-        Authentication authentication,
-        @PathVariable UUID postId,
-        @RequestPart("post") PostCommand postCommand) {
+            Authentication authentication,
+            @PathVariable UUID postId,
+            @RequestPart("post") PostCommand postCommand) {
 
         UUID currentUserId = UUID.fromString((String) authentication.getPrincipal());
 
@@ -60,8 +70,6 @@ public class PostController {
             return ResponseEntity.ok().body(post);
         } catch (AuthorizationException ae) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
-        } catch (RuntimeException re) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
     }
 
@@ -75,9 +83,29 @@ public class PostController {
             return ResponseEntity.noContent().build();
         } catch (AuthorizationException ae) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
-        } catch (RuntimeException re) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
     }
 
+    @PutMapping("/{postId}/reactions")
+    public ResponseEntity<Void> setPostReaction(
+            Authentication authentication,
+            @PathVariable UUID postId) {
+        final UUID userId = UUID.fromString((String) authentication.getPrincipal());
+
+        // TODO: Wczytanie typu reakcji z @RequestBody.
+        reactionService.setReaction(userId, new ReactionCommand(postId, ReactionType.LIKE));
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{postId}/reactions")
+    public ResponseEntity<Void> deletePostReaction(
+            Authentication authentication,
+            @PathVariable UUID postId) {
+        final UUID userId = UUID.fromString((String) authentication.getPrincipal());
+
+        reactionService.deleteReaction(userId, postId);
+
+        return ResponseEntity.noContent().build();
+    }
 }

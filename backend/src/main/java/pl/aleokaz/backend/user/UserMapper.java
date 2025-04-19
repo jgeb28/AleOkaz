@@ -11,6 +11,7 @@ class UserMapper {
                 .id(user.id())
                 .username(user.username())
                 .email(user.email())
+                .profilePicture(user.profilePicture())
                 .build();
     }
 }

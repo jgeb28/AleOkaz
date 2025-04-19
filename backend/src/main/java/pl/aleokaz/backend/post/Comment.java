@@ -13,21 +13,24 @@ import java.util.UUID;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
-public class Post extends Interaction {
+public class Comment extends Interaction {
     @NonNull
-    private String imageUrl;
+    @ManyToOne(optional = false)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    private Interaction parent;
 
     @Builder
-    public Post(
+    public Comment(
             UUID id,
-            String content,
-            String imageUrl,
-            Date createdAt,
+            @NonNull Interaction parent,
+            @NonNull String content,
+            @NonNull Date createdAt,
             Date editedAt,
-            User author,
+            @NonNull User author,
             Set<Reaction> reactions,
             Set<Comment> comments) {
         super(id, content, createdAt, editedAt, author, reactions, comments);
-        this.imageUrl = imageUrl;
+        this.parent = parent;
     }
 }
