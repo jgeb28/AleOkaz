@@ -1,27 +1,22 @@
 package pl.aleokaz.backend.post;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import jakarta.transaction.Transactional;
 import pl.aleokaz.backend.user.User;
 import pl.aleokaz.backend.user.UserRepository;
 import pl.aleokaz.backend.user.AuthorizationException;
-import pl.aleokaz.backend.post.ImageService;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
-import java.io.File;
-import java.nio.file.Path;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class PostService {
     @Autowired
     private PostRepository postRepository;
@@ -30,28 +25,28 @@ public class PostService {
     private UserRepository userRepository;
 
     @Autowired
-    private PostMapper postMapper;
+    private InteractionMapper postMapper;
 
     @Autowired
     private ImageService imageService;
 
-    public PostDto createPost(UUID userId, PostCommand postCommand, MultipartFile image) throws RuntimeException, PostSaveException {
+    public PostDto createPost(UUID userId, PostCommand postCommand, MultipartFile image) throws ImageSaveException {
         User author = userRepository.findById(userId)
-            .orElseThrow(() -> new RuntimeException("Author not found"));
+                .orElseThrow(() -> new RuntimeException("Author not found"));
 
         String imageUrl;
         try {
             imageUrl = imageService.saveImage(image);
         } catch (IOException ioe) {
-            throw new PostSaveException();
+            throw new ImageSaveException();
         }
 
         Post post = Post.builder()
-            .content(postCommand.content())
-            .imageUrl(imageUrl)
-            .createdAt(new Date())
-            .author(author)
-            .build();
+                .content(postCommand.content())
+                .imageUrl(imageUrl)
+                .createdAt(new Date())
+                .author(author)
+                .build();
 
         Post savedPost = postRepository.save(post);
 
@@ -60,9 +55,9 @@ public class PostService {
 
     public PostDto updatePost(UUID userId, UUID postId, PostCommand postCommand) throws AuthorizationException {
         Post post = postRepository.findById(postId)
-            .orElseThrow(() -> new RuntimeException("Post not found"));
+                .orElseThrow(() -> new RuntimeException("Post not found"));
 
-        if(!userId.equals(post.author().id())) {
+        if (!userId.equals(post.author().id())) {
             throw new AuthorizationException(userId.toString());
         }
 
@@ -76,12 +71,12 @@ public class PostService {
 
     public PostDto deletePost(UUID userId, UUID postId) throws AuthorizationException {
         Post post = postRepository.findById(postId)
-            .orElseThrow(() -> new RuntimeException("Post not found"));
+                .orElseThrow(() -> new RuntimeException("Post not found"));
 
         User author = userRepository.findById(userId)
-            .orElseThrow(() -> new RuntimeException("Author not found"));
+                .orElseThrow(() -> new RuntimeException("Author not found"));
 
-        if(!userId.toString().equals(post.author().id().toString())) {
+        if (!userId.toString().equals(post.author().id().toString())) {
             throw new AuthorizationException(userId.toString());
         }
 
@@ -96,13 +91,21 @@ public class PostService {
         List<Post> posts = postRepository.findAll();
 
         return posts.stream()
+                .map(post -> postMapper.convertPostToPostDto(post))
+                .collect(Collectors.toList());
+    }
+
+    public List<PostDto> getPostsByUserId(UUID userId) {
+        List<Post> posts = postRepository.findByAuthorId(userId);
+
+        return posts.stream()
             .map(post -> postMapper.convertPostToPostDto(post))
             .collect(Collectors.toList());
     }
 
     public PostDto getPostById(UUID postId) {
         Post post = postRepository.findById(postId)
-            .orElseThrow(() -> new RuntimeException("Post not found"));
+                .orElseThrow(() -> new RuntimeException("Post not found"));
 
         return postMapper.convertPostToPostDto(post);
     }
