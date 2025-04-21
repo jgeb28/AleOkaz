@@ -1,7 +1,5 @@
 package pl.aleokaz.backend.kafka;
 
-import java.util.UUID;
-
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 public class UserEmitter {
