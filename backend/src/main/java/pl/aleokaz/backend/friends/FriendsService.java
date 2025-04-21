@@ -47,7 +47,7 @@ public class FriendsService {
         if (existingFriendship.isEmpty()) {
             Friendship friendship = new Friendship(user, friend, false);
             friendshipRepository.save(friendship);
-            kafkaTemplate.send(friend.username(), "Friend request from " + user.username());
+            kafkaTemplate.send(friend.id().toString(), "Friend request from " + user.username());
             return FriendStatus.SENT_FRIEND_REQUEST;
         }
         Friendship friendship = existingFriendship.get(); 
@@ -55,7 +55,7 @@ public class FriendsService {
             if(friendship.isActive()) return FriendStatus.FRIENDSHIP_ALREADY_ACCEPTED;
             friendship.isActive(true);
             friendshipRepository.save(friendship);
-            kafkaTemplate.send(friend.username(), "Friend request accepted by " + user.username());
+            kafkaTemplate.send(friend.id().toString(), "Friend request accepted by " + user.username());
             return FriendStatus.ACCEPTED_FRIEND_REQUEST;
         }
         return friendship.isActive() ? FriendStatus.FRIENDSHIP_EXISTS : FriendStatus.ALREADY_SENT_FRIEND_REQUEST;
@@ -71,7 +71,7 @@ public class FriendsService {
         Optional<Friendship> existingFriendship = friendshipRepository.findSymmetricalFriendship(user.id(), friend.id());
         if (existingFriendship.isPresent()) {
             friendshipRepository.delete(existingFriendship.get());
-            kafkaTemplate.send(friend.username(), "Removed from friends by " + user.username());
+            kafkaTemplate.send(friend.id().toString(), "Removed from friends by " + user.username());
             return FriendStatus.FRIEND_REMOVED;
         }
         return FriendStatus.NO_FRIENDSHIP_TO_REMOVE;
