@@ -5,12 +5,12 @@ import java.util.UUID;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 public class UserEmitter {
-    public UUID id;
+    public String listener_id;
     public String username;
     public SseEmitter emitter;
 
-    public UserEmitter(UUID id, String username, SseEmitter emitter) {
-        this.id = id;
+    public UserEmitter(String listener_id, String username, SseEmitter emitter) {
+        this.listener_id = listener_id;
         this.username = username;
         this.emitter = emitter;
     }
