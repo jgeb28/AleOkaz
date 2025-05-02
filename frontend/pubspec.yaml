@@ -23,6 +23,8 @@ dependencies:
   get: ^4.6.6
   connectivity_plus: ^5.0.2
   shared_preferences: ^2.5.2
+  http_parser: ^4.0.2
+  readmore: ^3.0.0
 
 dev_dependencies:
   flutter_test:

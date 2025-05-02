@@ -8,7 +8,7 @@ import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 
 class PostService {
-  final String serverUrl = "$ip:8080";
+  final String serverUrl = ip;
   final _authService = AuthService();
   final storage = const FlutterSecureStorage();
 
@@ -27,8 +27,7 @@ class PostService {
 
       File imageFile = File(filename);
 
-      var request =
-          await http.MultipartRequest("POST", Uri.parse('$serverUrl/$url'));
+      var request = http.MultipartRequest("POST", Uri.parse('$serverUrl/$url'));
 
       request.headers['authorization'] = 'Bearer $accessToken';
 
@@ -59,10 +58,9 @@ class PostService {
     if (response.statusCode == 200) {
       final List<dynamic> postsJson = jsonDecode(response.body);
 
-      print(postsJson);
       final List<Post> posts =
           postsJson.map((json) => Post.fromJson(json)).toList();
-      print(posts);
+
       return posts;
     } else {
       throw Exception('Failed to load posts');

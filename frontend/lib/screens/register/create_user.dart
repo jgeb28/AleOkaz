@@ -1,11 +1,11 @@
 import 'dart:convert';
+import 'package:ale_okaz/utils/ip.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:ale_okaz/screens/register/user.dart';
 
 Future<User> createUser(String username, String email, String password) async {
-  final uri = Uri.parse(
-      'http://192.168.0.14:8080/api/users'); // Replace with your server IP
+  final uri = Uri.parse('$ip/api/users');
 
   try {
     final response = await http.post(

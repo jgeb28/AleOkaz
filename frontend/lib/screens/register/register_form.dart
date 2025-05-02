@@ -40,8 +40,8 @@ class _RegisterFormState extends State<RegisterForm> {
   void submit() async {
     if (_formKey.currentState!.validate()) {
       try {
-        final user = await createUser(_usernameController.text,
-            _emailController.text, _passwordController.text);
+        await createUser(_usernameController.text, _emailController.text,
+            _passwordController.text);
 
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             backgroundColor: Colors.green,

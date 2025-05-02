@@ -11,7 +11,7 @@ class PostContainer extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('TO DO: Przejście do POSTA')));
+            const SnackBar(content: Text('TO DO: Przejście do POSTA')));
       },
       child: Container(
         padding: const EdgeInsets.all(8),
@@ -29,7 +29,7 @@ class PostContainer extends StatelessWidget {
                     Container(
                       height: 25,
                       width: 25,
-                      padding: EdgeInsets.only(top: 2),
+                      padding: const EdgeInsets.only(top: 2),
                       decoration: const BoxDecoration(
                         shape: BoxShape.circle,
                         color: Colors.black,
@@ -42,7 +42,7 @@ class PostContainer extends StatelessWidget {
                     ),
                     const SizedBox(width: 3),
                     Text(
-                      post.likes.toString(),
+                      post.reactions.likes.toString(),
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 16,
@@ -50,9 +50,9 @@ class PostContainer extends StatelessWidget {
                     ),
                   ],
                 ),
-                Text(
-                  post.location,
-                  style: const TextStyle(
+                const Text(
+                  'Jezioro',
+                  style: TextStyle(
                     color: Colors.white,
                     fontSize: 12,
                   ),

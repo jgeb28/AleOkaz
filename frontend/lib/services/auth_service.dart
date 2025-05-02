@@ -12,7 +12,7 @@ class AuthService {
   Future<void> login(String username, String password) async {
     try {
       final response = await http.post(
-        Uri.parse('$ip:8080/api/users/login'),
+        Uri.parse('$ip/api/users/login'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -127,7 +127,7 @@ class AuthService {
     if (refreshToken != null) {
       try {
         final response = await http.post(
-          Uri.parse('$ip:8080/api/users/refresh'),
+          Uri.parse('$ip/api/users/refresh'),
           headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8',
           },

@@ -12,8 +12,9 @@ class PostsTab extends StatelessWidget {
       imageUrl: 'https://example.com/lake.jpg',
       createdAt: DateTime.now(),
       authorId: 'user123',
-      likes: 12,
+      reactions: const Reactions(likes: 0),
       location: 'Lake Tahoe',
+      comments: [],
     ),
   ];
 
