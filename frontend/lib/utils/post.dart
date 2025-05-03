@@ -47,7 +47,7 @@ class Post {
       authorId: json['authorId'] as String,
       reactions: Reactions.fromJson(json['reactions'] as Map<String, dynamic>?),
       comments: json['comments'] as List<dynamic>? ?? <dynamic>[],
-      location: json['location'] as String? ?? '',
+      location: json['location'] as String? ?? 'Unknown',
     );
   }
 }

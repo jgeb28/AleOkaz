@@ -22,7 +22,7 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    futurePosts = _postService.getPosts();
+    futurePosts = _postService.getUserPosts();
   }
 
   @override

@@ -21,15 +21,14 @@ class AuthService {
           'password': password,
         }),
       );
-      print(response);
 
       if (response.statusCode == 200) {
         final accessToken = jsonDecode(response.body)['accessToken'];
         final refreshToken = jsonDecode(response.body)['refreshToken'];
 
+        print(accessToken);
         await storage.write(key: 'accessToken', value: accessToken);
         await storage.write(key: 'refreshToken', value: refreshToken);
-
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('username', username);
 
@@ -157,5 +156,9 @@ class AuthService {
   Future<void> clearTokens() async {
     await storage.delete(key: 'accessToken');
     await storage.delete(key: 'refreshToken');
+  }
+
+  Future<String?> getAccessToken() async {
+    return await storage.read(key: 'accessToken');
   }
 }
