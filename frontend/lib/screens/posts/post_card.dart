@@ -1,9 +1,11 @@
+import 'package:ale_okaz/screens/posts/comments/comments_list.dart';
 import 'package:ale_okaz/utils/colors.dart';
 import 'package:ale_okaz/utils/ip.dart';
 import 'package:ale_okaz/utils/post.dart';
 import 'package:ale_okaz/widgets/posts/interaction_button.dart';
 import 'package:ale_okaz/widgets/posts/post_top_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:readmore/readmore.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
@@ -81,11 +83,14 @@ class _PostState extends State<PostCard> {
                 onPressed: toggleLikeButton,
               ),
               const SizedBox(width: 2),
+              // comment interaction
               InteractionButton(
-                number: 0,
+                number: widget.post.comments.length,
                 isNumberDisplayed: true,
                 icon: Icons.comment,
-                onPressed: () {},
+                onPressed: () {
+                  Get.to(() => CommentsPage(comments: widget.post.comments));
+                },
               ),
               const Spacer(),
               InteractionButton(

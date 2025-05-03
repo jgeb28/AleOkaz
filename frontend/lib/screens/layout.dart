@@ -6,7 +6,12 @@ import 'package:flutter/material.dart';
 class Layout extends StatelessWidget {
   final Widget body;
   final bool hasBackButton;
-  const Layout({super.key, required this.body, this.hasBackButton = false});
+  final bool hasBottomBar;
+  const Layout(
+      {super.key,
+      required this.body,
+      this.hasBackButton = false,
+      this.hasBottomBar = true});
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +19,7 @@ class Layout extends StatelessWidget {
       backgroundColor: primaryBackgroundColor,
       appBar: TopBar(hasBackButton: hasBackButton),
       body: body,
-      bottomNavigationBar: const BottomBar(),
+      bottomNavigationBar: hasBottomBar ? const BottomBar() : null,
     );
   }
 }

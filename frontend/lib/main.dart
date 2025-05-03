@@ -1,4 +1,5 @@
 import 'package:ale_okaz/screens/home.dart';
+import 'package:ale_okaz/screens/posts/comments/comments_list.dart';
 import 'package:ale_okaz/screens/posts/create_post.dart';
 import 'package:ale_okaz/screens/posts/take_picture.dart';
 import 'package:camera/camera.dart';
