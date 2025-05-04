@@ -89,7 +89,10 @@ class _PostState extends State<PostCard> {
                 isNumberDisplayed: true,
                 icon: Icons.comment,
                 onPressed: () {
-                  Get.to(() => CommentsPage(comments: widget.post.comments));
+                  Get.to(() => CommentsPage(comments: widget.post.comments),
+                      transition: Transition.downToUp,
+                      curve: Curves.easeInOut,
+                      duration: Duration(milliseconds: 300));
                 },
               ),
               const Spacer(),
