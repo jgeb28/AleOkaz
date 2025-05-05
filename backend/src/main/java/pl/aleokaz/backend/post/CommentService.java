@@ -42,14 +42,16 @@ public class CommentService {
                 .build();
         comment = commentRepository.save(comment);
 
-        return postMapper.convertCommentToCommentDto(comment);
+        return postMapper.convertCommentToCommentDto(comment, author);
     }
 
     public CommentDto updateComment(@NonNull UUID userId, @NonNull UpdateCommentCommand command) {
+        final var author = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("id", userId.toString()));
         var comment = commentRepository.findById(command.commentId())
                 .orElseThrow(() -> new RuntimeException("Comment not found"));
 
-        if (!userId.equals(comment.author().id())) {
+        if (!author.equals(comment.author())) {
             throw new AuthorizationException(userId.toString());
         }
 
@@ -58,7 +60,7 @@ public class CommentService {
 
         comment = commentRepository.save(comment);
 
-        return postMapper.convertCommentToCommentDto(comment);
+        return postMapper.convertCommentToCommentDto(comment, author);
     }
 
     public void deleteComment(@NonNull UUID userId, @NonNull UUID commentId) {

@@ -9,5 +9,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ReactionsDto {
     @JsonProperty
+    private ReactionType userReaction;
+
+    @JsonProperty
     private long likes = 0;
 }

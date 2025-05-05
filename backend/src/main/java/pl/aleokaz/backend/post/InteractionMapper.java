@@ -1,15 +1,22 @@
 package pl.aleokaz.backend.post;
 
-import java.util.HashMap;
+import pl.aleokaz.backend.user.User;
+
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import org.springframework.stereotype.Service;
 
+import lombok.NonNull;
+
 @Service
 public class InteractionMapper {
-    public PostDto convertPostToPostDto(Post post) {
+    public PostDto convertPostToPostDto(@NonNull Post post, User user) {
+        final var comments = new HashSet<CommentDto>();
+        for (final var subcomment : post.comments()) {
+            comments.add(convertCommentToCommentDto(subcomment, user));
+        }
+
         return PostDto.builder()
                 .id(post.id())
                 .content(post.content())
@@ -17,24 +24,15 @@ public class InteractionMapper {
                 .createdAt(post.createdAt())
                 .editedAt(post.editedAt())
                 .authorId(post.author().id())
-                .reactions(convertReactionsToReactionsDto(post.reactions()))
-                .comments(new HashSet<>(post.comments().stream()
-                        .map(this::convertCommentToCommentDto)
-                        .toList()))
+                .reactions(convertReactionsToReactionsDto(post.reactions(), user))
+                .comments(comments)
                 .build();
     }
 
-    public CommentDto convertCommentToCommentDto(Comment comment) {
-        final Map<String, Integer> reactions = new HashMap<>();
-        for (final ReactionType type : ReactionType.values()) {
-            reactions.put(type.name(), 0);
-        }
-
-        for (final var reaction : comment.reactions()) {
-            final var type = reaction.type().name();
-            reactions.put(
-                    type,
-                    reactions.get(type) + 1);
+    public CommentDto convertCommentToCommentDto(Comment comment, User user) {
+        final var subcomments = new HashSet<CommentDto>();
+        for (final var subcomment : comment.comments()) {
+            subcomments.add(convertCommentToCommentDto(subcomment, user));
         }
 
         return CommentDto.builder()
@@ -43,17 +41,19 @@ public class InteractionMapper {
                 .createdAt(comment.createdAt())
                 .editedAt(comment.editedAt())
                 .authorId(comment.author().id())
-                .reactions(convertReactionsToReactionsDto(comment.reactions()))
-                .comments(new HashSet<>(comment.comments().stream()
-                        .map(this::convertCommentToCommentDto)
-                        .toList()))
+                .reactions(convertReactionsToReactionsDto(comment.reactions(), user))
+                .comments(subcomments)
                 .build();
     }
 
-    public ReactionsDto convertReactionsToReactionsDto(Set<Reaction> reactions) {
+    public ReactionsDto convertReactionsToReactionsDto(Set<Reaction> reactions, User user) {
         final var result = new ReactionsDto();
 
         for (final var reaction : reactions) {
+            if (reaction.author().equals(user)) {
+                result.userReaction(reaction.type());
+            }
+
             switch (reaction.type()) {
                 case LIKE -> result.likes(result.likes() + 1);
             }
