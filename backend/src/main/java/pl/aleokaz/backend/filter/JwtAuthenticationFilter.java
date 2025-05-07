@@ -14,8 +14,6 @@ import pl.aleokaz.backend.user.JwtTokenProvider;
 import java.io.IOException;
 import java.util.ArrayList;
 
-
-
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
@@ -33,21 +31,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String method = httpRequest.getMethod();
         String path = httpRequest.getRequestURI();
 
-        //metoda GET w /api/posts możliwa bez autentykacji
-        if (( path.startsWith("/api/posts") || path.startsWith("/api/friends/allof")) && ("GET".equals(method))) {
-            filterChain.doFilter(request, response);
-            return;
-        }
+        final var isPublicEndpoint = "GET".equals(method) && (path.startsWith("/api/posts") ||
+                path.startsWith("/api/friends/allof"));
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            String token = authHeader.substring(7); //Remove "Bearer " prefix
+            String token = authHeader.substring(7); // Remove "Bearer " prefix
             try {
                 DecodedJWT decodedJWT = jwtTokenProvider.validateToken(token);
                 String userId = decodedJWT.getSubject();
 
                 if (isAccessToken(decodedJWT)) {
-                    UsernamePasswordAuthenticationToken authenticationToken =
-                        new UsernamePasswordAuthenticationToken(userId, null, new ArrayList<>());
+                    UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                            userId, null, new ArrayList<>());
 
                     authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authenticationToken);
@@ -60,8 +55,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 return;
             }
-        }
-        else {
+        } else if (!isPublicEndpoint) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write("Authorization header missing or invalid.");
             return;
