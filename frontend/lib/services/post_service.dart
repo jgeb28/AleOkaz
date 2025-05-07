@@ -79,8 +79,9 @@ class PostService {
 
     final userId = Jwt.parseJwt(token)['sub'];
 
-    final response =
-        await http.get(Uri.parse('$serverUrl/api/posts?userId=$userId'));
+    final response = await http.get(
+        Uri.parse('$serverUrl/api/posts?userId=$userId'),
+        headers: {'Authorization': 'Bearer $token'});
 
     if (response.statusCode == 200) {
       final List<dynamic> postsJson = jsonDecode(response.body);
@@ -91,6 +92,44 @@ class PostService {
       return posts;
     } else {
       throw Exception('Failed to load posts');
+    }
+  }
+
+  Future<bool> setReaction(String postId,
+      [String reactionType = 'LIKE']) async {
+    final token = await storage.read(key: 'accessToken');
+
+    if (token == null) {
+      throw Exception('Failed to make a reaction');
+    }
+
+    try {
+      final response = await http.put(
+          Uri.parse('$serverUrl/api/posts/$postId/reactions'),
+          headers: {'Authorization': 'Bearer $token'});
+
+      return response.statusCode == 204;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  Future<bool> deleteReaction(String postId,
+      [String reactionType = 'LIKE']) async {
+    final token = await storage.read(key: 'accessToken');
+
+    if (token == null) {
+      throw Exception('Failed to make a reaction');
+    }
+
+    try {
+      final response = await http.delete(
+          Uri.parse('$serverUrl/api/posts/$postId/reactions'),
+          headers: {'Authorization': 'Bearer $token'});
+
+      return response.statusCode == 204;
+    } catch (error) {
+      return false;
     }
   }
 }

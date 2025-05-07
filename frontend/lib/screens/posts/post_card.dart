@@ -1,4 +1,5 @@
 import 'package:ale_okaz/screens/posts/comments/comments_list.dart';
+import 'package:ale_okaz/services/post_service.dart';
 import 'package:ale_okaz/utils/colors.dart';
 import 'package:ale_okaz/utils/ip.dart';
 import 'package:ale_okaz/utils/post.dart';
@@ -19,17 +20,48 @@ class PostCard extends StatefulWidget {
 
 class _PostState extends State<PostCard> {
   late bool isLiked;
+  late int likesCount;
 
   Future<void> toggleLikeButton() async {
     setState(() {
       isLiked = !isLiked;
+      likesCount += isLiked ? 1 : -1;
     });
+
+    final String postId = widget.post.id;
+
+    if (isLiked) {
+      final success = await PostService().setReaction(postId);
+      if (!success) {
+        setState(() {
+          isLiked = !isLiked;
+          likesCount += isLiked ? 1 : -1;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            backgroundColor: Colors.red,
+            content: Center(child: Text("Couldn't add reaction to the post"))));
+      }
+    } else {
+      final success = await PostService().deleteReaction(postId);
+
+      if (!success) {
+        setState(() {
+          isLiked = !isLiked;
+          likesCount += isLiked ? 1 : -1;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            backgroundColor: Colors.red,
+            content:
+                Center(child: Text("Couldn't remove reaction from the post"))));
+      }
+    }
   }
 
   @override
   void initState() {
     super.initState();
-    isLiked = false;
+    likesCount = widget.post.reactions.likes;
+    isLiked = widget.post.reactions.userReaction != null ? true : false;
     timeago.setLocaleMessages('pl', timeago.PlMessages());
   }
 
@@ -77,7 +109,7 @@ class _PostState extends State<PostCard> {
           Row(
             children: [
               InteractionButton(
-                number: 10000,
+                number: likesCount,
                 isNumberDisplayed: true,
                 icon: isLiked ? Icons.favorite : Icons.favorite_border,
                 onPressed: toggleLikeButton,
