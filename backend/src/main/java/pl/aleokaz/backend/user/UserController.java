@@ -52,7 +52,7 @@ public class UserController {
         return ResponseEntity.ok(userService.getUserInfo(id));
     }
 
-    @PutMapping(path="/info/{id}", consumes = "multipart/form-data")
+    @PutMapping(path="/info", consumes = "multipart/form-data")
     public ResponseEntity<UserDto> updateUserInfo(
         Authentication authentication,
         @RequestPart(value = "userInfo", required = false) UpdateInfoCommand updateInfoCommand,

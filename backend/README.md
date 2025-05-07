@@ -73,7 +73,7 @@ GET     /api/users/info/{id}                                   AUTH, Zwraca info
 POST    /api/users             {username, email, password}     Rejestracja nowego użytkownika\
 POST    /api/users/login       {username, password}            Logowanie użytkownika\
 POST    /api/users/refresh     {refreshToken}                  Uzyskaj nowy access token
-PUT     /api/users/info/{id}   FORM DATA:                      AUTH, Aktualizuje nazwę lub profilowe użytkownika
+PUT     /api/users/info/     FORM DATA:                      AUTH, Aktualizuje nazwę lub profilowe użytkownika
                                     userInfo {username},
                                     image
 
