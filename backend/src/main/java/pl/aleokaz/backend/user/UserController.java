@@ -47,15 +47,8 @@ public class UserController {
         return ResponseEntity.ok(userService.refreshUserToken(refreshCommand));
     }
 
-    //przykładowy endpoint wymagający autoryzacji w nagłówku "Bearer token"
     @GetMapping("/info/{id}")
-    public ResponseEntity<UserDto> getUserInfo(@PathVariable UUID id, Authentication authentication) {
-        String currentUserId = (String) authentication.getPrincipal();
-
-        if (!currentUserId.equals(id.toString())) {
-            throw new RuntimeException("Access denied: You can only access your own info.");
-        }
-
+    public ResponseEntity<UserDto> getUserInfo(@PathVariable UUID id) {
         return ResponseEntity.ok(userService.getUserInfo(id));
     }
 
