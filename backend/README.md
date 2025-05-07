@@ -85,3 +85,12 @@ POST    /api/posts             FORM DATA:                      AUTH, Tworzy nowy
                                     image
 PUT     /api/posts/{postId}    {content}                       AUTH, Aktualizuje treść posta
 DELETE  /api/posts/{postId}                                    AUTH, Usuwa post
+PUT     /api/posts/{postId}/reactions                          Dodanie reakcji do posta.
+DELETE  /api/posts/{postId}/reactions                          Usunięcie reakcji do posta.
+
+### Komentarze
+POST    /api/comments                   {parentId,content}     Tworzenie komentarza.
+PUT     /api/comments/{commentId}       {content}              Aktualizacja komentarza.
+DELETE  /api/comments/{commentId}                              Usunięcie komentarza.
+PUT     /api/comments/{commentId}/reactions                    Dodanie reakcji do komentarza.
+DELETE  /api/comments/{commentId}/reactions                    Usunięcie reakcji do komentarza.
