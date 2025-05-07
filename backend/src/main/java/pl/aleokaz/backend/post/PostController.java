@@ -1,5 +1,7 @@
 package pl.aleokaz.backend.post;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,22 +24,34 @@ public class PostController {
 
     @GetMapping
     public ResponseEntity<List<PostDto>> getAllPosts(
-        @RequestParam(required = false) UUID userId
-    ) {
+            Authentication authentication,
+            @RequestParam(name = "userId", required = false) UUID authorId) {
+        UUID userId = null;
+        if (authentication != null) {
+            userId = UUID.fromString((String) authentication.getPrincipal());
+        }
+
         List<PostDto> posts;
 
-        if (userId != null) {
-            posts = postService.getPostsByUserId(userId);
+        if (authorId != null) {
+            posts = postService.getPostsByUserId(userId, authorId);
         } else {
-            posts = postService.getAllPosts();
+            posts = postService.getAllPosts(userId);
         }
-        
+
         return new ResponseEntity<>(posts, HttpStatus.OK);
     }
 
     @GetMapping("/{postId}")
-    public ResponseEntity<PostDto> getPost(@PathVariable UUID postId) {
-        PostDto post = postService.getPostById(postId);
+    public ResponseEntity<PostDto> getPost(
+            Authentication authentication,
+            @PathVariable UUID postId) {
+        UUID userId = null;
+        if (authentication != null) {
+            userId = UUID.fromString((String) authentication.getPrincipal());
+        }
+
+        PostDto post = postService.getPostById(userId, postId);
         return ResponseEntity.ok().body(post);
     }
 
