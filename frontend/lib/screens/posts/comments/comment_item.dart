@@ -11,7 +11,12 @@ class CommentItem extends StatefulWidget {
 
 class _CommentItemState extends State<CommentItem> {
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return const Text('Halo');
+    return Text('${widget.comment.authorId} ${widget.comment.content}');
   }
 }

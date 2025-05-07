@@ -3,6 +3,7 @@ import 'package:ale_okaz/services/post_service.dart';
 import 'package:ale_okaz/utils/colors.dart';
 import 'package:ale_okaz/utils/ip.dart';
 import 'package:ale_okaz/utils/post.dart';
+import 'package:ale_okaz/widgets/posts/comments_sheet.dart';
 import 'package:ale_okaz/widgets/posts/interaction_button.dart';
 import 'package:ale_okaz/widgets/posts/post_top_bar.dart';
 import 'package:flutter/material.dart';
@@ -86,7 +87,6 @@ class _PostState extends State<PostCard> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 1) HEADER
           PostTopBar(
             userId: widget.post.authorId,
             location: widget.post.location,
@@ -115,17 +115,12 @@ class _PostState extends State<PostCard> {
                 onPressed: toggleLikeButton,
               ),
               const SizedBox(width: 2),
-              // comment interaction
               InteractionButton(
                 number: widget.post.comments.length,
                 isNumberDisplayed: true,
                 icon: Icons.comment,
-                onPressed: () {
-                  Get.to(() => CommentsPage(comments: widget.post.comments),
-                      transition: Transition.downToUp,
-                      curve: Curves.easeInOut,
-                      duration: Duration(milliseconds: 300));
-                },
+                onPressed: () =>
+                    showCommentsSheet(context, widget.post.comments),
               ),
               const Spacer(),
               InteractionButton(
