@@ -1,6 +1,7 @@
 import 'package:ale_okaz/screens/register/user.dart';
 import 'package:ale_okaz/services/user_service.dart';
 import 'package:ale_okaz/utils/colors.dart';
+import 'package:ale_okaz/utils/parser.dart';
 import 'package:flutter/material.dart';
 
 class PostTopBar extends StatefulWidget {
@@ -14,6 +15,7 @@ class PostTopBar extends StatefulWidget {
 
 class _PostTopBarState extends State<PostTopBar> {
   late Future<User> _futureUser;
+  final _urlParser = Parser();
 
   @override
   void initState() {
@@ -27,17 +29,17 @@ class _PostTopBarState extends State<PostTopBar> {
         future: _futureUser,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            final user = snapshot.data!;
+            User user = snapshot.data!;
 
             return Padding(
               padding: const EdgeInsets.all(8),
               child: Row(
                 children: [
                   // avatar
-                  const CircleAvatar(
+                  CircleAvatar(
                     radius: 20,
-                    backgroundImage: NetworkImage(''),
-                    // or AssetImage if local, or placeholder
+                    backgroundImage: NetworkImage(
+                        _urlParser.getImageUrl(user.profilePicture)),
                   ),
                   const SizedBox(width: 12),
                   // name + maybe timestamp

@@ -3,6 +3,7 @@ import 'package:ale_okaz/services/post_service.dart';
 import 'package:ale_okaz/utils/colors.dart';
 import 'package:ale_okaz/utils/ip.dart';
 import 'package:ale_okaz/utils/post.dart';
+import 'package:ale_okaz/utils/parser.dart';
 import 'package:ale_okaz/widgets/posts/comments_sheet.dart';
 import 'package:ale_okaz/widgets/posts/interaction_button.dart';
 import 'package:ale_okaz/widgets/posts/post_top_bar.dart';
@@ -22,6 +23,7 @@ class PostCard extends StatefulWidget {
 class _PostState extends State<PostCard> {
   late bool isLiked;
   late int likesCount;
+  final _parser = Parser();
 
   Future<void> toggleLikeButton() async {
     setState(() {
@@ -63,19 +65,6 @@ class _PostState extends State<PostCard> {
     super.initState();
     likesCount = widget.post.reactions.likes;
     isLiked = widget.post.reactions.userReaction != null ? true : false;
-    timeago.setLocaleMessages('pl', timeago.PlMessages());
-  }
-
-  String getImageId(String imageUrl) {
-    List<String> splittedImageUrl = imageUrl.split('/');
-    return '${splittedImageUrl[splittedImageUrl.length - 2]}/${splittedImageUrl[splittedImageUrl.length - 1]}';
-  }
-
-  String getDate() {
-    final DateTime createdAt = widget.post.createdAt;
-    final full = timeago.format(createdAt, locale: 'pl');
-
-    return full;
   }
 
   @override
@@ -100,7 +89,7 @@ class _PostState extends State<PostCard> {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(8),
                 child: Image.network(
-                  '$ip/${getImageId(widget.post.imageUrl)}',
+                  _parser.getImageUrl(widget.post.imageUrl),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -142,7 +131,7 @@ class _PostState extends State<PostCard> {
                 )),
           Padding(
               padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
-              child: Text(getDate(),
+              child: Text(_parser.getDateInPL(widget.post.createdAt),
                   style: const TextStyle(
                     fontSize: 14,
                   )))
