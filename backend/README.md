@@ -60,6 +60,14 @@ Kody odpowiedzi:
         FRIEND_REMOVED,
         NO_FRIENDSHIP_TO_REMOVE,
 
+### Powiadomienia
+GET /api/sse/notifications              Otwiera połączenie sse do odbierania powiadomień
+#### Wysyłanie powiadomień z backendu:
+@Autowired\
+private KafkaTemplate<String, String> kafkaTemplate;\
+\
+kafkaTemplate.send(uuid_odbiorcy, tresc_powiadomienia);
+
 ### Użytkownik
 GET     /api/users/info/{id}                                   AUTH, Zwraca informacje o użytkowniku
 POST    /api/users             {username, email, password}     Rejestracja nowego użytkownika\
@@ -86,6 +94,3 @@ PUT     /api/comments/{commentId}       {content}              Aktualizacja kome
 DELETE  /api/comments/{commentId}                              Usunięcie komentarza.
 PUT     /api/comments/{commentId}/reactions                    Dodanie reakcji do komentarza.
 DELETE  /api/comments/{commentId}/reactions                    Usunięcie reakcji do komentarza.
-
-# TODO:
-- (Marcin): Zabezpieczenie kafka wiadomości przed awarią systemu
