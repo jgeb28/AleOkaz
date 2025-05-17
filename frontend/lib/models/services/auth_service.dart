@@ -2,6 +2,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:ale_okaz/consts/flutter_api_consts.dart';
 import 'package:ale_okaz/models/data/user.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
@@ -12,7 +13,7 @@ class AuthService extends GetxService {
   Future<void> login(String username, String password) async {
     try {
       final response = await http.post(
-        Uri.parse('http://10.0.2.2:8080/api/users/login'),
+        Uri.parse("${FlutterApiConsts.baseUrl}/users/login"),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -65,7 +66,7 @@ class AuthService extends GetxService {
     if (refreshToken != null) {
       try {
         final response = await http.post(
-          Uri.parse('http://10.0.2.2:8080/api/users/refresh'),
+          Uri.parse('${FlutterApiConsts.baseUrl}/users/refresh'),
           headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8',
           },
@@ -88,33 +89,116 @@ class AuthService extends GetxService {
   }
 
   Future<User> createUser(String username, String email, String password) async {
-  final uri = Uri.parse(
-      'http://10.0.2.2:8080/api/users'); // Replace with your server IP
+    final uri = Uri.parse(
+        '${FlutterApiConsts.baseUrl}/users');
+    try {
+      final response = await http.post(
+        uri,
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String>{
+          'username': username,
+          'email': email,
+          'password': password,
+        }),
+      );
 
-  try {
-    final response = await http.post(
-      uri,
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<String, String>{
-        'username': username,
-        'email': email,
-        'password': password,
-      }),
-    );
-
-    if (response.statusCode == 201) {
-      return User.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
-    } else {
-      final error = jsonDecode(response.body) as Map<String, dynamic>;
-      throw Exception(
-          'Failed to create user: ${error['message'] ?? 'Unknown error'}');
+      if (response.statusCode == 201) {
+        return User.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+      } else {
+        final error = jsonDecode(response.body) as Map<String, dynamic>;
+        throw Exception(
+            'Failed to create user: ${error['message'] ?? 'Unknown error'}');
+      }
+    } catch (e) {
+      throw Exception('An error occurred: $e');
     }
-  } catch (e) {
-    throw Exception('An error occurred: $e');
   }
-}
+
+  Future<void> sendResetToken(String email) async {
+    try {
+      final response = await http.post(
+        Uri.parse('${FlutterApiConsts.baseUrl}/recovery'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String>{
+          'email': email,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        return;
+
+      } else {
+        throw('Błędna odpowiedź serwera - ${response.statusCode}');
+      }
+      
+    } catch(e) {
+      throw('Wystąpił błąd: $e');
+    }
+
+  }
+
+  Future<bool> verifyResetToken(String email, String token) async {
+    try {
+      final response = await http.post(
+        Uri.parse('${FlutterApiConsts.baseUrl}/recovery/verifyToken'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String>{
+         'email': email,
+         'token': token
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        storage.write(key: "resetToken", value: token);
+        return true;
+
+      } else {
+        throw('Błędna odpowiedź serwera - ${response.statusCode} - ${response.body}');
+      }
+      
+    } catch(e) {
+      throw('Wystąpił błąd: $e');
+    }
+
+  }
+
+  Future<void> changePassword(String email, String password) async {
+    final resetToken = await storage.read(key: 'resetToken');
+    if (resetToken == null) {
+      throw 'Brak Tokenu resetującego';
+    }
+    try {
+      final response = await http.post(
+        Uri.parse('${FlutterApiConsts.baseUrl}/recovery/resetPassword'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String>{
+          'email': email,
+          'token': resetToken.toString(),
+          'password': password
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        storage.delete(key: 'resetToken');
+        return;
+
+      } else {
+        throw('Błędna odpowiedź serwera - ${response.statusCode}');
+      }
+      
+    } catch(e) {
+      throw('Wystąpił błąd: $e');
+    }
+
+  }
 
   Future<void> logout() async {
     clearTokens();

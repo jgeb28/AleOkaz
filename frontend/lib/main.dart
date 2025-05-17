@@ -1,10 +1,7 @@
-import 'package:ale_okaz/view_models/profile/friends_tab_view_model.dart';
-import 'package:ale_okaz/view_models/profile/profile_tab_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'package:ale_okaz/models/services/connectivity_service.dart';
-import 'package:ale_okaz/view_models/profile/profile_view_model.dart';
 
 import 'package:ale_okaz/views/profile/profile_view.dart';
 import 'package:ale_okaz/views/register/register_view.dart';
@@ -33,13 +30,13 @@ class MyApp extends StatelessWidget {
         GetPage(name: '/', page: () => const MyApp()),
         GetPage(name: '/no-connection', page: () => const NoConnectionScreen()),
         GetPage(name: '/register', page: () => RegisterScreen()),
-        GetPage(name: '/login', page: () => LoginScreen()),
-        GetPage(name: '/profile', page: () => ProfileScreen()),
-        GetPage(name: '/profile/:username', page: () => ProfileScreen())
+        GetPage(name: '/login', page: () => const LoginScreen()),
+        GetPage(name: '/profile', page: () => const ProfileScreen()),
+        GetPage(name: '/profile/:username', page: () => const ProfileScreen())
         
 
       ],
-      home: LoginScreen(),
+      home: const LoginScreen(),
     );
   }
 }

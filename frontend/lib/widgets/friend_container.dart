@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ale_okaz/utils/colors.dart';
+import 'package:ale_okaz/consts/colors.dart';
 
 class FriendContainer extends StatelessWidget {
 

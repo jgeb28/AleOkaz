@@ -1,6 +1,4 @@
 import 'package:ale_okaz/view_models/profile/friends_tab_view_model.dart';
-import 'package:ale_okaz/view_models/profile/profile_view_model.dart';
-import 'package:ale_okaz/views/profile/profile_view.dart';
 import 'package:flutter/material.dart';
 import 'package:ale_okaz/widgets/friend_container.dart';
 import 'package:ale_okaz/widgets/my_dropdown_menu.dart';
@@ -11,7 +9,7 @@ class FriendsTab extends StatefulWidget {
   final String? username;
   final bool isMyProfile;
 
-  FriendsTab({required this.isMyProfile, required this.username, super.key});
+  const FriendsTab({required this.isMyProfile, required this.username, super.key});
 
   @override
   State<FriendsTab> createState() => _FriendsTabState();
@@ -57,7 +55,7 @@ class _FriendsTabState extends State<FriendsTab> {
         Expanded(
           child: Obx(() {
             if (viewModel.filteredFriendsList.isEmpty) {
-              return const Center(child: Text("No friends found."));
+              return const Center(child: Text("Nie znaleziono przyjaciół :("));
             }
 
             Map<String, String> friendOptions = widget.isMyProfile

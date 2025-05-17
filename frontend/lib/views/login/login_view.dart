@@ -1,3 +1,4 @@
+import 'package:ale_okaz/views/login/request_password_reset_view.dart';
 import 'package:flutter/material.dart';
 import 'package:sign_in_button/sign_in_button.dart';
 import 'package:get/get.dart';
@@ -7,14 +8,14 @@ import 'package:ale_okaz/view_models/login/login_view_model.dart';
 import 'package:ale_okaz/widgets/auth_button.dart';
 import 'package:ale_okaz/widgets/label_input.dart';
 import 'package:ale_okaz/widgets/title_section.dart';
-import 'package:ale_okaz/utils/colors.dart';
+import 'package:ale_okaz/consts/colors.dart';
 import 'package:ale_okaz/widgets/line_divider.dart';
 
 
 
 
 class LoginScreen extends StatelessWidget {
-  LoginScreen({super.key});
+  const LoginScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +48,9 @@ class LoginScreen extends StatelessWidget {
                       isObscured: true,
                     ),
                     TextButton(
-                      onPressed: () {}, // Implement password reset logic
+                      onPressed: () {
+                        Get.offAll(() => RequestPasswordResetView());
+                      }, // Implement password reset logic
                       child: const Text(
                         'Zapomniałeś hasło?',
                         style: TextStyle(

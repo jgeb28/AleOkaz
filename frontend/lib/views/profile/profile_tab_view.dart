@@ -1,4 +1,5 @@
-import 'package:ale_okaz/utils/colors.dart';
+import 'package:ale_okaz/consts/colors.dart';
+import 'package:ale_okaz/models/services/image_service.dart';
 import 'package:ale_okaz/view_models/profile/profile_tab_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -6,25 +7,27 @@ import 'package:get/get.dart';
 class ProfileTab extends StatefulWidget {
   final bool isMyProfile;
   final String? username;
+  final String? profilePictureUrl;
   
-  ProfileTab({required this.isMyProfile, required this.username, super.key});
+  const ProfileTab({required this.isMyProfile, required this.username, required this.profilePictureUrl, super.key});
 
   @override
   State<ProfileTab> createState() => _ProfileTabState();
 }
 
 class _ProfileTabState extends State<ProfileTab> {
-  late ProfileTabViewModel viewModel;
+  late ProfileTabViewModel _viewModel;
 
   @override
   void initState() {
     Get.delete<ProfileTabViewModel>();
-    viewModel = Get.put(ProfileTabViewModel());
+    _viewModel = Get.put(ProfileTabViewModel());
     super.initState();
   }
 
   @override
   void dispose() {
+    Get.delete<ImageController>();
     Get.delete<ProfileTabViewModel>();
     super.dispose();
   }
@@ -32,21 +35,67 @@ class _ProfileTabState extends State<ProfileTab> {
 
   @override
   Widget build(BuildContext context) {
-    viewModel.username.value = widget.username ?? "Loading...";
+    _viewModel.username.value = widget.username ?? "Loading...";
 
     return Column(
       children: [
         const SizedBox(height: 40),
-        Container(
-          height: 220,
-          width: 220,
-          decoration: const BoxDecoration(
-            shape: BoxShape.circle,
-            color: Colors.grey,
-          ),
-        ),
+        Stack(
+          children:  [
+            widget.isMyProfile ? Obx(() => _viewModel.image.value == null
+                ? Container(
+                    width: 220.0,
+                    height: 220.0,
+                    decoration:  BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                            fit: BoxFit.fill,
+                            image:  NetworkImage(widget.profilePictureUrl!))
+                          )
+                        )
+                : Container(
+                    width: 220.0,
+                    height: 220.0,
+                    decoration:  BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                            fit: BoxFit.fill,
+                            image:  FileImage(_viewModel.image.value!))
+                          )
+                        )
+                      )
+                  : const SizedBox.shrink(),
+            widget.isMyProfile ? Positioned(
+              right: 0,
+              bottom: 0,
+              child: Obx(() => _viewModel.image.value == null ? Container(
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: offWhiteColor,
+                ),
+                child: IconButton(
+                  onPressed: () {
+                    _viewModel.pickImage();
+                  }, 
+                  icon: const Icon(Icons.edit),),
+              ):
+              Container(
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: buttonBackgroundColor,
+                ),
+                child: IconButton(
+                  onPressed: () {
+                    _viewModel.setImage();
+                    _viewModel.image.value = null;
+                  }, 
+                  icon: const Icon(Icons.check),
+                  color: Colors.white,),
+              )
+              )): const SizedBox.shrink(),
+      ]),
         const SizedBox(height: 40),
-        
+
         Container(
           height: 45,
           width: double.infinity,
@@ -57,10 +106,10 @@ class _ProfileTabState extends State<ProfileTab> {
                     children: [
                       Align(
                         alignment: Alignment.center,
-                        child: viewModel.isEditing.value
+                        child: _viewModel.isEditing.value
                             ? TextField(
                                 controller: TextEditingController(
-                                    text: viewModel.username.value),
+                                    text: _viewModel.username.value),
                                 textAlign: TextAlign.center,
                                 style: const TextStyle(fontSize: 24),
                                 autofocus: true,
@@ -69,10 +118,12 @@ class _ProfileTabState extends State<ProfileTab> {
                                   isDense: true,
                                   contentPadding: EdgeInsets.zero,
                                 ),
-                                onSubmitted: viewModel.setUsername,
+                                onSubmitted: (value) {
+                                  _viewModel.setUsername(value);
+                                },
                               )
                             : Text(
-                                viewModel.username.value,
+                                _viewModel.username.value,
                                 textAlign: TextAlign.center,
                                 style: const TextStyle(fontSize: 24),
                               ),
@@ -80,17 +131,19 @@ class _ProfileTabState extends State<ProfileTab> {
                       Positioned(
                         right: 0,
                         child: IconButton(
-                          onPressed: viewModel.toggleEdit,
+                          onPressed: _viewModel.toggleEdit,
                           icon: const Icon(Icons.edit),
                         ),
                       ),
                     ],
                   )
-                : Text(
-                    viewModel.username.value,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 24),
-                  );
+                : Center(
+                  child: Text(
+                      _viewModel.username.value,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(fontSize: 24),
+                    ),
+                );
           }),
         ),
         

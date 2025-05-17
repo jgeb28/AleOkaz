@@ -21,7 +21,7 @@ class LoginViewModel extends GetxController {
         //Get.toNamed('/profile');
       } catch (e) {
         clearInputs();
-        //Get.snackbar("Błąd", 'Wystąpił błąd podczas logowania',backgroundColor: Colors.red);
+        Get.snackbar("Błąd", 'Wystąpił błąd podczas logowania $e',backgroundColor: Colors.red);
       }
     }
   }

@@ -20,18 +20,18 @@ class FriendsTabViewModel extends GetxController {
       dynamic response;
       if (isMyProfile) {
         response = await _restService.sendGETRequest(
-          'http://10.0.2.2:8080/api/friends/all',
+          '/friends/all',
         );
       } else {
         response = await _restService.sendGETRequest(
-          "http://10.0.2.2:8080/api/friends/all/$username",
+          "/friends/allof/$username",
         );
       }
       friendsList.value =
           List<String>.from(response.map((friend) => friend['username'] as String));
       _applyFilters();
     } catch (e) {
-      Get.snackbar('Błąd', 'Error fetching friends: $e', backgroundColor: Colors.red);
+      Get.snackbar('Błąd', 'Błąd podczas wczytywania danych: $e', backgroundColor: Colors.red);
     }
   }
 
@@ -61,7 +61,7 @@ class FriendsTabViewModel extends GetxController {
   Future<void> addFriend(String username) async {
     try {
       await _restService.sendPOSTRequest(
-        'http://10.0.2.2:8080/api/friends/add',
+        '/friends/add',
         {'username': username},
       );
       Get.snackbar('Sukcess', 'Pomyślnie dodano znajomego', backgroundColor: Colors.green);
@@ -73,7 +73,7 @@ class FriendsTabViewModel extends GetxController {
   Future<void> deleteFriend(String username) async {
     try {
       await _restService.sendPOSTRequest(
-        'http://10.0.2.2:8080/api/friends/remove',
+        '/friends/remove',
         {'username': username},
       );
       Get.snackbar('Sukcess', 'Pomyślnie usunięto znajomego', backgroundColor: Colors.green);

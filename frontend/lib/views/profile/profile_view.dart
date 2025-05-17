@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ale_okaz/utils/colors.dart';
+import 'package:ale_okaz/consts/colors.dart';
 import 'package:ale_okaz/views/profile/fishing_spots_tab_view.dart';
 import 'package:ale_okaz/views/profile/friends_tab_view.dart';
 import 'package:ale_okaz/views/profile/posts_tab_view.dart';
 import 'package:ale_okaz/views/profile/profile_tab_view.dart';
-import 'package:ale_okaz/widgets/bottom_navbar.dart';
 import 'package:ale_okaz/widgets/profile_tabs.dart';
 import 'package:ale_okaz/view_models/profile/profile_view_model.dart';
 
 class ProfileScreen extends StatefulWidget {
-  ProfileScreen({super.key});
+  const ProfileScreen({super.key});
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -40,7 +39,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Obx(() => Scaffold(
           appBar: AppBar(
             title: Text(
-              viewModel.username.value ?? "Loading...",
+              viewModel.username.value,
               style: const TextStyle(
                 fontFamily: 'Righteous',
                 fontSize: 16,
@@ -66,9 +65,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: TabBarView(
               controller: tabController,
               children: <Widget>[
-                ProfileTab(username: viewModel.username.value, isMyProfile: viewModel.isMyProfile.value),
-                PostsTab(isMyProfile: viewModel.isMyProfile.value),
-                FishingSpotsTab(),
+                ProfileTab(username: viewModel.username.value, isMyProfile: viewModel.isMyProfile.value, profilePictureUrl: viewModel.profilePictureUrl.value),
+                PostsTab(isMyProfile: viewModel.isMyProfile.value, userId: viewModel.userId.value),
+                const FishingSpotsTab(),
                 FriendsTab(
                   isMyProfile: viewModel.isMyProfile.value,
                   username: viewModel.username.value,

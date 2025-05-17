@@ -1,6 +1,6 @@
 import 'package:ale_okaz/utils/validator.dart';
 import 'package:ale_okaz/view_models/register/register_view_model.dart';
-import 'package:ale_okaz/utils/colors.dart';
+import 'package:ale_okaz/consts/colors.dart';
 import 'package:ale_okaz/widgets/auth_button.dart';
 import 'package:ale_okaz/widgets/label_input.dart';
 import 'package:ale_okaz/widgets/title_section.dart';
