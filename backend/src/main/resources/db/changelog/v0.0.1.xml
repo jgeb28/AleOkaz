@@ -244,4 +244,28 @@
             <column name="profile_picture" type="text"></column>
         </addColumn>
     </changeSet>
+
+    <changeSet id="11" author="Grzegorz-Sawicki">
+        <createTable tableName="fishing_spot">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" primaryKeyName="fishing_spot_pk" nullable="false" />
+            </column>
+            <column name="name" type="text">
+                <constraints nullable="false"></constraints>
+            </column>
+            <column name="description" type="text"></column>
+            <column name="owner_id" type="uuid">
+                <constraints nullable="false"></constraints>
+            </column>
+            <column name="location" type="geometry(Point,4326)">
+                <constraints nullable="false"></constraints>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint
+            baseTableName="fishing_spot"
+            baseColumnNames="owner_id"
+            constraintName="fk_fishing_spot_owner"
+            referencedTableName="user"
+            referencedColumnNames="id" />
+    </changeSet>
 </databaseChangeLog>
