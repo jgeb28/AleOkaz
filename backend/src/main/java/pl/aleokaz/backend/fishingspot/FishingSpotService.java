@@ -8,7 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.aleokaz.backend.user.UserRepository;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -40,5 +42,16 @@ public class FishingSpotService {
         final var savedFishingSpot = fishingSpotRepository.save(fishingSpot);
 
         return fishingSpotMapper.convertFishingSpotToFishingSpotDto(savedFishingSpot);
+    }
+
+    public List<FishingSpotDto> getAllFishingSpots() {
+        final List<FishingSpot> fishingSpots = fishingSpotRepository.findAll();
+
+        final List<FishingSpotDto> fishingSpotDtos = fishingSpots.stream()
+            .map(fs -> fishingSpotMapper.convertFishingSpotToFishingSpotDto(fs))
+            .collect(Collectors.toList());
+
+        return fishingSpotDtos;
+
     }
 }

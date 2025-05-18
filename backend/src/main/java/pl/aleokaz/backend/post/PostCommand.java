@@ -13,4 +13,7 @@ public class PostCommand {
 
     @NonNull
     private String content;
+
+    @NonNull
+    private UUID fishingSpotId;
 }

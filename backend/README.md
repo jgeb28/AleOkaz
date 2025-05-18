@@ -81,7 +81,7 @@ PUT     /api/users/info/     FORM DATA:                      AUTH, Aktualizuje n
 GET     /api/posts?userId={userId}                             Zwraca wszystkie posty z możliwością wybrania konkretnego autora opcją ?userId
 GET     /api/posts/{postId}                                    Zwraca dany post
 POST    /api/posts             FORM DATA:                      AUTH, Tworzy nowy post
-                                    post {content},
+                                    post {content, fishingSpotId},
                                     image
 PUT     /api/posts/{postId}    {content}                       AUTH, Aktualizuje treść posta
 DELETE  /api/posts/{postId}                                    AUTH, Usuwa post

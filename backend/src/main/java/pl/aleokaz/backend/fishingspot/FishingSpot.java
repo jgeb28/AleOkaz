@@ -3,8 +3,11 @@ package pl.aleokaz.backend.fishingspot;
 import org.locationtech.jts.geom.Point;
 import jakarta.persistence.*;
 import lombok.*;
+import pl.aleokaz.backend.post.Post;
 import pl.aleokaz.backend.user.User;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity

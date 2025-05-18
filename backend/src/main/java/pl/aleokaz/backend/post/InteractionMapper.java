@@ -1,5 +1,7 @@
 package pl.aleokaz.backend.post;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import pl.aleokaz.backend.fishingspot.FishingSpotMapper;
 import pl.aleokaz.backend.user.User;
 
 import java.util.HashSet;
@@ -11,6 +13,9 @@ import lombok.NonNull;
 
 @Service
 public class InteractionMapper {
+    @Autowired
+    FishingSpotMapper fishingSpotMapper;
+
     public PostDto convertPostToPostDto(@NonNull Post post, User user) {
         final var comments = new HashSet<CommentDto>();
         for (final var subcomment : post.comments()) {
@@ -26,6 +31,7 @@ public class InteractionMapper {
                 .authorId(post.author().id())
                 .reactions(convertReactionsToReactionsDto(post.reactions(), user))
                 .comments(comments)
+                .fishingSpot(fishingSpotMapper.convertFishingSpotToFishingSpotDto(post.fishingSpot()))
                 .build();
     }
 

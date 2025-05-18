@@ -1,6 +1,12 @@
 package pl.aleokaz.backend.fishingspot;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import pl.aleokaz.backend.post.Interaction;
+import pl.aleokaz.backend.post.InteractionMapper;
+import pl.aleokaz.backend.post.PostDto;
+
+import java.util.HashSet;
 
 @Service
 public class FishingSpotMapper {

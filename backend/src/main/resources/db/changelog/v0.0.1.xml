@@ -267,5 +267,8 @@
             constraintName="fk_fishing_spot_owner"
             referencedTableName="user"
             referencedColumnNames="id" />
+        <addColumn tableName="interaction">
+            <column name="fishing_spot_id" type="uuid"></column>
+        </addColumn>
     </changeSet>
 </databaseChangeLog>
