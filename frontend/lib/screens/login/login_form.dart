@@ -3,6 +3,7 @@ import 'package:ale_okaz/widgets/label_input.dart';
 import 'package:ale_okaz/widgets/title_section.dart';
 import 'package:ale_okaz/services/auth_service.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
@@ -38,16 +39,12 @@ class _LoginFormState extends State<LoginForm> {
   void submit() async {
     if (_formKey.currentState!.validate()) {
       try {
-<<<<<<< HEAD
         await _authService.login(_usernameController.text, _passwordController.text);
         showSnackBar("Zalogowano Pomyślnie", Colors.green);
-=======
-        await _authService.login(_emailController.text, _passwordController.text);
-        showErrorSnackBar("Text");
->>>>>>> loginUI
+        Get.toNamed('/profile');
       } catch (e) {
         clearInputs();
-        showSnackBar('Wystąpił błąd podczas logowania: $e', Colors.red);
+        showSnackBar('Wystąpił błąd podczas logowania', Colors.red);
       }
     }
   }

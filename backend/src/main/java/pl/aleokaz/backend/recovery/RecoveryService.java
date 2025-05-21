@@ -5,6 +5,7 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.stereotype.Service;
 
 import pl.aleokaz.backend.user.UserRepository;
+import pl.aleokaz.backend.exceptions.UserNotFoundException;
 import pl.aleokaz.backend.user.User;
 
 @Service

@@ -62,34 +62,186 @@
             referencedTableName="user"
             referencedColumnNames="id" />
     </changeSet>
-<changeSet id="3" author="marcinmarszewski">
-    <preConditions onFail="MARK_RAN">
-        <not>
-            <tableExists tableName="recovery_token" />
-        </not>
-    </preConditions>
-    <createTable tableName="recovery_token">
-        <column name="id" type="uuid">
-            <constraints primaryKey="true" primaryKeyName="recovery_token_pk" nullable="false" />
-        </column>
-        <column name="user_id" type="uuid">
-            <constraints nullable="false" unique="true"/>
-        </column>
-        <column name="token" type="text">
-            <constraints nullable="false"/>
-        </column>
-        <column name="expiration_date" type="timestamp with time zone">
-            <constraints nullable="false" />
-        </column>
-        <column name="attempts" type="integer">
-            <constraints nullable="false" />
-        </column>
-    </createTable>
-    <addForeignKeyConstraint 
-        baseColumnNames="user_id" 
-        baseTableName="recovery_token" 
-        constraintName="fk_user_recovery_token" 
-        referencedColumnNames="id" 
-        referencedTableName="user" />
-</changeSet>
+
+    <changeSet id="3" author="marcinmarszewski">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="recovery_token" />
+            </not>
+        </preConditions>
+        <createTable tableName="recovery_token">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" primaryKeyName="recovery_token_pk" nullable="false" />
+            </column>
+            <column name="user_id" type="uuid">
+                <constraints nullable="false" unique="true" />
+            </column>
+            <column name="token" type="text">
+                <constraints nullable="false" />
+            </column>
+            <column name="expiration_date" type="timestamp with time zone">
+                <constraints nullable="false" />
+            </column>
+            <column name="attempts" type="integer">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <addForeignKeyConstraint
+            baseColumnNames="user_id"
+            baseTableName="recovery_token"
+            constraintName="fk_user_recovery_token"
+            referencedColumnNames="id"
+            referencedTableName="user" />
+    </changeSet>
+    <changeSet id="4" author="marcinmarszewski">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="user_friends" />
+            </not>
+        </preConditions>
+        <createTable tableName="user_friends">
+            <column name="id" type="uuid">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_user_friends" />
+            </column>
+            <column name="is_active" type="boolean">
+                <constraints nullable="false" />
+            </column>
+            <column name="user_id" type="uuid">
+                <constraints nullable="false" />
+            </column>
+            <column name="friend_id" type="uuid">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <addForeignKeyConstraint
+            baseTableName="user_friends"
+            baseColumnNames="user_id"
+            constraintName="user_friends_user_fk"
+            referencedTableName="user"
+            referencedColumnNames="id" />
+        <addForeignKeyConstraint
+            baseTableName="user_friends"
+            baseColumnNames="friend_id"
+            constraintName="user_friends_friend_fk"
+            referencedTableName="user"
+            referencedColumnNames="id" />
+    </changeSet>
+    <changeSet id="5" author="grzegorz-sawicki">
+        <createTable tableName="post">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" primaryKeyName="post_pk" nullable="false" />
+            </column>
+            <column name="content" type="text">
+                <constraints nullable="false" />
+            </column>
+            <column name="image_url" type="text">
+                <constraints nullable="false" />
+            </column>
+            <column name="created_at" type="timestamp with time zone">
+                <constraints nullable="false" />
+            </column>
+            <column name="edited_at" type="timestamp with time zone" />
+            <column name="author_id" type="uuid">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <addForeignKeyConstraint
+            baseTableName="post"
+            baseColumnNames="author_id"
+            constraintName="fk_post_author"
+            referencedTableName="user"
+            referencedColumnNames="id" />
+    </changeSet>
+
+    <changeSet id="6" author="grzegorz-sawicki">
+        <createTable tableName="post_comment">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" primaryKeyName="post_comment_pk" nullable="false" />
+            </column>
+            <column name="content" type="text">
+                <constraints nullable="false" />
+            </column>
+            <column name="image_url" type="text">
+                <constraints nullable="false" />
+            </column>
+            <column name="created_at" type="timestamp with time zone">
+                <constraints nullable="false" />
+            </column>
+            <column name="edited_at" type="timestamp with time zone" />
+            <column name="author_id" type="uuid">
+                <constraints nullable="false" />
+            </column>
+            <column name="post_id" type="uuid">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <addForeignKeyConstraint
+            baseTableName="post_comment"
+            baseColumnNames="author_id"
+            constraintName="fk_post_comment_author"
+            referencedTableName="user"
+            referencedColumnNames="id" />
+        <addForeignKeyConstraint
+            baseTableName="post_comment"
+            baseColumnNames="post_id"
+            constraintName="fk_post_comment_to_post"
+            referencedTableName="post"
+            referencedColumnNames="id" />
+    </changeSet>
+
+    <changeSet id="7" author="michalciechan">
+        <createTable tableName="post_reaction">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" primaryKeyName="post_reaction_pk" nullable="false" />
+            </column>
+            <column name="post_id" type="uuid">
+                <constraints nullable="false" />
+            </column>
+            <column name="author_id" type="uuid">
+                <constraints nullable="false" />
+            </column>
+            <column name="type" type="text">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint
+            baseTableName="post_reaction"
+            baseColumnNames="post_id"
+            constraintName="fk_post_reaction_post"
+            referencedTableName="post"
+            referencedColumnNames="id" />
+        <addForeignKeyConstraint
+            baseTableName="post_reaction"
+            baseColumnNames="author_id"
+            constraintName="fk_post_reaction_author"
+            referencedTableName="user"
+            referencedColumnNames="id" />
+        <addUniqueConstraint tableName="post_reaction" columnNames="post_id,author_id" />
+    </changeSet>
+
+    <changeSet id="8" author="michalciechan">
+        <dropTable tableName="post_comment" />
+
+        <dropNotNullConstraint tableName="post" columnName="image_url" />
+
+        <addColumn tableName="post">
+            <column name="type" type="text"></column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="9" author="michalciechan">
+        <renameTable oldTableName="post" newTableName="interaction" />
+        <renameTable oldTableName="post_reaction" newTableName="reaction" />
+        <renameColumn tableName="reaction" oldColumnName="post_id" newColumnName="interaction_id" />
+        <addColumn tableName="interaction">
+            <column name="parent_id" type="uuid"></column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="10" author="Grzegorz-Sawicki">
+        <addColumn tableName="user">
+            <column name="profile_picture" type="text"></column>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

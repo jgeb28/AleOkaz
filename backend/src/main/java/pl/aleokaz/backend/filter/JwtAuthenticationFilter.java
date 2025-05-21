@@ -1,47 +1,48 @@
-package pl.aleokaz.backend.user;
+package pl.aleokaz.backend.filter;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
-import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import pl.aleokaz.backend.user.JwtTokenProvider;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
-@Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-    @Autowired
-    private JwtTokenProvider jwtTokenProvider;
+
+    private final JwtTokenProvider jwtTokenProvider;
+
+    public JwtAuthenticationFilter(JwtTokenProvider jwtTokenProvider) {
+        this.jwtTokenProvider = jwtTokenProvider;
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-        //filter works on /api/users/info for now
-        if (!request.getRequestURI().startsWith("/api/users/info")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
         String authHeader = request.getHeader("Authorization");
+        HttpServletRequest httpRequest = (HttpServletRequest) request;
+        String method = httpRequest.getMethod();
+        String path = httpRequest.getRequestURI();
+
+        final var isPublicEndpoint = "GET".equals(method) && (path.startsWith("/api/posts") ||
+                path.startsWith("/api/friends/allof"));
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            String token = authHeader.substring(7); //Remove "Bearer " prefix
+            String token = authHeader.substring(7); // Remove "Bearer " prefix
             try {
                 DecodedJWT decodedJWT = jwtTokenProvider.validateToken(token);
                 String userId = decodedJWT.getSubject();
 
                 if (isAccessToken(decodedJWT)) {
-                    UsernamePasswordAuthenticationToken authenticationToken =
-                        new UsernamePasswordAuthenticationToken(userId, null, new ArrayList<>());
+                    UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                            userId, null, new ArrayList<>());
 
                     authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authenticationToken);
@@ -54,6 +55,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 return;
             }
+        } else if (!isPublicEndpoint) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("Authorization header missing or invalid.");
+            return;
         }
         filterChain.doFilter(request, response);
     }

@@ -10,6 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -29,12 +30,18 @@ public class UserServiceTest {
     @Mock
     private VerificationRepository verificationRepository;
 
+    @Spy
+    private JwtTokenProvider jwtTokenProvider;
+
+    @Value("${aleokaz.profile.picture.default}")
+    private String defaultProfilePicture;
+
     @Test
     public void shouldRegisterUser() throws Exception {
         final Set<UserRole> roles = new HashSet<>();
         roles.add(UserRole.UNVERIFIED_USER);
 
-        final var saved = new User(UUID.randomUUID(), "user@example.com", "user", "", roles);
+        final var saved = new User(UUID.randomUUID(), "user@example.com", "user", "", roles, defaultProfilePicture);
         when(userRepository.save(
                 argThat(user -> user.username().equals("user") &&
                         user.email().equals("user@example.com"))))

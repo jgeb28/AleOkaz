@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:sign_in_button/sign_in_button.dart';
+import 'package:get/get.dart';
+
 
 import 'package:ale_okaz/utils/colors.dart';
 import 'package:ale_okaz/screens/login/login_form.dart';
 import 'package:ale_okaz/widgets/line_divider.dart';
-import 'package:ale_okaz/screens/register/register.dart';
+
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -27,8 +29,7 @@ class LoginScreen extends StatelessWidget {
                       padding: const EdgeInsets.only(top: 8, bottom: 8),
                       child: TextButton(
                         onPressed: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => const RegisterScreen()));
+                          Get.toNamed('/register');
                         },
                         child: const Text(
                           'Stwórz nowe konto',
