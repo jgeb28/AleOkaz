@@ -1,4 +1,3 @@
-import 'package:ale_okaz/models/data/post.dart';
 import 'package:ale_okaz/view_models/profile/post_tab_view_model.dart';
 import 'package:ale_okaz/widgets/post_container.dart';
 import 'package:flutter/material.dart';
