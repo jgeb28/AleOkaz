@@ -6,9 +6,7 @@ import lombok.*;
 import pl.aleokaz.backend.post.Post;
 import pl.aleokaz.backend.user.User;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Data
@@ -33,12 +31,22 @@ public class FishingSpot {
     @Column(columnDefinition = "geometry(Point,4326)")
     private Point location;
 
-    public FishingSpot(UUID id, String name, String description, User owner, Point location) {
+    @NonNull
+    @OneToMany(mappedBy = "fishingSpot")
+    private List<Post> posts;
+
+    public FishingSpot(UUID id, String name, String description, User owner, Point location, List<Post> posts) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.owner = owner;
         this.location = location;
+
+        if(posts == null) {
+            this.posts = new ArrayList<>();
+        } else {
+            this.posts = new ArrayList<>(posts);
+        }
     }
 
 }

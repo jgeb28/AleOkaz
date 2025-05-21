@@ -52,6 +52,24 @@ public class FishingSpotService {
             .collect(Collectors.toList());
 
         return fishingSpotDtos;
+    }
 
+    public FishingSpotDto getClosestFishingSpot(double longitude, double latitude) {
+        var closestSpot = fishingSpotRepository.findClosestSpot(longitude, latitude);
+
+        return fishingSpotMapper.convertFishingSpotToFishingSpotDto(closestSpot);
+    }
+
+    public List<FishingSpotDto> getPostedInFishingSpots(UUID userId) {
+        final var owner = userRepository.findById(userId)
+            .orElseThrow(() -> new RuntimeException("User not found"));
+
+        final List<FishingSpot> fishingSpots = fishingSpotRepository.findByUserPosts(owner.id());
+
+        final List<FishingSpotDto> fishingSpotDtos = fishingSpots.stream()
+            .map(fs -> fishingSpotMapper.convertFishingSpotToFishingSpotDto(fs))
+            .collect(Collectors.toList());
+
+        return fishingSpotDtos;
     }
 }
