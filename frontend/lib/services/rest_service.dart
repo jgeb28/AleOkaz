@@ -153,4 +153,36 @@ class RestService {
       throw Exception('Błędna odpowiedź serwera – ${response.statusCode}');
     }
   }
+
+  /// Sends a POST request, decodes the JSON response via [parser].
+  Future<T> sendPOSTRequest<T>(
+    String url, {
+    dynamic payload,
+    required T Function(dynamic decodedJson) parser,
+  }) async {
+    var accessToken = await storage.read(key: 'accessToken');
+    if (accessToken == null) {
+      throw Exception('Brak Tokenu uwierzytelniającego');
+    }
+    if (await isTokenExpired(accessToken)) {
+      await refreshAccessToken();
+      accessToken = (await storage.read(key: 'accessToken'))!;
+    }
+
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
+      body: payload != null ? jsonEncode(payload) : null,
+    );
+
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      throw Exception('Błędna odpowiedź serwera – ${response.statusCode}');
+    }
+
+    final decoded = jsonDecode(response.body);
+    return parser(decoded);
+  }
 }

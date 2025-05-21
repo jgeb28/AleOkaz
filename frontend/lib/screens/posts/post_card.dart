@@ -1,7 +1,6 @@
-import 'package:ale_okaz/screens/posts/comments/comments_list.dart';
 import 'package:ale_okaz/services/post_service.dart';
 import 'package:ale_okaz/utils/colors.dart';
-import 'package:ale_okaz/utils/ip.dart';
+import 'package:ale_okaz/utils/comments_controller.dart';
 import 'package:ale_okaz/utils/post.dart';
 import 'package:ale_okaz/utils/parser.dart';
 import 'package:ale_okaz/widgets/posts/comments_sheet.dart';
@@ -10,7 +9,6 @@ import 'package:ale_okaz/widgets/posts/post_top_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:readmore/readmore.dart';
-import 'package:timeago/timeago.dart' as timeago;
 
 class PostCard extends StatefulWidget {
   final Post post;
@@ -24,6 +22,7 @@ class _PostState extends State<PostCard> {
   late bool isLiked;
   late int likesCount;
   final _parser = Parser();
+  final commentsCountController = Get.put(CommentsCountController());
 
   Future<void> toggleLikeButton() async {
     setState(() {
@@ -65,6 +64,8 @@ class _PostState extends State<PostCard> {
     super.initState();
     likesCount = widget.post.reactions.likes;
     isLiked = widget.post.reactions.userReaction != null ? true : false;
+
+    commentsCountController.initCount(widget.post.comments.length);
   }
 
   @override
@@ -104,13 +105,13 @@ class _PostState extends State<PostCard> {
                 onPressed: toggleLikeButton,
               ),
               const SizedBox(width: 2),
-              InteractionButton(
-                number: widget.post.comments.length,
-                isNumberDisplayed: true,
-                icon: Icons.comment,
-                onPressed: () =>
-                    showCommentsSheet(context, widget.post.comments),
-              ),
+              Obx(() => InteractionButton(
+                    key: ValueKey('comment_btn_${widget.post.id}'),
+                    number: commentsCountController.count.value,
+                    isNumberDisplayed: true,
+                    icon: Icons.comment,
+                    onPressed: () => showCommentsSheet(context, widget.post.id),
+                  )),
               const Spacer(),
               InteractionButton(
                 icon: Icons.share,

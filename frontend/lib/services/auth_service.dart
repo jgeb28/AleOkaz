@@ -26,7 +26,7 @@ class AuthService {
         final accessToken = jsonDecode(response.body)['accessToken'];
         final refreshToken = jsonDecode(response.body)['refreshToken'];
 
-        print(accessToken);
+        print("accessToken: " + accessToken);
         await storage.write(key: 'accessToken', value: accessToken);
         await storage.write(key: 'refreshToken', value: refreshToken);
         final prefs = await SharedPreferences.getInstance();

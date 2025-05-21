@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:ale_okaz/services/auth_service.dart';
 import 'package:ale_okaz/services/rest_service.dart';
+import 'package:ale_okaz/utils/comment.dart';
 import 'package:ale_okaz/utils/ip.dart';
 import 'package:ale_okaz/utils/post.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -154,5 +155,18 @@ class PostService {
       print(e);
       return false;
     }
+  }
+
+  Future<List<Comment>> getComments(String postId) async {
+    final Post post = await _restService.sendGETRequest(
+        '$ip/api/posts/$postId', (decodedJson) => Post.fromJson(decodedJson));
+
+    return post.comments;
+  }
+
+  Future<Comment> createComment(String postId, String content) {
+    return _restService.sendPOSTRequest('$ip/api/comments',
+        payload: {'parentId': postId, 'content': content},
+        parser: (decodedJson) => Comment.fromJson(decodedJson));
   }
 }
