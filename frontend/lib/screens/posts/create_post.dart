@@ -1,7 +1,7 @@
 import 'dart:io';
-import 'package:ale_okaz/screens/layout.dart';
+import 'package:ale_okaz/views/layout.dart';
 import 'package:ale_okaz/screens/posts/create_post_form.dart';
-import 'package:ale_okaz/utils/colors.dart';
+import 'package:ale_okaz/consts/colors.dart';
 import 'package:flutter/material.dart';
 
 class CreatePost extends StatelessWidget {

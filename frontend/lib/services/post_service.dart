@@ -1,10 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:ale_okaz/services/auth_service.dart';
 import 'package:ale_okaz/services/rest_service.dart';
-import 'package:ale_okaz/utils/comment.dart';
+import 'package:ale_okaz/models/data/comment.dart';
 import 'package:ale_okaz/utils/ip.dart';
-import 'package:ale_okaz/utils/post.dart';
+import 'package:ale_okaz/models/data/post.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';

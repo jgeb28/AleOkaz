@@ -1,4 +1,4 @@
-import 'package:ale_okaz/utils/colors.dart';
+import 'package:ale_okaz/consts/colors.dart';
 import 'package:ale_okaz/widgets/top_bar/title_text.dart';
 import 'package:flutter/material.dart';
 

@@ -1,6 +1,6 @@
-import 'package:ale_okaz/screens/register/user.dart';
+import 'package:ale_okaz/models/data/user.dart';
 import 'package:ale_okaz/services/user_service.dart';
-import 'package:ale_okaz/utils/colors.dart';
+import 'package:ale_okaz/consts/colors.dart';
 import 'package:ale_okaz/utils/parser.dart';
 import 'package:flutter/material.dart';
 
@@ -39,7 +39,7 @@ class _PostTopBarState extends State<PostTopBar> {
                   CircleAvatar(
                     radius: 20,
                     backgroundImage: NetworkImage(
-                        _urlParser.getImageUrl(user.profilePicture)),
+                        _urlParser.getImageUrl(user.profilePictureUrl)),
                   ),
                   const SizedBox(width: 12),
                   // name + maybe timestamp

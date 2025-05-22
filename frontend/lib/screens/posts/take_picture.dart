@@ -1,6 +1,6 @@
-import 'package:ale_okaz/screens/layout.dart';
+import 'package:ale_okaz/views/layout.dart';
 import 'package:ale_okaz/screens/posts/create_post.dart';
-import 'package:ale_okaz/utils/colors.dart';
+import 'package:ale_okaz/consts/colors.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';

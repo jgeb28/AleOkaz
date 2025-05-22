@@ -1,7 +1,7 @@
 import 'package:ale_okaz/services/post_service.dart';
-import 'package:ale_okaz/utils/colors.dart';
+import 'package:ale_okaz/consts/colors.dart';
 import 'package:ale_okaz/utils/comments_controller.dart';
-import 'package:ale_okaz/utils/post.dart';
+import 'package:ale_okaz/models/data/post.dart';
 import 'package:ale_okaz/utils/parser.dart';
 import 'package:ale_okaz/widgets/posts/comments_sheet.dart';
 import 'package:ale_okaz/widgets/posts/interaction_button.dart';

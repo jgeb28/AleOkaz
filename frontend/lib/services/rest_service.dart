@@ -1,9 +1,14 @@
+import 'dart:io';
+
+import 'package:ale_okaz/consts/flutter_api_consts.dart';
 import 'package:ale_okaz/utils/ip.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
+import 'package:path/path.dart';
 
 class RestService {
   final storage = const FlutterSecureStorage();
@@ -184,5 +189,65 @@ class RestService {
 
     final decoded = jsonDecode(response.body);
     return parser(decoded);
+  }
+
+  Future<void> updateUserInfo(
+      {Map<String, dynamic>? data, File? imageFile}) async {
+    try {
+      String? accessToken = await storage.read(key: 'accessToken');
+      if (accessToken == null) {
+        throw 'Brak Tokenu uwierzytelniającego';
+      }
+
+      if (await isTokenExpired(accessToken)) {
+        await refreshAccessToken();
+        accessToken = await storage.read(key: 'accessToken');
+      }
+      var uri = Uri.parse('${FlutterApiConsts.baseUrl}/api/users/info');
+
+      var request = http.MultipartRequest('PUT', uri);
+
+      if (data != null && data.isNotEmpty) {
+        request.files.add(http.MultipartFile.fromString(
+            'userInfo', jsonEncode(data),
+            contentType: MediaType('application', 'json')));
+      }
+
+      if (imageFile != null) {
+        String extension =
+            basename(imageFile.path).split('.').last.toLowerCase();
+        MediaType mediaType;
+
+        switch (extension) {
+          case 'jpg':
+          case 'jpeg':
+            mediaType = MediaType('image', 'jpeg');
+            break;
+          case 'png':
+            mediaType = MediaType('image', 'png');
+            break;
+          default:
+            mediaType = MediaType('image', 'jpeg');
+            break;
+        }
+
+        request.files.add(await http.MultipartFile.fromPath(
+            'image', imageFile.absolute.path,
+            contentType: mediaType));
+      }
+
+      request.headers['authorization'] = 'Bearer $accessToken';
+
+      var response = await request.send();
+
+      if (response.statusCode == 201) {
+        ;
+      } else {
+        final respStr = await response.stream.bytesToString();
+        throw Exception('Request failed: $respStr');
+      }
+    } catch (e) {
+      throw Exception('Error: $e');
+    }
   }
 }

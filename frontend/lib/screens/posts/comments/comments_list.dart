@@ -1,9 +1,9 @@
 // lib/screens/posts/comments/comments_list.dart
 
+import 'package:ale_okaz/models/data/user.dart';
 import 'package:flutter/material.dart';
-import 'package:ale_okaz/screens/register/user.dart';
 import 'package:ale_okaz/services/user_service.dart';
-import 'package:ale_okaz/utils/comment.dart';
+import 'package:ale_okaz/models/data/comment.dart';
 import 'package:ale_okaz/screens/posts/comments/comment_item.dart';
 
 class CommentsList extends StatefulWidget {

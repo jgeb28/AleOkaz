@@ -1,6 +1,6 @@
-import 'package:ale_okaz/screens/register/user.dart';
+import 'package:ale_okaz/models/data/user.dart';
 import 'package:ale_okaz/services/post_service.dart';
-import 'package:ale_okaz/utils/comment.dart';
+import 'package:ale_okaz/models/data/comment.dart';
 import 'package:ale_okaz/utils/parser.dart';
 import 'package:ale_okaz/widgets/posts/interaction_button.dart';
 import 'package:flutter/material.dart';
@@ -72,8 +72,8 @@ class _CommentItemState extends State<CommentItem> {
         children: [
           CircleAvatar(
             radius: 20,
-            backgroundImage:
-                NetworkImage(_parser.getImageUrl(widget.user.profilePicture)),
+            backgroundImage: NetworkImage(
+                _parser.getImageUrl(widget.user.profilePictureUrl)),
           ),
           const SizedBox(width: 12),
           Expanded(
