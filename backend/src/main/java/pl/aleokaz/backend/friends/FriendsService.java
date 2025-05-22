@@ -94,4 +94,15 @@ public class FriendsService {
             .toList();
         return friendDTOs;
     }
+
+    public List<FriendDTO> getIncomingRequests(UUID userId){
+        List<Friendship> friendships = friendshipRepository.findAllByFriendId(userId);
+        List<FriendDTO> friendDTOs = friendships.stream()
+            .filter(friendship -> !friendship.isActive())
+            .map(friendship -> friendship.toFriendDTO(userId))
+            .toList();
+        return friendDTOs.stream()
+            .filter(friendDTO -> !friendDTO.is_sender())
+            .toList();
+    }
 }

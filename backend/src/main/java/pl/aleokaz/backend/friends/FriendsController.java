@@ -36,6 +36,19 @@ public class FriendsController {
         }
     }
 
+    @GetMapping("/incoming")
+    public ResponseEntity<List<FriendDTO>> getIncomingRequests(Authentication authentication) {
+        try {
+            if(authentication == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+            }
+            UUID currentUserId = UUID.fromString((String) authentication.getPrincipal());
+            return ResponseEntity.ok().body(friendsService.getIncomingRequests(currentUserId));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(List.of());
+        }
+    }
+
     @GetMapping("/allof/{username}")
     public ResponseEntity<List<FriendDTO>> getFriendsOfUser(@PathVariable String username){
         try {
