@@ -28,14 +28,21 @@ public class Friendship {
     private boolean isActive;
 
     public UUID getFriendId(UUID currentUserId) {
-        return user().id().equals(currentUserId) ? friend().id() : user().id();
+        UUID userID = user().id();
+        UUID friendID = friend().id();
+        return userID.equals(currentUserId) ? friendID : userID;
     }
 
-    //TODO(marcin): Jak będą zdjęcia użytkowników to dodać
     public FriendDTO toFriendDTO(UUID currentUserId){
-        return user().id().equals(currentUserId) ? 
-            FriendDTO.builder().username(friend().username()).avatar_url("avatar_url").is_accepted(isActive()).is_sender(true).build() :
-            FriendDTO.builder().username(user().username()).avatar_url("avatar_url").is_accepted(isActive()).is_sender(false).build();
+        boolean isSender = user().id().equals(currentUserId);
+        User other = isSender ? friend() : user();
+        return FriendDTO.builder()
+                .id(other.id())
+                .username(other.username())
+                .avatar_url(other.profilePicture())
+                .is_accepted(isActive())
+                .is_sender(isSender)
+                .build();
     }
 
     public Friendship(User user, User friend, boolean isActive) {
