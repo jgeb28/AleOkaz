@@ -49,5 +49,6 @@ public class FishingSpotController {
         else return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-
+    //sortowanie w get all
+    //posty w łowisku
 }

@@ -6,6 +6,7 @@ import org.locationtech.jts.geom.Point;
 import pl.aleokaz.backend.post.Post;
 import pl.aleokaz.backend.post.PostDto;
 
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -16,5 +17,6 @@ public record FishingSpotDto(
     String description,
     @NonNull UUID ownerId,
     @NonNull double longitude,
-    @NonNull double latitude
+    @NonNull double latitude,
+    @NonNull List<PostDto> posts
 ) {}

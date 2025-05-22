@@ -18,6 +18,5 @@ public record PostDto(
     Date editedAt,
     @NonNull UUID authorId,
     @NonNull ReactionsDto reactions,
-    @NonNull Set<CommentDto> comments,
-    @NonNull FishingSpotDto fishingSpot) {
+    @NonNull Set<CommentDto> comments) {
 }
