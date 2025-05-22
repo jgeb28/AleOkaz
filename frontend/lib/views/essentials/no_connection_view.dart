@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:ale_okaz/utils/colors.dart';
+import 'package:ale_okaz/consts/colors.dart';
 import 'package:ale_okaz/widgets/bottom_navbar.dart';
 
 class NoConnectionScreen extends StatelessWidget {

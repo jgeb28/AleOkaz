@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:ale_okaz/utils/colors.dart';
+import 'package:ale_okaz/consts/colors.dart';
 
 class FriendContainer extends StatelessWidget {
 
   final String friendName;
   final Image? friendImage = null;
+  final Map<String,String> friendOptions;
   final Function onSelected;
 
   const FriendContainer({
     required this.friendName,
     required this.onSelected,
+    required this.friendOptions,
     super.key});
 
   @override
@@ -38,9 +40,9 @@ class FriendContainer extends StatelessWidget {
                       color: Colors.grey,
                     ),
                   ),
-                  SizedBox(width: 22),
+                  const SizedBox(width: 22),
                   Text(friendName,
-                  style: TextStyle(fontSize: 16),),
+                  style: const TextStyle(fontSize: 16),),
                 ],
               ),
               PopupMenuButton<String>(
