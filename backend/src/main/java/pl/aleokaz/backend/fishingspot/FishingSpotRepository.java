@@ -12,9 +12,8 @@ public interface FishingSpotRepository extends JpaRepository<FishingSpot, UUID> 
         SELECT *
         FROM fishing_spot
         ORDER BY location <-> ST_SetSRID(ST_MakePoint(:lon, :lat), 4326)
-        LIMIT 1
         """, nativeQuery = true)
-    FishingSpot findClosestSpot(@Param("lon") double lon, @Param("lat") double lat);
+    List<FishingSpot> getSortedByDistance(@Param("lon") double lon, @Param("lat") double lat);
 
     @Query(value = """
         SELECT DISTINCT fs

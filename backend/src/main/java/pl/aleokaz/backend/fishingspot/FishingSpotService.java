@@ -54,8 +54,18 @@ public class FishingSpotService {
         return fishingSpotDtos;
     }
 
+    public List<FishingSpotDto> getAllFishingSpotsSortedByDistance(double longitude, double latitude) {
+        final List<FishingSpot> fishingSpots = fishingSpotRepository.getSortedByDistance(longitude, latitude);
+
+        final List<FishingSpotDto> fishingSpotDtos = fishingSpots.stream()
+            .map(fs -> fishingSpotMapper.convertFishingSpotToFishingSpotDto(fs))
+            .collect(Collectors.toList());
+
+        return fishingSpotDtos;
+    }
+
     public FishingSpotDto getClosestFishingSpot(double longitude, double latitude) {
-        var closestSpot = fishingSpotRepository.findClosestSpot(longitude, latitude);
+        var closestSpot = fishingSpotRepository.getSortedByDistance(longitude, latitude).getFirst();
 
         return fishingSpotMapper.convertFishingSpotToFishingSpotDto(closestSpot);
     }

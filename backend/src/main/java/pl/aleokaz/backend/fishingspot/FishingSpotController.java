@@ -21,6 +21,16 @@ public class FishingSpotController {
         return new ResponseEntity<>(fishingSpotService.getAllFishingSpots(), HttpStatus.OK);
     }
 
+    @GetMapping("/allsorted")
+    public ResponseEntity<List<FishingSpotDto>> getAllFishingSpotsSortedByDistance(@RequestBody FishingSpotLocationCommand fishingSpotLocationCommand) {
+        double lon = fishingSpotLocationCommand.longitude();
+        double lat = fishingSpotLocationCommand.latitude();
+        var spotsSorted = fishingSpotService.getAllFishingSpotsSortedByDistance(lon, lat);
+
+        if (spotsSorted != null) return new ResponseEntity<>(fishingSpotService.getAllFishingSpotsSortedByDistance(lon, lat), HttpStatus.OK);
+        else return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
     @PostMapping
     public ResponseEntity<FishingSpotDto> createFishingSpot(Authentication authentication, @RequestBody FishingSpotCommand fishingSpotCommand) {
         UUID currentUserId = UUID.fromString((String) authentication.getPrincipal());
@@ -50,5 +60,4 @@ public class FishingSpotController {
     }
 
     //sortowanie w get all
-    //posty w łowisku
 }
