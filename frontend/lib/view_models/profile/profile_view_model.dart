@@ -1,3 +1,4 @@
+import 'package:ale_okaz/models/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -5,6 +6,7 @@ import 'package:ale_okaz/models/services/rest_service.dart';
 
 class ProfileViewModel extends GetxController {
   final RestService _restService = RestService();
+  final AuthService _authService = AuthService();
 
   var isMyProfile = false.obs;
   var username = "".obs;
@@ -64,6 +66,11 @@ class ProfileViewModel extends GetxController {
         isMyProfile.value = true;  // It's the logged-in user's profile
       }
     }
+  }
+
+  Future<void> logout() async {
+    await _authService.clearTokens();
+    Get.offAllNamed('/login');
   }
 
   Future<void> addFriend() async {

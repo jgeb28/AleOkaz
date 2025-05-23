@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
         GetPage(name: '/register', page: () => RegisterScreen()),
         GetPage(name: '/login', page: () => const LoginScreen()),
         GetPage(name: '/profile', page: () => const ProfileScreen()),
-        GetPage(name: '/profile/:userId', page: () => ProfileScreen()),
+        GetPage(name: '/profile/:userId', page: () => const ProfileScreen()),
         
 
       ],
