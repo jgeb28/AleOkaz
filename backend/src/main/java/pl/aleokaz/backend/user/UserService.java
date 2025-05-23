@@ -3,6 +3,7 @@ package pl.aleokaz.backend.user;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -10,7 +11,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.NonNull;
+import org.springframework.web.multipart.MultipartFile;
+import pl.aleokaz.backend.post.ImageSaveException;
+import pl.aleokaz.backend.post.ImageService;
 
+import java.io.IOException;
 import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -30,14 +35,21 @@ public class UserService {
 
     private JwtTokenProvider jwtTokenProvider;
 
+    @Value("${aleokaz.profile.picture.default}")
+    private String defaultProfilePicture;
+
+    private ImageService imageService;
+
     public UserService(@NonNull UserMapper userMapper,
             @NonNull UserRepository userRepository,
             @NonNull VerificationRepository verificationRepository,
-                       @NonNull JwtTokenProvider jwtTokenProvider) {
+                       @NonNull JwtTokenProvider jwtTokenProvider,
+                       @NonNull ImageService imageService) {
         this.userMapper = userMapper;
         this.userRepository = userRepository;
         this.verificationRepository = verificationRepository;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.imageService = imageService;
     }
 
     /**
@@ -97,6 +109,7 @@ public class UserService {
                 .email(email)
                 .password(encodedPassword)
                 .roles(roles)
+                .profilePicture(defaultProfilePicture)
                 .build();
         user = userRepository.save(user);
 
@@ -171,6 +184,32 @@ public class UserService {
         Optional<User> optionalUser = userRepository.findById(userId);
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
+            return userMapper.convertUserToUserDto(user);
+        }
+        else {
+            throw new IllegalArgumentException("User not found with ID: " + userId);
+        }
+    }
+
+    public UserDto updateUserInfo(UUID userId, UpdateInfoCommand updateInfoCommand, MultipartFile image) {
+        Optional<User> optionalUser = userRepository.findById(userId);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+
+            if(updateInfoCommand != null) {
+                if(!updateInfoCommand.username().isEmpty()) {
+                    user.username(updateInfoCommand.username());
+                }
+            }
+
+            if(image != null && !image.isEmpty()) {
+                try {
+                    user.profilePicture(imageService.saveProfilePicture(image));
+                } catch (IOException e) {
+                    throw new ImageSaveException();
+                }
+            }
+
             return userMapper.convertUserToUserDto(user);
         }
         else {

@@ -4,16 +4,15 @@ import java.net.URISyntaxException;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import pl.aleokaz.backend.post.PostDto;
+import pl.aleokaz.backend.post.ImageSaveException;
 
 // TODO(michalciechan): Obsługa wyjątków.
 @RestController
@@ -48,16 +47,25 @@ public class UserController {
         return ResponseEntity.ok(userService.refreshUserToken(refreshCommand));
     }
 
-    //przykładowy endpoint wymagający autoryzacji w nagłówku "Bearer token"
     @GetMapping("/info/{id}")
-    public ResponseEntity<UserDto> getUserInfo(@PathVariable UUID id, Authentication authentication) {
-        String currentUserId = (String) authentication.getPrincipal();
-
-        if (!currentUserId.equals(id.toString())) {
-            throw new RuntimeException("Access denied: You can only access your own info.");
-        }
-
+    public ResponseEntity<UserDto> getUserInfo(@PathVariable UUID id) {
         return ResponseEntity.ok(userService.getUserInfo(id));
+    }
+
+    @PutMapping(path="/info/{id}", consumes = "multipart/form-data")
+    public ResponseEntity<UserDto> updateUserInfo(
+        Authentication authentication,
+        @RequestPart(value = "userInfo", required = false) UpdateInfoCommand updateInfoCommand,
+        @RequestParam(value = "image", required = false) MultipartFile image) {
+
+        UUID currentUserId = UUID.fromString((String) authentication.getPrincipal());
+
+        try {
+            UserDto userInfo = userService.updateUserInfo(currentUserId, updateInfoCommand, image);
+            return ResponseEntity.status(HttpStatus.CREATED).body(userInfo);
+        } catch (ImageSaveException pse) {
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(null);
+        }
     }
 
 }

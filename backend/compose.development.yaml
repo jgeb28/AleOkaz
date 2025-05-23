@@ -1,4 +1,7 @@
 services:
+  zookeeper:
+    ports:
+      - 2181:2181
   kafka:
     ports:
       - 9092:9092
