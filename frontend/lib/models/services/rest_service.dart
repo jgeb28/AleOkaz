@@ -56,7 +56,7 @@ class RestService extends GetxService {
       }
 
       final response = await http.post(
-        Uri.parse("${FlutterApiConsts.baseUrl}/$url"),
+        Uri.parse("${FlutterApiConsts.baseUrl}$url"),
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',
           "Authorization": "Bearer $accessToken",
@@ -87,7 +87,7 @@ class RestService extends GetxService {
       }
 
       final response = await http.put(
-        Uri.parse("${FlutterApiConsts.baseUrl}/$url"),
+        Uri.parse("${FlutterApiConsts.baseUrl}$url"),
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',
           "Authorization": "Bearer $accessToken",

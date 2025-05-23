@@ -1,3 +1,4 @@
+import 'package:ale_okaz/models/data/friend.dart';
 import 'package:ale_okaz/view_models/profile/friends_tab_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:ale_okaz/widgets/friend_container.dart';
@@ -63,17 +64,17 @@ class _FriendsTabState extends State<FriendsTab> {
                 : {'profile': 'Profil', 'add': 'Dodaj'};
 
             return ListView(
-              children: viewModel.filteredFriendsList.map((String name) {
+              children: viewModel.filteredFriendsList.map((Friend friend) {
                 return FriendContainer(
-                  friendName: name,
+                  friendName: friend.username,
                   friendOptions: friendOptions,
                   onSelected: (String choice) {
                     if (choice == 'delete') {
-                      viewModel.deleteFriend(name);
+                      viewModel.deleteFriend(friend.username);
                     } else if (choice == 'profile') {
-                      Get.toNamed("/profile/$name");
+                      Get.toNamed("/profile/${friend.id}");
                     } else if (choice == 'add') {
-                      viewModel.addFriend(name);
+                      viewModel.addFriend(friend.username);
                     }
                   },
                 );

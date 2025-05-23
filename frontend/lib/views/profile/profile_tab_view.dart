@@ -64,7 +64,16 @@ class _ProfileTabState extends State<ProfileTab> {
                           )
                         )
                       )
-                  : const SizedBox.shrink(),
+                  : Container(
+                    width: 220.0,
+                    height: 220.0,
+                    decoration:  BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                            fit: BoxFit.fill,
+                            image:  NetworkImage(widget.profilePictureUrl!))
+                          )
+                        ),
             widget.isMyProfile ? Positioned(
               right: 0,
               bottom: 0,

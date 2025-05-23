@@ -51,7 +51,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 20.0),
                 child: viewModel.isMyProfile.value
-                    ? const Icon(Icons.settings)
+                    ? 
+                    const Icon(Icons.settings)
                     : IconButton(
                         onPressed: viewModel.addFriend,
                         icon: const Icon(Icons.person_add_rounded),
