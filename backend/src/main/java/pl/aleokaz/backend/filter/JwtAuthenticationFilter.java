@@ -31,8 +31,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String method = httpRequest.getMethod();
         String path = httpRequest.getRequestURI();
 
-        final var isPublicEndpoint = "GET".equals(method) && (path.startsWith("/api/posts") ||
-                path.startsWith("/api/friends/allof"));
+        final var isPublicEndpoint = "GET".equals(method) &&
+            (path.startsWith("/api/posts") || path.startsWith("/api/users/info") || path.startsWith("/api/friends/allof"));
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7); // Remove "Bearer " prefix

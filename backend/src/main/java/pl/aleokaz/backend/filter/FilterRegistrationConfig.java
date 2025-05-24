@@ -16,7 +16,7 @@ public class FilterRegistrationConfig {
     public FilterRegistrationBean<JwtAuthenticationFilter> jwtAuthenticationFilter() {
         FilterRegistrationBean<JwtAuthenticationFilter> filterRegistrationBean = new FilterRegistrationBean<>();
         filterRegistrationBean.setFilter(new JwtAuthenticationFilter(jwtTokenProvider));
-        filterRegistrationBean.addUrlPatterns("/api/comments/*", "/api/posts/*", "/api/friends/*", "/api/sse/*");
+        filterRegistrationBean.addUrlPatterns("/api/comments/*", "/api/posts/*", "/api/friends/*", "/api/sse/*", "/api/users/info/*");
         return filterRegistrationBean;
     }
 }
