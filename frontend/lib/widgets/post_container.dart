@@ -1,6 +1,7 @@
 import 'package:ale_okaz/consts/colors.dart';
+import 'package:ale_okaz/utils/parser.dart';
 import 'package:flutter/material.dart';
-import 'package:ale_okaz/models/data/post.dart';
+import 'package:ale_okaz/models/data/post_miniature.dart';
 
 class PostMiniatureContainer extends StatelessWidget {
   final PostMiniature post;
@@ -11,15 +12,14 @@ class PostMiniatureContainer extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('TO DO: Przejście do POSTA'))
-        );
+            const SnackBar(content: Text('TO DO: Przejście do POSTA')));
       },
       child: Stack(
         children: [
           // Network Image as Background
           Positioned.fill(
             child: Image.network(
-              post.imageUrl,
+              Parser().getImageUrl(post.imageUrl),
               fit: BoxFit.cover,
               errorBuilder: (context, error, stackTrace) => Container(
                 color: Colors.grey,
@@ -28,7 +28,7 @@ class PostMiniatureContainer extends StatelessWidget {
               ),
             ),
           ),
-          
+
           // Bottom Overlay for Info
           Positioned(
             bottom: 0,

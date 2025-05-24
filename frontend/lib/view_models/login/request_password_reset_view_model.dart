@@ -1,7 +1,7 @@
+import 'package:ale_okaz/services/auth_service.dart';
 import 'package:ale_okaz/views/login/reset_password_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ale_okaz/models/services/auth_service.dart';
 
 class RequestPasswordResetViewModel extends GetxController {
   final formKey = GlobalKey<FormState>();
@@ -35,7 +35,8 @@ class RequestPasswordResetViewModel extends GetxController {
   void submit() async {
     if (formKey.currentState!.validate()) {
       try {
-        bool success = await _authService.verifyResetToken(emailController.text, codeController.text);
+        bool success = await _authService.verifyResetToken(
+            emailController.text, codeController.text);
         if (success) {
           Get.to(() => ResetPasswordView(), arguments: emailController.text);
         }

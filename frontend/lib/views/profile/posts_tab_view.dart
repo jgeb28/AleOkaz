@@ -1,14 +1,10 @@
-import 'package:ale_okaz/models/data/post.dart';
 import 'package:ale_okaz/view_models/profile/post_tab_view_model.dart';
 import 'package:ale_okaz/widgets/post_container.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class PostsTab extends StatefulWidget {
-  const PostsTab({
-    required this.isMyProfile,
-    required this.userId,
-    super.key});
+  const PostsTab({required this.isMyProfile, required this.userId, super.key});
 
   final bool isMyProfile;
   final String userId;
@@ -18,7 +14,6 @@ class PostsTab extends StatefulWidget {
 }
 
 class _PostsTabState extends State<PostsTab> {
-
   late PostsTabViewModel _viewModel;
 
   @override
@@ -61,6 +56,4 @@ class _PostsTabState extends State<PostsTab> {
       );
     });
   }
-
-
 }

@@ -2,14 +2,11 @@ import 'package:ale_okaz/consts/colors.dart';
 import 'package:flutter/material.dart';
 
 class MySearchBar extends StatelessWidget {
-  const MySearchBar({
-    required this.controller,
-    required this.onChanged,
-    super.key
-  });
+  const MySearchBar(
+      {required this.controller, required this.onChanged, super.key});
 
   final TextEditingController controller;
-  final Function(String) onChanged; 
+  final Function(String) onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +26,7 @@ class MySearchBar extends StatelessWidget {
             child: SizedBox(
               height: 32,
               child: TextField(
-                onChanged: onChanged, 
+                onChanged: onChanged,
                 controller: controller,
                 textAlignVertical: TextAlignVertical.center,
                 style: const TextStyle(

@@ -1,9 +1,9 @@
+import 'package:ale_okaz/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ale_okaz/models/services/auth_service.dart';
 
 class ResetPasswordViewModel extends GetxController {
-  final GlobalKey<FormState> formKey = GlobalKey<FormState>(); 
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final passwordController = TextEditingController();
   final repeatedPasswordController = TextEditingController();
   final AuthService _authService = AuthService();
@@ -29,7 +29,7 @@ class ResetPasswordViewModel extends GetxController {
         await _authService.changePassword(email, passwordController.text);
         clearInputs();
         Get.offAllNamed('/login');
-         showSnackBar("Pomyślnie zresetowano hasło", Colors.green);
+        showSnackBar("Pomyślnie zresetowano hasło", Colors.green);
       } catch (e) {
         clearInputs();
         showSnackBar("Wystąpił błąd podczas resetowania: $e", Colors.red);

@@ -1,14 +1,13 @@
+import 'package:ale_okaz/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ale_okaz/models/services/auth_service.dart';
 
 class LoginViewModel extends GetxController {
-  final AuthService authService = AuthService(); 
+  final AuthService authService = AuthService();
 
-  final GlobalKey<FormState> formKey = GlobalKey<FormState>(); 
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
-
 
   void submit() async {
     if (formKey.currentState!.validate()) {
@@ -17,11 +16,12 @@ class LoginViewModel extends GetxController {
           usernameController.text,
           passwordController.text,
         );
-        Get.offAllNamed('/profile');
+        Get.offAllNamed('/home');
         //Get.toNamed('/profile');
       } catch (e) {
         clearInputs();
-        Get.snackbar("Błąd", 'Wystąpił błąd podczas logowania $e',backgroundColor: Colors.red);
+        Get.snackbar("Błąd", 'Wystąpił błąd podczas logowania $e',
+            backgroundColor: Colors.red);
       }
     }
   }

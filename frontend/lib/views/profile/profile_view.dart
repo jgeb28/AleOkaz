@@ -51,7 +51,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 20.0),
                 child: viewModel.isMyProfile.value
-                    ? const Icon(Icons.settings)
+                    ? 
+                    PopupMenuButton<String>(
+                      onSelected: (String choice) {  
+                        if(choice == "logout") {
+                          viewModel.logout();
+                        }
+                      },
+                      icon: const Icon(Icons.more_horiz, color: tabGreenColor,),
+                      itemBuilder: 
+                        (BuildContext context) => <PopupMenuEntry<String>> [
+                          const PopupMenuItem(value: "logout", child:  Text('Wyloguj')),
+
+                        ],
+                    )
                     : IconButton(
                         onPressed: viewModel.addFriend,
                         icon: const Icon(Icons.person_add_rounded),

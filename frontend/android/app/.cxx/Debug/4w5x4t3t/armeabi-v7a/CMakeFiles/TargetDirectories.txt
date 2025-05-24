@@ -1,0 +1,2 @@
+D:/aleOkazProject/frontend/android/app/.cxx/Debug/4w5x4t3t/armeabi-v7a/CMakeFiles/edit_cache.dir
+D:/aleOkazProject/frontend/android/app/.cxx/Debug/4w5x4t3t/armeabi-v7a/CMakeFiles/rebuild_cache.dir

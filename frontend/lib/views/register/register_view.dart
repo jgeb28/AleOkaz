@@ -10,7 +10,6 @@ import 'package:ale_okaz/widgets/line_divider.dart';
 import 'package:flutter/material.dart';
 
 class RegisterScreen extends StatelessWidget {
-
   RegisterScreen({super.key});
 
   final validator = Validator();
