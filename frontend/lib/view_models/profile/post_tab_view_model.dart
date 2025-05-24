@@ -1,7 +1,7 @@
-import 'package:ale_okaz/models/data/post_miniature.dart';
-import 'package:ale_okaz/services/rest_service.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:ale_okaz/services/rest_service.dart';
+import 'package:ale_okaz/models/data/post_miniature.dart';
 
 class PostsTabViewModel extends GetxController {
   final RestService _restService = RestService();

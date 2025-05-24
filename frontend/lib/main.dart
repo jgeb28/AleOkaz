@@ -1,22 +1,17 @@
-import 'package:ale_okaz/services/connectivity_service.dart';
 import 'package:ale_okaz/views/essentials/no_connection_view.dart';
 import 'package:ale_okaz/views/login/login_view.dart';
 import 'package:ale_okaz/views/posts/posts_screen.dart';
 import 'package:ale_okaz/views/posts/take_picture.dart';
 import 'package:ale_okaz/views/profile/profile_view.dart';
 import 'package:ale_okaz/views/register/register_view.dart';
-import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-void main() async {
+import 'package:ale_okaz/services/connectivity_service.dart';
+
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
-
-  final cameras = await availableCameras();
-
-  Get.put(cameras.first, permanent: true);
   Get.put(ConnectivityService(), permanent: true);
-
   runApp(const MyApp());
 }
 
@@ -40,6 +35,7 @@ class MyApp extends StatelessWidget {
         GetPage(name: '/profile', page: () => const ProfileScreen()),
         GetPage(name: '/take-picture', page: () => const TakePictureScreen()),
         GetPage(name: '/home', page: () => const PostsScreen()),
+        GetPage(name: '/profile/:username', page: () => const ProfileScreen())
       ],
     );
   }

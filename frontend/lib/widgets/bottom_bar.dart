@@ -36,7 +36,7 @@ class BottomBar extends StatelessWidget {
             ),
             Expanded(
               child: InkWell(
-                onTap: () => {},
+                onTap: () => {Get.toNamed('/profile')},
                 child: const SizedBox.expand(
                     child: Icon(Icons.account_circle, color: Colors.green)),
               ),

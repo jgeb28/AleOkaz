@@ -1,7 +1,5 @@
 import 'dart:io';
-
 import 'package:ale_okaz/consts/flutter_api_consts.dart';
-import 'package:ale_okaz/utils/ip.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'dart:convert';
