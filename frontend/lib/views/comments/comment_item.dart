@@ -30,10 +30,13 @@ class CommentItem extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // User avatar
-          CircleAvatar(
-            radius: 20,
-            backgroundImage: NetworkImage(
-              parser.getImageUrl(user.profilePictureUrl),
+          InkWell(
+            onTap: () => Get.toNamed('/profile/${user.id}'),
+            child: CircleAvatar(
+              radius: 20,
+              backgroundImage: NetworkImage(
+                parser.getImageUrl(user.profilePictureUrl),
+              ),
             ),
           ),
           const SizedBox(width: 12),
