@@ -43,8 +43,11 @@ class PostTopBar extends StatelessWidget {
           padding: const EdgeInsets.all(8),
           child: Row(
             children: [
-              CircleAvatar(
-                  radius: 20, backgroundImage: NetworkImage(avatarUrl)),
+              InkWell(
+                onTap: () => Get.toNamed('/profile/$userId'),
+                child: CircleAvatar(
+                    radius: 20, backgroundImage: NetworkImage(avatarUrl)),
+              ),
               const SizedBox(width: 12),
               Text(
                 user.username,

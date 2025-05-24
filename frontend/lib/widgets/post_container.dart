@@ -1,4 +1,5 @@
 import 'package:ale_okaz/consts/colors.dart';
+import 'package:ale_okaz/utils/parser.dart';
 import 'package:flutter/material.dart';
 import 'package:ale_okaz/models/data/post_miniature.dart';
 
@@ -8,7 +9,6 @@ class PostMiniatureContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(post.imageUrl);
     return GestureDetector(
       onTap: () {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -19,7 +19,7 @@ class PostMiniatureContainer extends StatelessWidget {
           // Network Image as Background
           Positioned.fill(
             child: Image.network(
-              post.imageUrl,
+              Parser().getImageUrl(post.imageUrl),
               fit: BoxFit.cover,
               errorBuilder: (context, error, stackTrace) => Container(
                 color: Colors.grey,

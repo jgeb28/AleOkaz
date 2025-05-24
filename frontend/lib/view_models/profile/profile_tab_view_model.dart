@@ -41,6 +41,25 @@ class ProfileTabViewModel extends GetxController {
     }
   }
 
+  Future<void> addFriend() async {
+    try {
+      await _restService.sendPOSTRequest('api/friends/add',
+          payload: {'username': username.value}, parser: (decodedJson) => {});
+
+      Get.snackbar(
+        'Sukces',
+        'Pomyślnie dodano znajomego',
+        backgroundColor: Colors.green,
+      );
+    } catch (ex) {
+      Get.snackbar(
+        'Błąd',
+        "Coś poszło nie tak w trakcie dodawania znajomego : $ex",
+        backgroundColor: Colors.red,
+      );
+    }
+  }
+
   Future<void> setUsername(String newUsername) async {
     username.value = newUsername;
     isEditing.value = false;

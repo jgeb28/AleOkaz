@@ -80,7 +80,7 @@ class ProfileViewModel extends GetxController {
 
   Future<void> addFriend() async {
     try {
-      await _restService.sendPOSTRequest('/friends/add',
+      await _restService.sendPOSTRequest('api/friends/add',
           payload: {'username': username.value}, parser: (decodedJson) => {});
 
       Get.snackbar(

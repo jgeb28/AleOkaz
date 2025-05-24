@@ -169,7 +169,7 @@ class _ProfileTabState extends State<ProfileTab> {
                 ),
               )
             : IconButton(
-                onPressed: () {},
+                onPressed: () => _viewModel.addFriend(),
                 icon: const Icon(Icons.person_add_alt_rounded),
               ),
       ],
