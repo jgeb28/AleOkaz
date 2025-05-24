@@ -1,9 +1,8 @@
-import 'package:ale_okaz/models/services/auth_service.dart';
+import 'package:ale_okaz/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class RegisterViewModel extends GetxController {
-
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final AuthService authService = AuthService();
   final usernameController = TextEditingController();
@@ -12,7 +11,6 @@ class RegisterViewModel extends GetxController {
   final repeatedPasswordController = TextEditingController();
 
   var isLoading = false.obs;
-
 
   @override
   void onClose() {
@@ -47,7 +45,7 @@ class RegisterViewModel extends GetxController {
         Get.offAllNamed('/login');
       } catch (e) {
         clearInputs();
-        Get.snackbar('Błąd',"Błąd podczas tworzenia konta! $e",
+        Get.snackbar('Błąd', "Błąd podczas tworzenia konta! $e",
             backgroundColor: Colors.red, colorText: Colors.white);
       } finally {
         isLoading.value = false;

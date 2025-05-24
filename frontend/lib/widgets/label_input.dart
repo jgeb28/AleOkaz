@@ -6,12 +6,14 @@ class LabelInput extends StatelessWidget {
   final TextEditingController controller;
   final String? hintText;
   final String? Function(String?) validator;
+  final int maxLines;
 
   const LabelInput({
     required this.labelName,
     required this.controller,
     required this.validator,
     this.isObscured = false,
+    this.maxLines = 1,
     this.hintText,
     super.key,
   });
@@ -37,6 +39,7 @@ class LabelInput extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 TextFormField(
+                  maxLines: maxLines,
                   controller: controller,
                   obscureText: isObscured,
                   decoration: InputDecoration(

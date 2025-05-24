@@ -10,7 +10,8 @@ class FriendsTab extends StatefulWidget {
   final String? username;
   final bool isMyProfile;
 
-  const FriendsTab({required this.isMyProfile, required this.username, super.key});
+  const FriendsTab(
+      {required this.isMyProfile, required this.username, super.key});
 
   @override
   State<FriendsTab> createState() => _FriendsTabState();

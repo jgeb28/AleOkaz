@@ -1,7 +1,7 @@
+import 'package:ale_okaz/services/rest_service.dart';
 import 'package:ale_okaz/models/data/friend.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
-import 'package:ale_okaz/models/services/rest_service.dart';
 
 class FriendsTabViewModel extends GetxController {
   final RestService _restService = RestService();
@@ -18,16 +18,27 @@ class FriendsTabViewModel extends GetxController {
 
   Future<void> getAllFriends(bool isMyProfile, String? username) async {
     try {
-      dynamic response =
-          await _restService.sendGETRequest("/friends/allof/$username");
+      final url =
+          isMyProfile ? 'api/friends/all' : 'api/friends/allof/$username';
 
-      friendsList.value = List<Friend>.from(response.map(
-          (friend) => Friend(id: friend['id'], username: friend['username'])));
+      final friends = await _restService.sendGETRequest<List<Friend>>(
+        url,
+        (decodedJson) {
+          return (decodedJson as List)
+              .map((friend) =>
+                  Friend(id: friend['id'], username: friend['username']))
+              .toList();
+        },
+      );
+
+      friendsList.value = friends;
       _applyFilters();
-      
     } catch (e) {
-      Get.snackbar('Błąd', 'Błąd podczas wczytywania danych: $e',
-          backgroundColor: Colors.red);
+      Get.snackbar(
+        'Błąd',
+        'Błąd podczas wczytywania danych: $e',
+        backgroundColor: Colors.red,
+      );
     }
   }
 
@@ -65,9 +76,15 @@ class FriendsTabViewModel extends GetxController {
 
   Future<void> addFriend(String username) async {
     try {
-      await _restService.sendPOSTRequest(
-        '/friends/add',
-        {'username': username},
+      await _restService.sendPOSTRequest<void>(
+        'api/friends/add',
+        payload: {'username': username},
+        parser: (decodedJson) => {},
+      );
+      Get.snackbar(
+        'Sukces',
+        'Pomyślnie dodano znajomego',
+        backgroundColor: Colors.green,
       );
       Get.snackbar('Sukcess', 'Pomyślnie dodano znajomego',
           backgroundColor: Colors.green);
@@ -79,10 +96,9 @@ class FriendsTabViewModel extends GetxController {
 
   Future<void> deleteFriend(String username) async {
     try {
-      await _restService.sendPOSTRequest(
-        '/friends/remove',
-        {'username': username},
-      );
+      await _restService.sendPOSTRequest('api/friends/remove',
+          payload: {'username': username}, parser: (decodedJson) => {});
+
       Get.snackbar('Sukcess', 'Pomyślnie usunięto znajomego',
           backgroundColor: Colors.green);
       await getAllFriends(true, null);

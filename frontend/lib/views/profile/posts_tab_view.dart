@@ -4,10 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class PostsTab extends StatefulWidget {
-  const PostsTab({
-    required this.isMyProfile,
-    required this.userId,
-    super.key});
+  const PostsTab({required this.isMyProfile, required this.userId, super.key});
 
   final bool isMyProfile;
   final String userId;
@@ -17,7 +14,6 @@ class PostsTab extends StatefulWidget {
 }
 
 class _PostsTabState extends State<PostsTab> {
-
   late PostsTabViewModel _viewModel;
 
   @override
@@ -60,6 +56,4 @@ class _PostsTabState extends State<PostsTab> {
       );
     });
   }
-
-
 }

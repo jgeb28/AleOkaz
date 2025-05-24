@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 
 class TitleSection extends StatelessWidget {
-  const TitleSection({
-    super.key,
-    required this.name,
-  });
-
+  final double fontSize;
   final String name;
+  final String? fontFamily;
+
+  const TitleSection(
+      {super.key,
+      required this.name,
+      this.fontSize = 48,
+      this.fontFamily = 'Righteous'});
 
   @override
   Widget build(BuildContext context) {
@@ -19,9 +22,9 @@ class TitleSection extends StatelessWidget {
             padding: const EdgeInsets.only(bottom: 8),
             child: Text(
               name,
-              style: const TextStyle(
+              style: TextStyle(
                 fontFamily: 'Righteous',
-                fontSize: 48,
+                fontSize: fontSize,
               ),
             ),
           ),
