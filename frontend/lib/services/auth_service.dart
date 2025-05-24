@@ -14,7 +14,7 @@ class AuthService {
   Future<void> login(String username, String password) async {
     try {
       final response = await http.post(
-        Uri.parse('$ip/api/users/login'),
+        Uri.parse('${FlutterApiConsts.baseUrl}/api/users/login'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -128,7 +128,7 @@ class AuthService {
     if (refreshToken != null) {
       try {
         final response = await http.post(
-          Uri.parse('$ip/api/users/refresh'),
+          Uri.parse('${FlutterApiConsts.baseUrl}/api/users/refresh'),
           headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8',
           },
@@ -224,7 +224,7 @@ class AuthService {
 
   Future<User> createUser(
       String username, String email, String password) async {
-    final uri = Uri.parse('$ip/api/users');
+    final uri = Uri.parse('${FlutterApiConsts.baseUrl}/api/users');
 
     try {
       final response = await http.post(

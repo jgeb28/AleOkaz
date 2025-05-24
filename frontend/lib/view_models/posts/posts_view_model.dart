@@ -1,16 +1,12 @@
-// lib/viewmodels/posts_view_model.dart
-
 import 'package:ale_okaz/models/data/post.dart';
 import 'package:ale_okaz/services/post_service.dart';
 import 'package:get/get.dart';
 
 class PostsViewModel extends GetxController {
-  final _service = Get.find<PostService>();
+  final PostService _service = PostService();
 
-  // Observable list of posts
   final posts = <Post>[].obs;
 
-  // Loading & error state
   final isLoading = false.obs;
   final errorMessage = RxnString();
 

@@ -12,7 +12,7 @@ class PostsTabViewModel extends GetxController {
   Future<void> getAllPosts() async {
     try {
       final response = await _restService
-          .sendGETRequest<List<PostMiniature>>('/posts', (decodedJson) {
+          .sendGETRequest<List<PostMiniature>>('api/posts', (decodedJson) {
         return List<PostMiniature>.from(decodedJson.map((postMini) =>
             PostMiniature.fromJson(postMini as Map<String, dynamic>)));
       });

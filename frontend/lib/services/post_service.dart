@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:ale_okaz/consts/flutter_api_consts.dart';
 import 'package:ale_okaz/services/rest_service.dart';
 import 'package:ale_okaz/models/data/comment.dart';
 import 'package:ale_okaz/utils/ip.dart';
@@ -29,7 +30,8 @@ class PostService {
 
       File imageFile = File(filename);
 
-      var request = http.MultipartRequest("POST", Uri.parse('$serverUrl/$url'));
+      var request = http.MultipartRequest(
+          "POST", Uri.parse('${FlutterApiConsts.baseUrl}/$url'));
 
       request.headers['authorization'] = 'Bearer $accessToken';
 
@@ -55,7 +57,7 @@ class PostService {
 
   Future<List<Post>> getPosts() {
     return _restService.sendGETRequest<List<Post>>(
-      '$serverUrl/api/posts',
+      'api/posts',
       (decodedJson) {
         if (decodedJson is List) {
           return decodedJson
@@ -133,8 +135,8 @@ class PostService {
   Future<bool> setCommentReaction(String commentId) async {
     try {
       print(commentId);
-      await _restService.sendPUTRequestNoResponse(
-          '$serverUrl/api/comments/$commentId/reactions');
+      await _restService
+          .sendPUTRequestNoResponse('api/comments/$commentId/reactions');
 
       return true;
     } catch (e) {
@@ -146,8 +148,8 @@ class PostService {
   Future<bool> deleteCommentReaction(String commentId) async {
     try {
       print(commentId);
-      await _restService.sendDELETERequestNoResponse(
-          '$serverUrl/api/comments/$commentId/reactions');
+      await _restService
+          .sendDELETERequestNoResponse('api/comments/$commentId/reactions');
 
       return true;
     } catch (e) {
@@ -158,13 +160,13 @@ class PostService {
 
   Future<List<Comment>> getComments(String postId) async {
     final Post post = await _restService.sendGETRequest(
-        '$ip/api/posts/$postId', (decodedJson) => Post.fromJson(decodedJson));
+        'api/posts/$postId', (decodedJson) => Post.fromJson(decodedJson));
 
     return post.comments;
   }
 
   Future<Comment> createComment(String postId, String content) {
-    return _restService.sendPOSTRequest('$ip/api/comments',
+    return _restService.sendPOSTRequest('api/comments',
         payload: {'parentId': postId, 'content': content},
         parser: (decodedJson) => Comment.fromJson(decodedJson));
   }

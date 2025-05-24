@@ -17,7 +17,8 @@ class FriendsTabViewModel extends GetxController {
 
   Future<void> getAllFriends(bool isMyProfile, String? username) async {
     try {
-      final url = isMyProfile ? '/friends/all' : '/friends/allof/$username';
+      final url =
+          isMyProfile ? 'api/friends/all' : 'api/friends/allof/$username';
 
       final friends = await _restService.sendGETRequest<List<String>>(
         url,
@@ -68,7 +69,7 @@ class FriendsTabViewModel extends GetxController {
   Future<void> addFriend(String username) async {
     try {
       await _restService.sendPOSTRequest<void>(
-        '/friends/add',
+        'api/friends/add',
         payload: {'username': username},
         parser: (decodedJson) => {},
       );
@@ -88,7 +89,7 @@ class FriendsTabViewModel extends GetxController {
 
   Future<void> deleteFriend(String username) async {
     try {
-      await _restService.sendPOSTRequest('/friends/remove',
+      await _restService.sendPOSTRequest('api/friends/remove',
           payload: {'username': username}, parser: (decodedJson) => {});
 
       Get.snackbar('Sukcess', 'Pomyślnie usunięto znajomego',

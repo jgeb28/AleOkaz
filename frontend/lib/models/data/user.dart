@@ -15,6 +15,6 @@ class User {
         id: json['id'] as String,
         username: json['username'] as String,
         email: json['email'] as String,
-        profilePictureUrl: json['email'] as String);
+        profilePictureUrl: json['profilePicture'] as String);
   }
 }

@@ -16,7 +16,7 @@ class LoginViewModel extends GetxController {
           usernameController.text,
           passwordController.text,
         );
-        Get.offAllNamed('/profile');
+        Get.offAllNamed('/home');
         //Get.toNamed('/profile');
       } catch (e) {
         clearInputs();

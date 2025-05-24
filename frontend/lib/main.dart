@@ -1,8 +1,8 @@
-import 'package:ale_okaz/screens/posts_screen.dart';
-import 'package:ale_okaz/screens/posts/take_picture.dart';
 import 'package:ale_okaz/services/connectivity_service.dart';
 import 'package:ale_okaz/views/essentials/no_connection_view.dart';
 import 'package:ale_okaz/views/login/login_view.dart';
+import 'package:ale_okaz/views/posts/posts_screen.dart';
+import 'package:ale_okaz/views/posts/take_picture.dart';
 import 'package:ale_okaz/views/profile/profile_view.dart';
 import 'package:ale_okaz/views/register/register_view.dart';
 import 'package:camera/camera.dart';
@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: '/',
+      initialRoute: '/login',
       getPages: [
         GetPage(name: '/', page: () => const MyApp()),
         GetPage(name: '/no-connection', page: () => const NoConnectionScreen()),
@@ -41,7 +41,6 @@ class MyApp extends StatelessWidget {
         GetPage(name: '/take-picture', page: () => const TakePictureScreen()),
         GetPage(name: '/home', page: () => const PostsScreen()),
       ],
-      home: const LoginScreen(),
     );
   }
 }

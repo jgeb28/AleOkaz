@@ -32,7 +32,7 @@ class RestService {
     if (refreshToken != null) {
       try {
         final response = await http.post(
-          Uri.parse('$ip/api/users/refresh'),
+          Uri.parse('${FlutterApiConsts.baseUrl}/api/users/refresh'),
           headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8',
           },
@@ -89,8 +89,10 @@ class RestService {
       accessToken = (await storage.read(key: 'accessToken'))!;
     }
 
+    final finalUrl = '${FlutterApiConsts.baseUrl}/$url';
+
     final response = await http.get(
-      Uri.parse(url),
+      Uri.parse(finalUrl),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $accessToken',
@@ -120,8 +122,10 @@ class RestService {
       accessToken = (await storage.read(key: 'accessToken'))!;
     }
 
+    final finalUrl = '${FlutterApiConsts.baseUrl}/$url';
+
     final response = await http.put(
-      Uri.parse(url),
+      Uri.parse(finalUrl),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $accessToken',
@@ -146,8 +150,10 @@ class RestService {
       accessToken = (await storage.read(key: 'accessToken'))!;
     }
 
+    final finalUrl = '${FlutterApiConsts.baseUrl}/$url';
+
     final response = await http.delete(
-      Uri.parse(url),
+      Uri.parse(finalUrl),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $accessToken',
@@ -174,8 +180,10 @@ class RestService {
       accessToken = (await storage.read(key: 'accessToken'))!;
     }
 
+    final finalUrl = '${FlutterApiConsts.baseUrl}/$url';
+
     final response = await http.post(
-      Uri.parse(url),
+      Uri.parse(finalUrl),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $accessToken',

@@ -31,7 +31,7 @@ class ProfileViewModel extends GetxController {
       final storedUsername = prefs.getString('username');
       try {
         var response = await _restService.sendGETRequest<Map<String, dynamic>>(
-            "/users/info/16850b20-56a6-4799-9573-c0ce12df23d6",
+            "api/users/info/dbb29345-b5a6-40b3-975f-37a9f8de9c9a",
             (decodedJson) => decodedJson as Map<String, dynamic>);
 
         userId.value = response['id'];

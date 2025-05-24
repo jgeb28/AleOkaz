@@ -1,12 +1,9 @@
 import 'package:ale_okaz/models/data/user.dart';
-import 'package:ale_okaz/services/auth_service.dart';
-import 'package:ale_okaz/utils/ip.dart';
+import 'package:ale_okaz/services/rest_service.dart';
 
 class UserService {
   Future<User> getUserInfo(String userId) async {
-    final rawUser =
-        await AuthService().sendGETRequest('$ip/api/users/info/$userId');
-
-    return User.fromJson(rawUser);
+    return RestService().sendGETRequest(
+        'api/users/info/$userId', (decodedJson) => User.fromJson(decodedJson));
   }
 }
