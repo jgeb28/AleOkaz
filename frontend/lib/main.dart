@@ -35,7 +35,7 @@ class MyApp extends StatelessWidget {
         GetPage(name: '/profile', page: () => const ProfileScreen()),
         GetPage(name: '/take-picture', page: () => const TakePictureScreen()),
         GetPage(name: '/home', page: () => const PostsScreen()),
-        GetPage(name: '/profile/:username', page: () => const ProfileScreen())
+        GetPage(name: '/profile/:userId', page: () => const ProfileScreen()),
       ],
     );
   }

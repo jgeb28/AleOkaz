@@ -1,8 +1,8 @@
 import 'package:ale_okaz/consts/colors.dart';
-import 'package:ale_okaz/services/image_service.dart';
 import 'package:ale_okaz/view_models/profile/profile_tab_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ale_okaz/services/image_service.dart';
 
 class ProfileTab extends StatefulWidget {
   final bool isMyProfile;
@@ -62,7 +62,14 @@ class _ProfileTabState extends State<ProfileTab> {
                           image: DecorationImage(
                               fit: BoxFit.fill,
                               image: FileImage(_viewModel.image.value!)))))
-              : const SizedBox.shrink(),
+              : Container(
+                  width: 220.0,
+                  height: 220.0,
+                  decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      image: DecorationImage(
+                          fit: BoxFit.fill,
+                          image: NetworkImage(widget.profilePictureUrl!)))),
           widget.isMyProfile
               ? Positioned(
                   right: 0,

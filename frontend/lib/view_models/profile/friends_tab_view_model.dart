@@ -1,12 +1,13 @@
 import 'package:ale_okaz/services/rest_service.dart';
+import 'package:ale_okaz/models/data/friend.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 
 class FriendsTabViewModel extends GetxController {
   final RestService _restService = RestService();
 
-  var friendsList = <String>[].obs;
-  var filteredFriendsList = <String>[].obs;
+  var friendsList = <Friend>[].obs;
+  var filteredFriendsList = <Friend>[].obs;
   var searchQuery = ''.obs;
   var currentSortOption = 'alphabetical'.obs;
 
@@ -20,11 +21,12 @@ class FriendsTabViewModel extends GetxController {
       final url =
           isMyProfile ? 'api/friends/all' : 'api/friends/allof/$username';
 
-      final friends = await _restService.sendGETRequest<List<String>>(
+      final friends = await _restService.sendGETRequest<List<Friend>>(
         url,
         (decodedJson) {
           return (decodedJson as List)
-              .map((friend) => friend['username'] as String)
+              .map((friend) =>
+                  Friend(id: friend['id'], username: friend['username']))
               .toList();
         },
       );
@@ -51,18 +53,24 @@ class FriendsTabViewModel extends GetxController {
   }
 
   void _applyFilters() {
-    var list = List<String>.from(friendsList);
-    if (searchQuery.isNotEmpty) {
+    var list = List<Friend>.from(friendsList);
+
+    if (searchQuery.value.isNotEmpty) {
       list = list
-          .where((friend) =>
-              friend.toLowerCase().startsWith(searchQuery.value.toLowerCase()))
+          .where((friend) => friend.username
+              .toLowerCase()
+              .startsWith(searchQuery.value.toLowerCase()))
           .toList();
     }
+
     if (currentSortOption.value == 'default') {
-      list.sort((a, b) => b.toLowerCase().compareTo(a.toLowerCase()));
+      list.sort((a, b) =>
+          b.username.toLowerCase().compareTo(a.username.toLowerCase()));
     } else {
-      list.sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
+      list.sort((a, b) =>
+          a.username.toLowerCase().compareTo(b.username.toLowerCase()));
     }
+
     filteredFriendsList.value = list;
   }
 
@@ -78,12 +86,11 @@ class FriendsTabViewModel extends GetxController {
         'Pomyślnie dodano znajomego',
         backgroundColor: Colors.green,
       );
+      Get.snackbar('Sukcess', 'Pomyślnie dodano znajomego',
+          backgroundColor: Colors.green);
     } catch (ex) {
-      Get.snackbar(
-        'Błąd',
-        'Błąd dodawania znajomego: $ex',
-        backgroundColor: Colors.red,
-      );
+      Get.snackbar('Błąd', "Błąd dodawania znajomego: $ex",
+          backgroundColor: Colors.red);
     }
   }
 

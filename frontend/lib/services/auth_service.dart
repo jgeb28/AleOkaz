@@ -146,7 +146,8 @@ class AuthService {
       }
     }
 
-    logout();
+    clearTokens();
+    Get.offAllNamed('/login');
   }
 
   Future<void> sendResetToken(String email) async {
