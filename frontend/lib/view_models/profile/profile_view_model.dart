@@ -1,3 +1,4 @@
+import 'package:ale_okaz/models/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -5,6 +6,7 @@ import 'package:ale_okaz/models/services/rest_service.dart';
 
 class ProfileViewModel extends GetxController {
   final RestService _restService = RestService();
+  final AuthService _authService = AuthService();
 
   var isMyProfile = false.obs;
   var username = "".obs;
@@ -19,13 +21,26 @@ class ProfileViewModel extends GetxController {
   }
 
   Future<void> loadUserdata() async {
-    String? paramUsername = Get.parameters['username'];
+    String? paramUserId = Get.parameters['userId'];
+    print(paramUserId);
 
-    if (paramUsername != null) {
-      username.value = paramUsername; 
-      // TO DO var response = _restService.sendGETRequest("/users/info/{id}");
+    if (paramUserId != null) { 
+       try {
+        var response = await _restService.sendGETRequest("/users/info/$paramUserId");
+        username.value = response['username'];
+        String url = response['profilePicture'];
+        // Tymczasowe rozwiązanie LOCALHOST ma problem na emulatorze
+        String address = url.substring(22);
+        profilePictureUrl.value = "http://10.0.2.2:8080/$address";
+      } catch (ex) {
+        Get.snackbar(
+          'Błąd', 
+          " : $ex",
+          backgroundColor: Colors.red,
+        );
+      }
 
-      isMyProfile.value = false; // It's not the logged-in user
+      isMyProfile.value = false; 
     } else {
       final prefs = await SharedPreferences.getInstance();
       final storedUsername = prefs.getString('username');
@@ -51,6 +66,11 @@ class ProfileViewModel extends GetxController {
         isMyProfile.value = true;  // It's the logged-in user's profile
       }
     }
+  }
+
+  Future<void> logout() async {
+    await _authService.clearTokens();
+    Get.offAllNamed('/login');
   }
 
   Future<void> addFriend() async {

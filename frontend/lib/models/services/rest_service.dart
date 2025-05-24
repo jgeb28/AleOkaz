@@ -4,10 +4,10 @@ import 'package:ale_okaz/models/services/auth_service.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
-import 'package:path/path.dart';
-import 'package:http_parser/http_parser.dart';
 import 'dart:convert';
 import 'package:ale_okaz/consts/flutter_api_consts.dart';
+import 'package:path/path.dart';
+import 'package:http_parser/http_parser.dart';
 
 
 class RestService extends GetxService {
@@ -56,7 +56,7 @@ class RestService extends GetxService {
       }
 
       final response = await http.post(
-        Uri.parse("${FlutterApiConsts.baseUrl}/$url"),
+        Uri.parse("${FlutterApiConsts.baseUrl}$url"),
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',
           "Authorization": "Bearer $accessToken",
@@ -87,7 +87,7 @@ class RestService extends GetxService {
       }
 
       final response = await http.put(
-        Uri.parse("${FlutterApiConsts.baseUrl}/$url"),
+        Uri.parse("${FlutterApiConsts.baseUrl}$url"),
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',
           "Authorization": "Bearer $accessToken",

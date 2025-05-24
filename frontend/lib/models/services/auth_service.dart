@@ -85,7 +85,8 @@ class AuthService extends GetxService {
       }
     }
 
-    logout();
+    clearTokens();
+    Get.offAllNamed('/login');
   }
 
   Future<User> createUser(String username, String email, String password) async {
@@ -198,11 +199,6 @@ class AuthService extends GetxService {
       throw('Wystąpił błąd: $e');
     }
 
-  }
-
-  Future<void> logout() async {
-    clearTokens();
-    Get.offAllNamed('/login');
   }
 
   Future<void> clearTokens() async {
