@@ -1,10 +1,14 @@
 # AleOkaz Backend
 
-Backend aplikacji dla wędkarzy AleOkaz.
+Backend aplikacji dla wędkarzy **AleOkaz**.
+
+---
 
 ## Użycie
 
 ### Development
+
+Uruchomienie środowiska developerskiego:
 
 ```sh
 docker compose -f compose.yaml -f compose.development.yaml up --detach
@@ -13,19 +17,25 @@ docker compose -f compose.yaml -f compose.development.yaml up --detach
 
 ### Produkcja
 
+Uruchomienie środowiska produkcyjnego:
+
 ```sh
 docker compose -f compose.yaml -f compose.production.yaml up --detach
 ```
+
+---
 
 ## Instalacja
 
 ### Prerekwizyty
 
+Przed instalacją upewnij się, że masz zainstalowane:  
+
 - Git
 - Docker
 - Java 21
 
-### Przepis
+### Instrukcja instalacji
 
 ```sh
 git clone https://github.com/jgeb28/AleOkaz
@@ -35,16 +45,22 @@ cp .env.example .env
 
 ## Endpointy
 
-### Reset hasła
-POST /api/recovery                  {email}                     Wysłanie tokenu\
-POST /api/recovery/verifyToken      {email, token}              Zweryfikowanie tokenu\
-POST /api/recovery/resetPassword    {email, token, password}    Ustawienie nowego hasła
+### Reset hasła  **`/api/recoevery`**
 
-### Znajomi
-GET  /api/friends/all                       Lista wszystkich znajomych\
-GET  /api/friends/allof/{username}                       Lista wszystkich zaakceptowanych znajomych użytkownika o nicku\
-POST /api/friends/add       {username}      Dodanie znajomego\
-POST /api/friends/remove    {username}      Usunięcie znajomego
+Metoda  | Endpoint        | Dane                     | Zwracane | Działanie                 
+--------|-----------------|--------------------------|----------|----------------
+POST    | /               | {email}                  |          | Wysłanie tokenu          
+POST    | /verifyToken    | {email, token}           |          | Zweryfikowanie tokenu    
+POST    | /resetPassword  | {email, token, password} |          | Ustawienie nowego hasła  
+
+### Znajomi **`/api/firends`**
+Metoda | Endpoint           | Dane       | Zwracane                           | Działanie
+-------|--------------------|------------|------------------------------------|--------------
+GET    | /all               |            | {firend_id, is_accepted, is_sender}| Wszyscy znajomi zalogowanego
+GET    | /allof/{username}  |            | {firend_id, is_accepted, is_sender}| Wszyscy zaakceptowani użytkownika
+POST   | /add               | {username} |                                    |Dodanie znajomego  
+POST   | /remove            | {username} |                                    |Usunięcie znajomego
+
 FriendDTO:
         UUID friend_id,
         boolean is_accepted,
@@ -60,37 +76,50 @@ Kody odpowiedzi:
         FRIEND_REMOVED,
         NO_FRIENDSHIP_TO_REMOVE,
 
-### Powiadomienia
-GET /api/sse/notifications              Otwiera połączenie sse do odbierania powiadomień
-#### Wysyłanie powiadomień z backendu:
-@Autowired\
-private KafkaTemplate<String, String> kafkaTemplate;\
-\
-kafkaTemplate.send(uuid_odbiorcy, tresc_powiadomienia);
+### Powiadomienia **`/api/sse`**
+Metoda  | Endpoint        | Dane                     | Zwracane | Działanie                 
+--------|-----------------|--------------------------|----------|----------------
+GET     | /notifications  |                          | message  | Otwiera połączenie sse do odbierania powiadomień
 
-### Użytkownik
-GET     /api/users/info/{id}                                   AUTH, Zwraca informacje o użytkowniku
-POST    /api/users             {username, email, password}     Rejestracja nowego użytkownika\
-POST    /api/users/login       {username, password}            Logowanie użytkownika\
-POST    /api/users/refresh     {refreshToken}                  Uzyskaj nowy access token
-PUT     /api/users/info/     FORM DATA:                      AUTH, Aktualizuje nazwę lub profilowe użytkownika
+#### Wysyłanie powiadomień z backendu:
+```java
+@Autowired
+private KafkaTemplate<String, String> kafkaTemplate;
+
+...
+kafkaTemplate.send(uuid_odbiorcy, tresc_powiadomienia);
+```
+
+### Użytkownik **`/api/users`**
+Metoda  | Endpoint        | Dane                        | Zwracane | Działanie                 
+--------|-----------------|-----------------------------|----------|----------------
+GET     | /info/{id}      |                             |          | AUTH, Zwraca informacje o użytkowniku
+POST    | /               | {username, email, password} |          |  Rejestracja nowego użytkownika\
+POST    | /login          | {username, password}        |          |  Logowanie użytkownika\
+POST    | /refresh        | {refreshToken}              |          |  Uzyskaj nowy access token
+PUT     | /info           | FORM DATA:                  |          |  AUTH, Aktualizuje nazwę lub profilowe użytkownika
                                     userInfo {username},
                                     image
 
-### Posty
-GET     /api/posts?userId={userId}                             Zwraca wszystkie posty z możliwością wybrania konkretnego autora opcją ?userId
-GET     /api/posts/{postId}                                    Zwraca dany post
-POST    /api/posts             FORM DATA:                      AUTH, Tworzy nowy post
+### Posty **`/api/posts`**
+Metoda  | Endpoint         | Dane                        | Zwracane | Działanie                 
+--------|------------------|-----------------------------|----------|----------------
+GET     | ?userId={userId} |                             |          | Zwraca wszystkie posty z możliwością wybrania konkretnego autora opcją ?userId
+GET     | /{postId}        |                             |          | Zwraca dany post
+POST    | /                | FORM DATA:  AUTH,           |          | Tworzy nowy post
                                     post {content},
                                     image
-PUT     /api/posts/{postId}    {content}                       AUTH, Aktualizuje treść posta
-DELETE  /api/posts/{postId}                                    AUTH, Usuwa post
-PUT     /api/posts/{postId}/reactions                          Dodanie reakcji do posta.
-DELETE  /api/posts/{postId}/reactions                          Usunięcie reakcji do posta.
 
-### Komentarze
-POST    /api/comments                   {parentId,content}     Tworzenie komentarza.
-PUT     /api/comments/{commentId}       {content}              Aktualizacja komentarza.
-DELETE  /api/comments/{commentId}                              Usunięcie komentarza.
-PUT     /api/comments/{commentId}/reactions                    Dodanie reakcji do komentarza.
-DELETE  /api/comments/{commentId}/reactions                    Usunięcie reakcji do komentarza.
+PUT     | /{postId}           | {content}                |          |        AUTH, Aktualizuje treść posta
+DELETE  | /{postId}           |                          |          | AUTH, Usuwa post
+PUT     | /{postId}/reactions |                          |          | Dodanie reakcji do posta.
+DELETE  | /{postId}/reactions |                          |          | Usunięcie reakcji do posta.
+
+### Komentarze **`/api/comments`**
+Metoda  | Endpoint               | Dane                        | Zwracane | Działanie                 
+--------|------------------------|-----------------------------|----------|----------------
+POST    | /                      | {parentId,content}          |          | Tworzenie komentarza.
+PUT     | /{commentId}           | {content}                   |          | Aktualizacja komentarza.
+DELETE  | /{commentId}           |                             |          | Usunięcie komentarza.
+PUT     | /{commentId}/reactions |                             |          | Dodanie reakcji do komentarza.
+DELETE  | /{commentId}/reactions |                             |          | Usunięcie reakcji do komentarza.
