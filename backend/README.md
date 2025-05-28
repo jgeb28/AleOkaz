@@ -94,3 +94,14 @@ PUT     /api/comments/{commentId}       {content}              Aktualizacja kome
 DELETE  /api/comments/{commentId}                              Usunięcie komentarza.
 PUT     /api/comments/{commentId}/reactions                    Dodanie reakcji do komentarza.
 DELETE  /api/comments/{commentId}/reactions                    Usunięcie reakcji do komentarza.
+
+### Łowiska
+GET     /api/fishingspots/all                                  Zwraca wszystkie łowiska
+GET     /api/fishingspots/allsorted     {latitude, longitude}  Zwraca wszystkie łowiska posortowane wg podanej pozycji, najbliższe = pierwsze na liście
+GET     /api/fishingspots/{spotId}                             Zwraca łowisko o podanym ID
+GET     /api/fishingspots/closest       {latitude, longitude}  Zwraca najbliższe łowisko
+GET     /api/fishingspots/postedIn                             AUTH, zwraca wszystkie łowiska, gdzie zalogowany użytkownik ma posta
+POST    /api/fishingspots               {name, description,    AUTH, tworzy łowisko. description = optional
+                                        latitude, longitude}
+PUT     /api/fishingspots/{spotId}      {name, description,    AUTH, edytuje łowisko. Wszystkie pozycje są opcjonalne, latitude i longitude muszą być oba podane, żeby zmienić pozycję łowiska
+                                        latitude, longitude}

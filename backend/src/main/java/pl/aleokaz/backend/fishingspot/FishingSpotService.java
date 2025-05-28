@@ -6,6 +6,7 @@ import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import pl.aleokaz.backend.user.AuthorizationException;
 import pl.aleokaz.backend.user.UserRepository;
 
 import java.util.List;
@@ -42,6 +43,13 @@ public class FishingSpotService {
         final var savedFishingSpot = fishingSpotRepository.save(fishingSpot);
 
         return fishingSpotMapper.convertFishingSpotToFishingSpotDto(savedFishingSpot);
+    }
+
+    public FishingSpotDto getFishingSpotById(UUID id) {
+        final var fishingSpot = fishingSpotRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Fishing Spot not found"));
+
+        return fishingSpotMapper.convertFishingSpotToFishingSpotDto(fishingSpot);
     }
 
     public List<FishingSpotDto> getAllFishingSpots() {
@@ -81,5 +89,32 @@ public class FishingSpotService {
             .collect(Collectors.toList());
 
         return fishingSpotDtos;
+    }
+
+    public FishingSpotDto updateFishingSpot(UUID userId, UUID id, FishingSpotUpdateCommand fishingSpotUpdateCommand) {
+        final var owner = userRepository.findById(userId)
+            .orElseThrow(() -> new RuntimeException("User not found"));
+
+        final var fishingSpot = fishingSpotRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Fishing Spot not found"));
+
+        if (!owner.equals(fishingSpot.owner())) {
+            throw new AuthorizationException(userId.toString());
+        }
+
+        if(fishingSpotUpdateCommand.name() != null) {
+            fishingSpot.name(fishingSpotUpdateCommand.name());
+        }
+        if (fishingSpotUpdateCommand.description() != null) {
+            fishingSpot.description(fishingSpotUpdateCommand.description());
+        }
+        if (fishingSpotUpdateCommand.latitude() != 0 && fishingSpotUpdateCommand.longitude() != 0) {
+            Point location = geometryFactory.createPoint(new Coordinate(fishingSpotUpdateCommand.longitude(), fishingSpotUpdateCommand.latitude()));
+            fishingSpot.location(location);
+        }
+
+        final var savedFishingSpot = fishingSpotRepository.save(fishingSpot);
+
+        return fishingSpotMapper.convertFishingSpotToFishingSpotDto(savedFishingSpot);
     }
 }

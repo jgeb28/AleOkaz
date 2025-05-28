@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import pl.aleokaz.backend.user.AuthorizationException;
 
 import java.util.List;
 import java.util.UUID;
@@ -29,6 +30,11 @@ public class FishingSpotController {
 
         if (spotsSorted != null) return new ResponseEntity<>(fishingSpotService.getAllFishingSpotsSortedByDistance(lon, lat), HttpStatus.OK);
         else return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<FishingSpotDto> getFishingSpotById(@PathVariable UUID id) {
+        return ResponseEntity.ok(fishingSpotService.getFishingSpotById(id));
     }
 
     @PostMapping
@@ -59,5 +65,12 @@ public class FishingSpotController {
         else return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    //sortowanie w get all
+    @PutMapping("/{id}")
+    public ResponseEntity<FishingSpotDto> updateFishingSpot(Authentication authentication, @PathVariable UUID id, @RequestBody FishingSpotUpdateCommand fishingSpotUpdateCommand) {
+        UUID currentUserId = UUID.fromString((String) authentication.getPrincipal());
+
+        var spot = fishingSpotService.updateFishingSpot(currentUserId, id, fishingSpotUpdateCommand);
+
+        return new ResponseEntity<>(spot, HttpStatus.OK);
+    }
 }
