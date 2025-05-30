@@ -98,7 +98,7 @@ public class FriendsService {
     }
 
     public List<FriendDTO> getIncomingRequests(UUID userId){
-        List<Friendship> friendships = friendshipRepository.findAllByFriendId(userId);
+        List<Friendship> friendships = friendshipRepository.findAllByUserId(userId);
         List<FriendDTO> friendDTOs = friendships.stream()
             .filter(friendship -> !friendship.isActive())
             .map(friendship -> friendship.toFriendDTO(userId))
