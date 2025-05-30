@@ -24,6 +24,8 @@ public class FriendsService {
         ALREADY_SENT_FRIEND_REQUEST,
         FRIEND_REMOVED,
         NO_FRIENDSHIP_TO_REMOVE,
+        REQUEST_DELETED,
+        REQUEST_NOT_FOUND
     }
 
     @Autowired
@@ -104,5 +106,21 @@ public class FriendsService {
         return friendDTOs.stream()
             .filter(friendDTO -> !friendDTO.is_sender())
             .toList();
+    }
+
+    public FriendStatus deleteFriendRequest(FriendCommand removeFriendCommand, UUID userId) throws UserNotFoundException {
+        String friendUsername = removeFriendCommand.username();
+        User friend = userRepository.findByUsername(friendUsername);
+        if(friend == null) throw new UserNotFoundException("username", friendUsername);
+        User user = userRepository.getReferenceById(userId);
+        if(user == null) throw new UserNotFoundException("id", userId.toString());
+
+        Optional<Friendship> existingFriendship = friendshipRepository.findSymmetricalFriendship(user.id(), friend.id());
+        if (existingFriendship.isPresent()) {
+            friendshipRepository.delete(existingFriendship.get());
+            kafkaTemplate.send(friend.id().toString(), "Friend request denied by " + user.username());
+            return FriendStatus.REQUEST_DELETED;
+        }
+        return FriendStatus.REQUEST_NOT_FOUND;
     }
 }

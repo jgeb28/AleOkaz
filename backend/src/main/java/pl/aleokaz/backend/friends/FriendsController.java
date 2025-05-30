@@ -85,4 +85,18 @@ public class FriendsController {
             return ResponseEntity.badRequest().body(ResponseMsgDto.builder().message("ERROR").build());
         }
     }
+
+    @PostMapping("/deleterequest")
+    public ResponseEntity<ResponseMsgDto> deleteFriendRequest(Authentication authentication, @RequestBody FriendCommand removeFriendCommand) {
+        try {
+            if(authentication == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+            }
+            UUID currentUserId = UUID.fromString((String) authentication.getPrincipal());
+            FriendsService.FriendStatus status =  friendsService.deleteFriendRequest(removeFriendCommand, currentUserId);
+            return ResponseEntity.ok().body(ResponseMsgDto.builder().message(status.name()).build());
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(ResponseMsgDto.builder().message("ERROR").build());
+        }
+    }
 }
