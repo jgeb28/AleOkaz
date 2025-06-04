@@ -19,7 +19,7 @@ class BottomBar extends StatelessWidget {
               child: Row(children: [
             Expanded(
               child: InkWell(
-                onTap: () => {},
+                onTap: () => {Get.toNamed('map')},
                 child: const SizedBox.expand(
                     child: Icon(Icons.location_on, color: Colors.green)),
               ),

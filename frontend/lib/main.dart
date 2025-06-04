@@ -1,5 +1,6 @@
 import 'package:ale_okaz/views/essentials/no_connection_view.dart';
 import 'package:ale_okaz/views/login/login_view.dart';
+import 'package:ale_okaz/views/map/map_view.dart';
 import 'package:ale_okaz/views/posts/posts_screen.dart';
 import 'package:ale_okaz/views/posts/take_picture.dart';
 import 'package:ale_okaz/views/profile/profile_view.dart';
@@ -40,6 +41,8 @@ class MyApp extends StatelessWidget {
         GetPage(name: '/home', page: () => const PostsScreen()),
         GetPage(name: '/profile/:userId', page: () => const ProfileScreen()),
         GetPage(name: '/post/:postId', page: () => const PostScreen()),
+        GetPage(name: '/map', page: () => MapScreen()),
+
       ],
     );
   }
