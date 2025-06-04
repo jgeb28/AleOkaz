@@ -157,7 +157,9 @@ class _ProfileTabState extends State<ProfileTab> {
         const SizedBox(height: 40),
         widget.isMyProfile
             ? FilledButton(
-                onPressed: () {},
+                onPressed: () {
+                  _viewModel.addFriend();
+                },
                 style: FilledButton.styleFrom(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 40, vertical: 9),
