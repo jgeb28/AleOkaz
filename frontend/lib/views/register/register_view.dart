@@ -18,14 +18,16 @@ class RegisterScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final RegisterViewModel viewModel = Get.put(RegisterViewModel());
     final horizonalMargin = MediaQuery.of(context).size.width * 0.15;
-    final verticalMargin = MediaQuery.of(context).size.height * 0;
+    final verticalMargin = MediaQuery.of(context).size.height * 0.025;
 
     return Scaffold(
         backgroundColor: primaryBackgroundColor,
         body: SingleChildScrollView(
           child: Container(
               margin: EdgeInsets.symmetric(
-                  horizontal: horizonalMargin, vertical: verticalMargin),
+                horizontal: horizonalMargin,
+                vertical: verticalMargin,
+              ),
               child: Center(
                 child: Column(
                   children: [
@@ -77,14 +79,20 @@ class RegisterScreen extends StatelessWidget {
                         child: const Text("Posiadam już konto",
                             style: TextStyle(fontWeight: FontWeight.bold))),
                     const LineDivider(),
-                    SignInButton(
-                      Buttons.google,
-                      text: "Sign up with Google",
-                      shape: RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.circular(30), // Make it rounded
+                    Padding(
+                      padding: const EdgeInsets.only(top: 20),
+                      child: SizedBox(
+                        width: double.maxFinite,
+                        height: 50,
+                        child: SignInButton(
+                          Buttons.google,
+                          text: "Sign up with Google",
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          onPressed: () {}, // Implement Google Sign-In
+                        ),
                       ),
-                      onPressed: () {},
                     ),
                   ],
                 ),

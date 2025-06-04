@@ -9,9 +9,11 @@ import 'package:get/get.dart';
 import 'package:ale_okaz/views/posts/post_screen.dart';
 
 import 'package:ale_okaz/services/connectivity_service.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  timeago.setLocaleMessages('pl', timeago.PlMessages());
   Get.put(ConnectivityService(), permanent: true);
   runApp(const MyApp());
 }

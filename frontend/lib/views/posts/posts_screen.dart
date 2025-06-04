@@ -41,7 +41,7 @@ class _PostsScreenState extends State<PostsScreen> {
         }
 
         if (vm.posts.isEmpty) {
-          return const Center(child: Text('No posts available'));
+          return const Center(child: Text('Brak postów'));
         }
 
         return ListView.builder(

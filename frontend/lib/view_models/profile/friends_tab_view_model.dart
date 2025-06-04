@@ -28,8 +28,10 @@ class FriendsTabViewModel extends GetxController {
         url,
         (decodedJson) {
           return (decodedJson as List)
-              .map((friend) =>
-                  Friend(id: friend['id'], username: friend['username'], imageUrl: friend['avatar_url']))
+              .map((friend) => Friend(
+                  id: friend['id'],
+                  username: friend['username'],
+                  imageUrl: friend['avatar_url']))
               .toList();
         },
       );
@@ -51,8 +53,10 @@ class FriendsTabViewModel extends GetxController {
         'api/friends/incoming',
         (decodedJson) {
           return (decodedJson as List)
-              .map((friend) =>
-                  Friend(id: friend['id'], username: friend['username'], imageUrl: friend['avatar_url']))
+              .map((friend) => Friend(
+                  id: friend['id'],
+                  username: friend['username'],
+                  imageUrl: friend['avatar_url']))
               .toList();
         },
       );
@@ -73,26 +77,26 @@ class FriendsTabViewModel extends GetxController {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-         return AlertDialog(
-        title: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              "Zaproszenia",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
+        return AlertDialog(
+          title: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                "Zaproszenia",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-            SizedBox(height: 6),
-            Container(
-              height: 2,
-              width: double.infinity,
-              color: smallTextColor, // Change to any color you like
-            ),
-          ],
-        ),
+              SizedBox(height: 6),
+              Container(
+                height: 2,
+                width: double.infinity,
+                color: smallTextColor, // Change to any color you like
+              ),
+            ],
+          ),
           content: Obx(() {
             if (incomingRequests.isEmpty) {
               return Text(
@@ -110,13 +114,14 @@ class FriendsTabViewModel extends GetxController {
                   final friend = incomingRequests[index];
                   return ListTile(
                     leading: Container(
-                  width: 40.0,
-                  height: 40.0,
-                  decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      image: DecorationImage(
-                          fit: BoxFit.fill,
-                          image: NetworkImage("${FlutterApiConsts.baseUrl}/${friend.imageUrl.substring(22)}")))),
+                        width: 40.0,
+                        height: 40.0,
+                        decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            image: DecorationImage(
+                                fit: BoxFit.fill,
+                                image: NetworkImage(
+                                    "${FlutterApiConsts.baseUrl}/${friend.imageUrl.substring(22)}")))),
                     title: Text(friend.username),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -127,7 +132,6 @@ class FriendsTabViewModel extends GetxController {
                             addFriend(friend.username);
                             incomingRequests.removeWhere(
                                 (f) => f.username == friend.username);
-                            getAllFriends(true, username.value);
                           },
                         ),
                         IconButton(
@@ -189,20 +193,19 @@ class FriendsTabViewModel extends GetxController {
     filteredFriendsList.value = list;
   }
 
-  Future<void> addFriend(String username) async {
+  Future<void> addFriend(String userToAdd) async {
     try {
       await _restService.sendPOSTRequest<void>(
         'api/friends/add',
-        payload: {'username': username},
+        payload: {'username': userToAdd},
         parser: (decodedJson) => {},
       );
+      await getAllFriends(true, username.value);
       Get.snackbar(
         'Sukces',
         'Pomyślnie dodano znajomego',
         backgroundColor: Colors.green,
       );
-      Get.snackbar('Sukcess', 'Pomyślnie dodano znajomego',
-          backgroundColor: Colors.green);
     } catch (ex) {
       Get.snackbar('Błąd', "Błąd dodawania znajomego: $ex",
           backgroundColor: Colors.red);

@@ -11,9 +11,6 @@ import 'package:ale_okaz/widgets/title_section.dart';
 import 'package:ale_okaz/consts/colors.dart';
 import 'package:ale_okaz/widgets/line_divider.dart';
 
-
-
-
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
 
@@ -21,12 +18,13 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final LoginViewModel loginViewModel = Get.put(LoginViewModel());
     final horizonalMargin = MediaQuery.of(context).size.width * 0.15;
-
+    final verticalMargin = MediaQuery.of(context).size.width * 0.05;
     return Scaffold(
       backgroundColor: primaryBackgroundColor,
       body: SingleChildScrollView(
         child: Container(
-          margin: EdgeInsets.symmetric(horizontal: horizonalMargin),
+          margin: EdgeInsets.symmetric(
+              horizontal: horizonalMargin, vertical: verticalMargin),
           child: Column(
             children: [
               Form(
@@ -37,14 +35,16 @@ class LoginScreen extends StatelessWidget {
                     LabelInput(
                       labelName: "Nazwa Użytkownika",
                       controller: loginViewModel.usernameController,
-                      validator: (value) =>
-                          value == null || value.isEmpty ? "Wypełnij pole" : null,
+                      validator: (value) => value == null || value.isEmpty
+                          ? "Wypełnij pole"
+                          : null,
                     ),
                     LabelInput(
                       labelName: "Hasło",
                       controller: loginViewModel.passwordController,
-                      validator: (value) =>
-                          value == null || value.isEmpty ? "Wypełnij pole" : null,
+                      validator: (value) => value == null || value.isEmpty
+                          ? "Wypełnij pole"
+                          : null,
                       isObscured: true,
                     ),
                     TextButton(
@@ -59,7 +59,8 @@ class LoginScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                    AuthButton(label: "Zaloguj się", onPressed: loginViewModel.submit),
+                    AuthButton(
+                        label: "Zaloguj się", onPressed: loginViewModel.submit),
                   ],
                 ),
               ),

@@ -21,6 +21,7 @@ class PostsViewModel extends GetxController {
       isLoading.value = true;
       errorMessage.value = null;
       final fetched = await _service.getPosts();
+      fetched.sort((a, b) => b.createdAt.compareTo(a.createdAt));
       posts.value = fetched;
     } catch (e) {
       errorMessage.value = e.toString();
