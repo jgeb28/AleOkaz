@@ -52,6 +52,13 @@ public class UserController {
         return ResponseEntity.ok(userService.getUserInfo(id));
     }
 
+    @GetMapping("/info")
+    public ResponseEntity<UserDto> getUserInfo(Authentication authentication) {
+        UUID currentUserId = UUID.fromString((String) authentication.getPrincipal());
+
+        return ResponseEntity.ok(userService.getUserInfo(currentUserId));
+    }
+
     @PutMapping(path="/info", consumes = "multipart/form-data")
     public ResponseEntity<UserDto> updateUserInfo(
         Authentication authentication,

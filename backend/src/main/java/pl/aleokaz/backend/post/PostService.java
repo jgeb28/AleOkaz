@@ -6,6 +6,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.transaction.Transactional;
 import lombok.NonNull;
+import pl.aleokaz.backend.fishingspot.FishingSpot;
+import pl.aleokaz.backend.fishingspot.FishingSpotRepository;
 import pl.aleokaz.backend.user.User;
 import pl.aleokaz.backend.user.UserRepository;
 import pl.aleokaz.backend.user.AuthorizationException;
@@ -31,11 +33,16 @@ public class PostService {
 
     @Autowired
     private ImageService imageService;
+    @Autowired
+    private FishingSpotRepository fishingSpotRepository;
 
     public PostDto createPost(@NonNull UUID userId, PostCommand postCommand, MultipartFile image)
             throws ImageSaveException {
         final var author = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Author not found"));
+
+        final var fishingSpot = fishingSpotRepository.findById(postCommand.fishingSpotId())
+            .orElseThrow(() -> new RuntimeException("FishingSpot not found"));
 
         String imageUrl;
         try {
@@ -49,6 +56,7 @@ public class PostService {
                 .imageUrl(imageUrl)
                 .createdAt(new Date())
                 .author(author)
+                .fishingSpot(fishingSpot)
                 .build();
 
         final var savedPost = postRepository.save(post);
