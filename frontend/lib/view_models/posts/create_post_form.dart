@@ -22,6 +22,7 @@ class CreatePostFormViewModel extends GetxController {
   Future<void> submitForm() async {
     if (!formKey.currentState!.validate()) return;
     try {
+      print("Byłem tutaj");
       final response = await _postService.createPost(
         "api/posts",
         descriptionController.text,
