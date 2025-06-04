@@ -3,7 +3,7 @@ import 'package:ale_okaz/consts/colors.dart';
 
 class FriendContainer extends StatelessWidget {
   final String friendName;
-  final Image? friendImage = null;
+  final String? friendImage;
   final Map<String, String> friendOptions;
   final Function onSelected;
 
@@ -11,6 +11,7 @@ class FriendContainer extends StatelessWidget {
       {required this.friendName,
       required this.onSelected,
       required this.friendOptions,
+      this.friendImage,
       super.key});
 
   @override
@@ -30,6 +31,16 @@ class FriendContainer extends StatelessWidget {
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
+              friendImage != null ?
+              Container(
+                  width: 40.0,
+                  height: 40.0,
+                  decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      image: DecorationImage(
+                          fit: BoxFit.fill,
+                          image: NetworkImage(friendImage!))))
+              :
               ClipRRect(
                 borderRadius: BorderRadius.circular(40),
                 child: Container(

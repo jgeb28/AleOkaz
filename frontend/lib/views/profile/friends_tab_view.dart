@@ -1,3 +1,5 @@
+import 'package:ale_okaz/consts/colors.dart';
+import 'package:ale_okaz/consts/flutter_api_consts.dart';
 import 'package:ale_okaz/models/data/friend.dart';
 import 'package:ale_okaz/view_models/profile/friends_tab_view_model.dart';
 import 'package:flutter/material.dart';
@@ -36,6 +38,8 @@ class _FriendsTabState extends State<FriendsTab> {
   @override
   Widget build(BuildContext context) {
     viewModel.getAllFriends(widget.isMyProfile, widget.username);
+    viewModel.getIncomingFriendRequests();
+
 
     return Column(
       children: [
@@ -45,12 +49,42 @@ class _FriendsTabState extends State<FriendsTab> {
         ),
         const SizedBox(height: 6),
         Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Obx(() => MyDropdownMenu(
                   sortOptions: viewModel.sortOptions,
                   currentSortOption: viewModel.currentSortOption.value,
                   onSortOptionChanged: viewModel.updateSortOption,
                 )),
+            widget.isMyProfile ? Obx(() => TextButton.icon(
+                  onPressed: () {
+                    viewModel.showIncomingRequestsDialog(context);
+                  },
+                  icon: Icon(Icons.person_add, color: smallTextColor),
+                  label: Row(
+                    children: [
+                      Text("Zaproszenia",
+                          style: TextStyle(color: smallTextColor)),
+                      if (viewModel.incomingRequests.isNotEmpty) ...[
+                        SizedBox(width: 6),
+                        Container(
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: smallTextColor,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Obx(() => Text(
+                                '${viewModel.incomingRequests.length}',
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 12),
+                              )),
+                        ),
+                      ],
+                    ],
+                  ),
+                )) :
+                SizedBox.shrink(),
           ],
         ),
         const SizedBox(height: 6),
@@ -69,6 +103,7 @@ class _FriendsTabState extends State<FriendsTab> {
                 return FriendContainer(
                   friendName: friend.username,
                   friendOptions: friendOptions,
+                  friendImage: "${FlutterApiConsts.baseUrl}/${friend.imageUrl.substring(22)}",
                   onSelected: (String choice) {
                     if (choice == 'delete') {
                       viewModel.deleteFriend(friend.username);
