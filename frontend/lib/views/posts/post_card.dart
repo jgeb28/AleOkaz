@@ -26,15 +26,18 @@ class PostCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           PostTopBar(userId: post.authorId, location: post.location),
-          ConstrainedBox(
-            constraints: BoxConstraints(
-              maxHeight: MediaQuery.of(context).size.height * 0.5,
-            ),
-            child: AspectRatio(
-              aspectRatio: 1,
-              child: ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: Image.network(vm.imageUrl, fit: BoxFit.cover)),
+          InkWell(
+            onTap: () => Get.toNamed('/post/${post.id}'),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.of(context).size.height * 0.5,
+              ),
+              child: AspectRatio(
+                aspectRatio: 1,
+                child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Image.network(vm.imageUrl, fit: BoxFit.cover)),
+              ),
             ),
           ),
           Row(

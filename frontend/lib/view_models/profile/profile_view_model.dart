@@ -23,7 +23,6 @@ class ProfileViewModel extends GetxController {
 
   Future<void> loadUserdata() async {
     String? paramUserId = Get.parameters['userId'];
-    print(paramUserId);
 
     if (paramUserId != null) {
       try {
@@ -48,7 +47,7 @@ class ProfileViewModel extends GetxController {
       final storedUsername = prefs.getString('username');
       try {
         var response = await _restService.sendGETRequest<Map<String, dynamic>>(
-            "api/users/info/5dea42da-b3ec-4b48-bf45-e773bc84ab50",
+            "api/users/info",
             (decodedJson) => decodedJson as Map<String, dynamic>);
 
         userId.value = response['id'];

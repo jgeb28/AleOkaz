@@ -15,8 +15,8 @@ class PostService {
   final storage = const FlutterSecureStorage();
   final _restService = RestService();
 
-  Future<dynamic> createPost(
-      String url, String description, String filename) async {
+  Future<dynamic> createPost(String url, String description, String filename,
+      String fishingSpotId) async {
     try {
       String? accessToken = await storage.read(key: 'accessToken');
       if (accessToken == null) {
@@ -35,8 +35,8 @@ class PostService {
 
       request.headers['authorization'] = 'Bearer $accessToken';
 
-      request.files.add(http.MultipartFile.fromString(
-          'post', jsonEncode({'content': description}),
+      request.files.add(http.MultipartFile.fromString('post',
+          jsonEncode({'content': description, 'fishingSpotId': fishingSpotId}),
           contentType: MediaType('application', 'json')));
 
       request.files.add(await http.MultipartFile.fromPath(
@@ -65,6 +65,15 @@ class PostService {
               .toList();
         }
         throw Exception('Unexpected JSON format for posts');
+      },
+    );
+  }
+
+  Future<Post> getPost(String postId) {
+    return _restService.sendGETRequest<Post>(
+      'api/posts/$postId',
+      (decodedJson) {
+        return Post.fromJson(decodedJson as Map<String, dynamic>);
       },
     );
   }
@@ -161,7 +170,8 @@ class PostService {
   Future<List<Comment>> getComments(String postId) async {
     final Post post = await _restService.sendGETRequest(
         'api/posts/$postId', (decodedJson) => Post.fromJson(decodedJson));
-
+    print("halo");
+    print(post.comments[0]);
     return post.comments;
   }
 

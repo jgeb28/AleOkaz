@@ -17,6 +17,43 @@ class CreatePostForm extends StatelessWidget {
       key: vm.formKey,
       child: Column(
         children: [
+          Obx(
+            () => DropdownButtonFormField<String>(
+              value: vm.selectedSpot.value,
+              decoration: InputDecoration(
+                labelText: 'Wybierz miejsce połowu',
+                prefixIcon: const Icon(Icons.location_on,
+                    color: Colors.green), // The location icon
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+                filled: true,
+                fillColor: Colors.white,
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              ),
+              hint: const Text('Wybierz miejsce'),
+              isExpanded: true,
+              items: vm.fishingSpots.map((spot) {
+                return DropdownMenuItem<String>(
+                  value:
+                      spot['id'] as String, // Ensure 'id' is treated as String
+                  child:
+                      Text(spot['name'] as String), // Ensure 'name' is String
+                );
+              }).toList(),
+              onChanged: (String? newValue) {
+                vm.selectedSpot.value = newValue;
+              },
+              validator: (String? value) {
+                if (value == null || value.isEmpty) {
+                  return 'Proszę wybrać miejsce połowu';
+                }
+                return null;
+              },
+            ),
+          ),
+          const SizedBox(height: 20), // R
           LabelInput(
             maxLines: 2,
             labelName: "Opis",
@@ -28,6 +65,7 @@ class CreatePostForm extends StatelessWidget {
               return null;
             },
           ),
+          const SizedBox(height: 20), // Reduced spacing for dropdown
           const SizedBox(height: 30),
           Button(
             label: "Utwórz",

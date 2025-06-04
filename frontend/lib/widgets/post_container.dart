@@ -2,6 +2,7 @@ import 'package:ale_okaz/consts/colors.dart';
 import 'package:ale_okaz/utils/parser.dart';
 import 'package:flutter/material.dart';
 import 'package:ale_okaz/models/data/post_miniature.dart';
+import 'package:get/get.dart';
 
 class PostMiniatureContainer extends StatelessWidget {
   final PostMiniature post;
@@ -10,10 +11,7 @@ class PostMiniatureContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('TO DO: Przejście do POSTA')));
-      },
+      onTap: () => Get.toNamed('/post/${post.id}'),
       child: Stack(
         children: [
           // Network Image as Background

@@ -6,6 +6,7 @@ import 'package:ale_okaz/views/profile/profile_view.dart';
 import 'package:ale_okaz/views/register/register_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ale_okaz/views/posts/post_screen.dart';
 
 import 'package:ale_okaz/services/connectivity_service.dart';
 
@@ -36,6 +37,7 @@ class MyApp extends StatelessWidget {
         GetPage(name: '/take-picture', page: () => const TakePictureScreen()),
         GetPage(name: '/home', page: () => const PostsScreen()),
         GetPage(name: '/profile/:userId', page: () => const ProfileScreen()),
+        GetPage(name: '/post/:postId', page: () => const PostScreen()),
       ],
     );
   }

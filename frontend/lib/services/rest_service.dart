@@ -92,7 +92,7 @@ class RestService {
     final response = await http.get(
       Uri.parse(finalUrl),
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': 'Bearer $accessToken',
       },
     );
@@ -100,8 +100,9 @@ class RestService {
     if (response.statusCode != 200) {
       throw Exception('Błędna odpowiedź serwera – ${response.statusCode}');
     }
+    final decodedBody = utf8.decode(response.bodyBytes);
 
-    final decoded = jsonDecode(response.body);
+    final decoded = jsonDecode(decodedBody);
     return parser(decoded);
   }
 
@@ -183,7 +184,7 @@ class RestService {
     final response = await http.post(
       Uri.parse(finalUrl),
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': 'Bearer $accessToken',
       },
       body: payload != null ? jsonEncode(payload) : null,
@@ -192,8 +193,9 @@ class RestService {
     if (response.statusCode < 200 || response.statusCode >= 300) {
       throw Exception('Błędna odpowiedź serwera – ${response.statusCode}');
     }
+    final decodedBody = utf8.decode(response.bodyBytes);
 
-    final decoded = jsonDecode(response.body);
+    final decoded = jsonDecode(decodedBody);
     return parser(decoded);
   }
 

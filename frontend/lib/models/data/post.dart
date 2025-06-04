@@ -38,7 +38,7 @@ class Post {
       comments: (json['comments'] as List<dynamic>)
           .map((e) => Comment.fromJson(e as Map<String, dynamic>))
           .toList(),
-      location: json['location'] as String? ?? 'Unknown',
+      location: json['location'] as String? ?? 'Jezioro Zegrzyńskie',
     );
   }
 }

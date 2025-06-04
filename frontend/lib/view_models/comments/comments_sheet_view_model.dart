@@ -49,6 +49,7 @@ class CommentsSheetViewModel extends GetxController {
     isSending.value = true;
     try {
       final newComment = await _service.createComment(postId, text);
+
       comments.add(newComment);
       textController.clear();
       _countController.increment();
