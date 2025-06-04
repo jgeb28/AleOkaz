@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 class FriendsTabViewModel extends GetxController {
   final RestService _restService = RestService();
 
+  var username = ''.obs;
   var friendsList = <Friend>[].obs;
   var filteredFriendsList = <Friend>[].obs;
   var searchQuery = ''.obs;
@@ -126,6 +127,7 @@ class FriendsTabViewModel extends GetxController {
                             addFriend(friend.username);
                             incomingRequests.removeWhere(
                                 (f) => f.username == friend.username);
+                            getAllFriends(true, username.value);
                           },
                         ),
                         IconButton(

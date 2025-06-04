@@ -39,6 +39,7 @@ class _FriendsTabState extends State<FriendsTab> {
   Widget build(BuildContext context) {
     viewModel.getAllFriends(widget.isMyProfile, widget.username);
     viewModel.getIncomingFriendRequests();
+    viewModel.username.value = widget.username!;
 
 
     return Column(

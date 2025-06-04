@@ -44,7 +44,7 @@ class ProfileTabViewModel extends GetxController {
   Future<void> addFriend() async {
     try {
       await _restService.sendPOSTRequest('api/friends/add',
-          payload: {'username': username.value}, parser: (decodedJson) => {});
+          payload: {'username': "user2"}, parser: (decodedJson) => {});
 
       Get.snackbar(
         'Sukces',
