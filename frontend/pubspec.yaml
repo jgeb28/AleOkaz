@@ -28,6 +28,8 @@ dependencies:
   jwt_decode: ^0.3.1
   timeago: ^3.7.0
   image_picker: ^1.1.2
+  google_maps_flutter: ^2.5.0
+  geolocator: ^13.0.1
 
 dev_dependencies:
   flutter_test:

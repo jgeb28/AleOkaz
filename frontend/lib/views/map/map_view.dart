@@ -8,11 +8,14 @@ class MapScreen extends StatelessWidget {
 
   final MapViewModel viewModel = Get.put(MapViewModel());
 
-  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Piękna Mapa', textAlign: TextAlign.center,)),
+      appBar: AppBar(
+          title: const Text(
+        'Mapa łowisk',
+        textAlign: TextAlign.center,
+      )),
       body: Obx(() => GoogleMap(
             onMapCreated: viewModel.onMapCreated,
             initialCameraPosition: CameraPosition(
