@@ -39,10 +39,10 @@ class MyApp extends StatelessWidget {
         GetPage(name: '/profile', page: () => const ProfileScreen()),
         GetPage(name: '/take-picture', page: () => const TakePictureScreen()),
         GetPage(name: '/home', page: () => const PostsScreen()),
+        GetPage(name: '/home/:spotId', page: () => const PostsScreen()),
         GetPage(name: '/profile/:userId', page: () => const ProfileScreen()),
         GetPage(name: '/post/:postId', page: () => const PostScreen()),
         GetPage(name: '/map', page: () => MapScreen()),
-
       ],
     );
   }

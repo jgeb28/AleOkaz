@@ -12,6 +12,7 @@ class MapViewModel extends GetxController {
   StreamSubscription<Position>? positionStream;
   final _restService = RestService();
   final fishingSpots = <Map<String, dynamic>>[].obs;
+  final selectedFishingSpot = Rxn<Map<String, dynamic>>();
 
   // Custom marker icons
   BitmapDescriptor? currentLocationIcon;
@@ -74,8 +75,7 @@ class MapViewModel extends GetxController {
   }
 
   void _onFishingSpotTap(Map<String, dynamic> spot) {
-    // Handle spot tap (show details, navigate, etc.)
-    Get.snackbar('Fishing Spot', spot['name']?.toString() ?? 'Fishing Spot');
+    selectedFishingSpot.value = spot;
   }
 
   void onMapCreated(GoogleMapController controller) {

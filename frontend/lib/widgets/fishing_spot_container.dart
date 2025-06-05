@@ -51,7 +51,7 @@ class FishingSpotContainer extends StatelessWidget {
               const SizedBox(height: 6),
               FilledButton(
                 onPressed: () {
-                 Get.toNamed('home');
+                  Get.toNamed('/home/$fishingSpotId');
                 },
                 style: FilledButton.styleFrom(
                   minimumSize: const Size(180, 40),
