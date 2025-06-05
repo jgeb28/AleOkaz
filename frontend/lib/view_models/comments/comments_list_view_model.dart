@@ -26,7 +26,7 @@ class CommentsListViewModel extends ChangeNotifier {
   Future<void> updateComments(List<Comment> comments) async {
     _comments = comments;
     _sortedComments = List.from(_comments)
-      ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+      ..sort((a, b) => a.createdAt.compareTo(b.createdAt));
     await _fetchUsers();
   }
 

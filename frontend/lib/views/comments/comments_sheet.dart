@@ -64,7 +64,7 @@ class CommentsSheet extends StatelessWidget {
                     return const Center(child: Text('Brak komentarzy'));
                   }
                   return CommentsList(
-                    comments: vm.comments,
+                    comments: vm.comments.reversed.toList(),
                   );
                 }),
               ),

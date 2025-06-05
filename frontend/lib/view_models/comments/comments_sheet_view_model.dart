@@ -30,6 +30,8 @@ class CommentsSheetViewModel extends GetxController {
     try {
       isLoading.value = true;
       final fetched = await _service.getComments(postId);
+      print(fetched[0].createdAt);
+      fetched.sort((a, b) => b.createdAt.compareTo(a.createdAt));
       comments.assignAll(fetched);
     } catch (e) {
       Get.snackbar(
@@ -51,6 +53,7 @@ class CommentsSheetViewModel extends GetxController {
       final newComment = await _service.createComment(postId, text);
 
       comments.add(newComment);
+      comments.sort((a, b) => b.createdAt.compareTo(a.createdAt));
       textController.clear();
       _countController.increment();
     } catch (e) {
