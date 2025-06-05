@@ -28,6 +28,7 @@ dependencies:
   jwt_decode: ^0.3.1
   timeago: ^3.7.0
   image_picker: ^1.1.2
+  google_maps_flutter: ^2.5.0
 
 dev_dependencies:
   flutter_test:
@@ -36,7 +37,8 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-
+  assets:
+    - assets/images/spot.jpg
   fonts:
     - family: Righteous
       fonts:
