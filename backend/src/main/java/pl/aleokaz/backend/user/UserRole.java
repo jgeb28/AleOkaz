@@ -1,6 +1,6 @@
 package pl.aleokaz.backend.user;
 
-enum UserRole {
+public enum UserRole {
     UNVERIFIED_USER,
     USER,
     ADMIN,

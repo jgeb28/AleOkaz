@@ -1,0 +1,61 @@
+.fishing-spot-component-container {
+    padding: 0 1rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+    width: 1000px;
+}
+
+.spot-coordinates,
+.spot-user-component,
+.spot-name {
+    align-self: flex-start;
+    font-size: 1.25rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.spot-coordinates {
+    flex-direction: row;
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+}
+
+.spot-name {
+    padding: 0 0.5rem;
+    width: 100%;
+    text-align: left;
+}
+
+.spot-description {
+    margin-bottom: 0.5rem;
+    width: 95%;
+    margin-left: 1rem;
+    text-align: left;
+}
+
+.fishing-spot-actions {
+    cursor: pointer;
+    flex-direction: row;
+    display: flex;
+    gap: 1rem;
+    margin-top: 0.5rem;
+}
+
+.fishing-spot-actions>* {
+    font-weight: bold;
+    color: #555;
+}
+
+.fishing-spot-actions>*:hover {
+    color: #000;
+}
+
+.fishing-spot-bar {
+    flex-direction: row;
+    align-items: flex-start;
+    display: flex;
+    margin-bottom: 0.5rem;
+    padding: 0.5rem 0 0 0;
+}

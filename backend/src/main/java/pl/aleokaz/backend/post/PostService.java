@@ -7,15 +7,17 @@ import org.springframework.web.multipart.MultipartFile;
 import jakarta.transaction.Transactional;
 import lombok.NonNull;
 import pl.aleokaz.backend.fishingspot.FishingSpot;
-import pl.aleokaz.backend.fishingspot.FishingSpotRepository;
+import pl.aleokaz.backend.fishingspot.FishingSpotService;
+import pl.aleokaz.backend.image.ImageService;
+import pl.aleokaz.backend.post.commands.PostCommand;
+import pl.aleokaz.backend.post.exceptions.PostNotFoundException;
+import pl.aleokaz.backend.security.AuthorizationException;
 import pl.aleokaz.backend.user.User;
-import pl.aleokaz.backend.user.UserRepository;
-import pl.aleokaz.backend.user.AuthorizationException;
+import pl.aleokaz.backend.user.UserService;
 
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -26,30 +28,44 @@ public class PostService {
     private PostRepository postRepository;
 
     @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private InteractionMapper postMapper;
+    private UserService userService;
 
     @Autowired
     private ImageService imageService;
+
     @Autowired
-    private FishingSpotRepository fishingSpotRepository;
+    private FishingSpotService fishingSpotService;
 
-    public PostDto createPost(@NonNull UUID userId, PostCommand postCommand, MultipartFile image)
-            throws ImageSaveException {
-        final var author = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("Author not found"));
+    public List<Post> getPostsByAuthorId(UUID authorId) {
+        return postRepository.findByAuthorId(authorId);
+    }
 
-        final var fishingSpot = fishingSpotRepository.findById(postCommand.fishingSpotId())
-            .orElseThrow(() -> new RuntimeException("FishingSpot not found"));
+    public Post getPostByPostId(UUID postId) {
+        return postRepository.findById(postId)
+                .orElseThrow(() -> new PostNotFoundException("id", postId.toString()));
+    }
+
+    public List<Post> getPostsByFishingSpotId(UUID fishingSpotId, UUID userId) {
+        return postRepository.findByFishingSpotId(fishingSpotId);
+    }
+
+    public List<PostDTO> postsAsPostDtos(List<Post> posts) {
+        return posts.stream()
+                .map(Post::asPostDTO)
+                .collect(Collectors.toList());
+    }
+
+    public Post createPost(@NonNull UUID userId, PostCommand postCommand, MultipartFile image)
+            throws IOException {
+        User author = userService.getUserById(userId);
+        FishingSpot fishingSpot = fishingSpotService.getFishingSpotById(postCommand.fishingSpotId());
 
         String imageUrl;
-        try {
+        //try {
             imageUrl = imageService.saveImage(image);
-        } catch (IOException ioe) {
-            throw new ImageSaveException();
-        }
+        //} catch (IOException e) {
+        //    throw new ImageSaveException();
+        //}
 
         final var post = Post.builder()
                 .content(postCommand.content())
@@ -59,76 +75,24 @@ public class PostService {
                 .fishingSpot(fishingSpot)
                 .build();
 
-        final var savedPost = postRepository.save(post);
-
-        return postMapper.convertPostToPostDto(savedPost, author);
+        return postRepository.save(post);
     }
 
-    public PostDto updatePost(@NonNull UUID userId, UUID postId, PostCommand postCommand)
+    public Post updatePost(@NonNull UUID userId, UUID postId, PostCommand postCommand)
             throws AuthorizationException {
-        final var author = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("Author not found"));
-        final var post = postRepository.findById(postId)
-                .orElseThrow(() -> new RuntimeException("Post not found"));
-
-        if (!author.equals(post.author())) {
-            throw new AuthorizationException(userId.toString());
-        }
-
+        User author = userService.getUserById(userId);
+        Post post = getPostByPostId(postId);
+        author.verifyAs(post.author());
         post.content(postCommand.content());
         post.editedAt(new Date());
-
-        final var savedPost = postRepository.save(post);
-
-        return postMapper.convertPostToPostDto(savedPost, author);
+        return postRepository.save(post);
     }
 
-    public PostDto deletePost(@NonNull UUID userId, UUID postId) throws AuthorizationException {
-        final var author = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("Author not found"));
-        final var post = postRepository.findById(postId)
-                .orElseThrow(() -> new RuntimeException("Post not found"));
-
-        if (!author.equals(post.author())) {
-            throw new AuthorizationException(userId.toString());
-        }
-
-        PostDto responsePost = postMapper.convertPostToPostDto(post, author);
-
+    public void deletePost(@NonNull UUID userId, UUID postId)
+            throws AuthorizationException {
+        User author = userService.getUserById(userId);
+        Post post = getPostByPostId(postId);
+        author.verifyAs(post.author());
         postRepository.delete(post);
-
-        return responsePost;
-    }
-
-    public List<PostDto> getAllPosts(UUID userId) {
-        final var user = Optional.ofNullable(userId)
-                .flatMap(userRepository::findById)
-                .orElse(null);
-        final List<Post> posts = postRepository.findAll();
-
-        return posts.stream()
-                .map(post -> postMapper.convertPostToPostDto(post, user))
-                .collect(Collectors.toList());
-    }
-
-    public List<PostDto> getPostsByUserId(UUID userId, UUID authorId) {
-        final var user = Optional.ofNullable(userId)
-                .flatMap(userRepository::findById)
-                .orElse(null);
-        final List<Post> posts = postRepository.findByAuthorId(authorId);
-
-        return posts.stream()
-                .map(post -> postMapper.convertPostToPostDto(post, user))
-                .collect(Collectors.toList());
-    }
-
-    public PostDto getPostById(UUID userId, UUID postId) {
-        final var user = Optional.ofNullable(userId)
-                .flatMap(userRepository::findById)
-                .orElse(null);
-        final var post = postRepository.findById(postId)
-                .orElseThrow(() -> new RuntimeException("Post not found"));
-
-        return postMapper.convertPostToPostDto(post, user);
     }
 }

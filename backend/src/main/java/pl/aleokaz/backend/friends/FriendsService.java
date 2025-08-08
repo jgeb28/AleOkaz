@@ -8,119 +8,122 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
-import pl.aleokaz.backend.exceptions.UserNotFoundException;
+import pl.aleokaz.backend.friends.exceptions.FriendRequestNotFoundException;
+import pl.aleokaz.backend.friends.exceptions.FriendshipNotFoundException;
 import pl.aleokaz.backend.user.User;
-import pl.aleokaz.backend.user.UserRepository;
+import pl.aleokaz.backend.user.UserService;
 
 @Service
 public class FriendsService {
 
-    public enum FriendStatus {
-        SENT_FRIEND_REQUEST,
-        ACCEPTED_FRIEND_REQUEST,
-        TRIED_TO_ADD_YOURSELF,
-        FRIENDSHIP_EXISTS,
-        FRIENDSHIP_ALREADY_ACCEPTED,
-        ALREADY_SENT_FRIEND_REQUEST,
-        FRIEND_REMOVED,
-        NO_FRIENDSHIP_TO_REMOVE,
-        REQUEST_DELETED,
-        REQUEST_NOT_FOUND
-    }
-
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
     @Autowired
     private FriendshipRepository friendshipRepository;
 
     @Autowired
+    private FriendRequestRepository friendRequestRepository;
+
+    @Autowired
     private KafkaTemplate<String, String> kafkaTemplate;
-    
-    public FriendStatus addFriend(FriendCommand addFriendCommand, UUID userId) throws UserNotFoundException {
-        String friendUsername = addFriendCommand.username();
-        User friend = userRepository.findByUsername(friendUsername);
-        if(friend == null) throw new UserNotFoundException("username", friendUsername);
-        User user = userRepository.getReferenceById(userId);
-        if(user == null) throw new UserNotFoundException("id", userId.toString());
-        if(user.id() == friend.id()) return FriendStatus.TRIED_TO_ADD_YOURSELF;
 
-        Optional<Friendship> existingFriendship = friendshipRepository.findSymmetricalFriendship(user.id(), friend.id());
-        if (existingFriendship.isEmpty()) {
-            Friendship friendship = new Friendship(user, friend, false);
-            friendshipRepository.save(friendship);
-            kafkaTemplate.send(friend.id().toString(), "Friend request from " + user.username());
-            return FriendStatus.SENT_FRIEND_REQUEST;
+    public List<FriendRequest> getIncomingFriendRequests(UUID userId) {
+        return friendRequestRepository.findAllByReceiverId(userId);
+    }
+
+    public List<FriendRequest> getSentFriendRequests(UUID userId) {
+        return friendRequestRepository.findAllBySenderId(userId);
+    }
+
+    public FriendRequest sendFriendRequest(UUID senderId, UUID receiverId){
+        if (senderId.equals(receiverId)) {
+            throw new IllegalArgumentException("You cannot send a friend request to yourself.");
         }
-        Friendship friendship = existingFriendship.get(); 
-        if (friendship.friend().id() == userId){
-            if(friendship.isActive()) return FriendStatus.FRIENDSHIP_ALREADY_ACCEPTED;
-            friendship.isActive(true);
-            friendshipRepository.save(friendship);
-            kafkaTemplate.send(friend.id().toString(), "Friend request accepted by " + user.username());
-            return FriendStatus.ACCEPTED_FRIEND_REQUEST;
+        if (friendRequestRepository.existsBySenderIdAndReceiverId(senderId, receiverId)) {
+            throw new IllegalArgumentException("Friend request already sent.");
         }
-        return friendship.isActive() ? FriendStatus.FRIENDSHIP_EXISTS : FriendStatus.ALREADY_SENT_FRIEND_REQUEST;
-    }
-
-    public FriendStatus removeFriend(FriendCommand removeFriendCommand, UUID userId) throws UserNotFoundException {
-        String friendUsername = removeFriendCommand.username();
-        User friend = userRepository.findByUsername(friendUsername);
-        if(friend == null) throw new UserNotFoundException("username", friendUsername);
-        User user = userRepository.getReferenceById(userId);
-        if(user == null) throw new UserNotFoundException("id", userId.toString());
-
-        Optional<Friendship> existingFriendship = friendshipRepository.findSymmetricalFriendship(user.id(), friend.id());
-        if (existingFriendship.isPresent()) {
-            friendshipRepository.delete(existingFriendship.get());
-            kafkaTemplate.send(friend.id().toString(), "Removed from friends by " + user.username());
-            return FriendStatus.FRIEND_REMOVED;
+        if (friendshipRepository.existsByUserIdAndFriendId(senderId, receiverId)) {
+            throw new IllegalArgumentException("Friendship already exists.");
         }
-        return FriendStatus.NO_FRIENDSHIP_TO_REMOVE;
+
+        User sender = userService.getUserById(senderId);
+        User receiver = userService.getUserById(receiverId);
+
+        FriendRequest friendRequest = new FriendRequest(sender, receiver);
+        friendRequest = friendRequestRepository.save(friendRequest);
+        kafkaTemplate.send(receiver.id().toString(), "New friend request from " + sender.username());
+        return friendRequest;
     }
 
-    public List<FriendDTO> getFriends(UUID userId){
-        List<Friendship> friendships = friendshipRepository.findAllByUserId(userId);
-        List<FriendDTO> friendDTOs = friendships.stream()
-            .map(friendship -> friendship.toFriendDTO(userId)).toList();
-        return friendDTOs;
-    }
-
-    public List<FriendDTO> getFriendsOfUser(String username){
-        User user = userRepository.findByUsername(username);
-        if(user == null) return List.of();
-        List<Friendship> friendships = friendshipRepository.findAllByUserId(user.id());
-        List<FriendDTO> friendDTOs = friendships.stream()
-            .filter(friendship -> friendship.isActive())
-            .map(friendship -> friendship.toFriendDTO(user.id()))
-            .toList();
-        return friendDTOs;
-    }
-
-    public List<FriendDTO> getIncomingRequests(UUID userId){
-        List<Friendship> friendships = friendshipRepository.findAllByUserId(userId);
-        List<FriendDTO> friendDTOs = friendships.stream()
-            .filter(friendship -> !friendship.isActive())
-            .map(friendship -> friendship.toFriendDTO(userId))
-            .toList();
-        return friendDTOs.stream()
-            .filter(friendDTO -> !friendDTO.is_sender())
-            .toList();
-    }
-
-    public FriendStatus deleteFriendRequest(FriendCommand removeFriendCommand, UUID userId) throws UserNotFoundException {
-        String friendUsername = removeFriendCommand.username();
-        User friend = userRepository.findByUsername(friendUsername);
-        if(friend == null) throw new UserNotFoundException("username", friendUsername);
-        User user = userRepository.getReferenceById(userId);
-        if(user == null) throw new UserNotFoundException("id", userId.toString());
-
-        Optional<Friendship> existingFriendship = friendshipRepository.findSymmetricalFriendship(user.id(), friend.id());
-        if (existingFriendship.isPresent()) {
-            friendshipRepository.delete(existingFriendship.get());
-            kafkaTemplate.send(friend.id().toString(), "Friend request denied by " + user.username());
-            return FriendStatus.REQUEST_DELETED;
+    public void cancelFriendRequest(UUID senderId, UUID receiverId) {
+        List<FriendRequest> friendRequest = friendRequestRepository.findAllByReceiverIdAndSenderId(receiverId, senderId);
+        if (friendRequest.isEmpty()) {
+            throw new FriendRequestNotFoundException("receiver_id", receiverId.toString());
         }
-        return FriendStatus.REQUEST_NOT_FOUND;
+        friendRequestRepository.delete(friendRequest.get(0));
+    }
+
+    public Friendship acceptFriendRequest(UUID senderId, UUID receiverId) {
+        List<FriendRequest> friendRequest = friendRequestRepository.findAllByReceiverIdAndSenderId(receiverId, senderId);
+        if (friendRequest.isEmpty()) {
+            throw new FriendRequestNotFoundException("sender_id", senderId.toString());
+        }
+        FriendRequest request = friendRequest.get(0);
+        User sender = request.sender();
+        User receiver = request.receiver();
+        Friendship friendship = new Friendship(sender, receiver);
+        friendRequestRepository.delete(request);
+        friendship = friendshipRepository.save(friendship);
+        kafkaTemplate.send(sender.id().toString(), "Friend request accepted by " + receiver.username());
+        return friendship;
+    }
+
+    public void denyFriendRequest(UUID senderId, UUID receiverId) {
+        List<FriendRequest> friendRequest = friendRequestRepository.findAllByReceiverIdAndSenderId(receiverId, senderId);
+        if (friendRequest.isEmpty()) {
+            throw new FriendRequestNotFoundException("sender_id", senderId.toString());
+        }
+        FriendRequest request = friendRequest.get(0);
+        friendRequestRepository.delete(request);
+        kafkaTemplate.send(senderId.toString(), "Friend request denied by " + userService.getUserById(receiverId).username());
+    }
+
+    public List<User> getFriends(UUID currentUserId) {
+        List<Friendship> friendships = friendshipRepository.findAllByUserId(currentUserId);
+        return friendships.stream()
+                .map(friendship -> friendship.getFriendId(currentUserId))
+                .map(userService::getUserById)
+                .toList();
+    }
+
+    public List<User> getFriendsOfUser(String username,UUID currentUserId) {
+        //TODO: Privacy settings check
+        User user = userService.getUserByUsername(username);
+        return getFriends(user.id());
+    }
+
+    public void removeFriend(UUID currentUserId, UUID friendId){
+        Optional<Friendship> friendship = friendshipRepository.findSymmetricalFriendship(currentUserId, friendId);
+        if (friendship.isEmpty()) {
+            throw new FriendshipNotFoundException("friend_id", friendId.toString());
+        }
+        friendshipRepository.delete(friendship.get());
+        kafkaTemplate.send(friendId.toString(), "You have been removed from the friends list by " + userService.getUserById(currentUserId).username());
+    }
+
+    public static List<FriendDTO> usersAsFriendDtos(List<User> users) {
+        return users.stream()
+                .map(user -> FriendDTO.builder()
+                        .username(user.username())
+                        .avatar_url(user.profilePicture())
+                        .build())
+                .toList();
+    }
+
+    public static List<FriendDTO> friendRequestsAsFriendDtos(List<FriendRequest> friendRequests, UUID currentUserId) {
+        return friendRequests.stream()
+                .map(friendRequest -> friendRequest.toFriendDTO(currentUserId))
+                .toList();
     }
 }

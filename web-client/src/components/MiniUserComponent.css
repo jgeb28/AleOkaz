@@ -1,0 +1,34 @@
+.mini-user-component-container {
+    flex-direction: row;
+    align-items: center;
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.25rem;
+    padding-right: 0.5rem;
+    border-radius: 0.25rem;
+    border: 1px solid #ccc;
+    height: 25px;
+    cursor: pointer;
+    width: fit-content;
+
+}
+
+.mini-user-component-container:hover {
+    background-color: #d9d9d9;
+}
+
+
+.profile-picture {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 1px solid #ccc;
+}
+
+.username {
+    font-weight: 500;
+    font-size: 1rem;
+    margin-left: 0.5rem;
+    color: #333;
+    text-wrap: nowrap;
+}

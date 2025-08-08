@@ -19,8 +19,10 @@ public class KafkaListenerCreator {
 
     @Autowired
     private KafkaListenerEndpointRegistry kafkaListenerEndpointRegistry;
+
     @Autowired
     private KafkaListenerContainerFactory kafkaListenerContainerFactory;
+    
     @Lazy
     @Autowired
     private SseService sseService;

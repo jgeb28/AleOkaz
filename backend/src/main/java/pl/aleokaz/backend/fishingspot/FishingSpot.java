@@ -20,7 +20,8 @@ public class FishingSpot {
     @NonNull
     private String name;
 
-    private String description="";
+    @Builder.Default
+    private String description = "";
 
     @OneToOne
     @JoinColumn(name = "owner_id", nullable = false)
@@ -49,4 +50,14 @@ public class FishingSpot {
         }
     }
 
+    public FishingSpotDTO asFishingSpotDTO() {
+        return FishingSpotDTO.builder()
+            .id(id())
+            .name(name())
+            .description(description())
+            .ownerId(owner().id())
+            .latitude(location().getY())
+            .longitude(location().getX())
+            .build();
+    }
 }

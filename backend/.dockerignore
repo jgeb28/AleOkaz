@@ -9,7 +9,6 @@
 
 # Inne pliki
 **/.dockerignore
-**/.env
 **/.gitignore
 **/Dockerfile
 **/README.md

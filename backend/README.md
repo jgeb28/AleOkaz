@@ -4,21 +4,6 @@ Backend aplikacji dla wędkarzy AleOkaz.
 
 ## Użycie
 
-### Development
-
-```sh
-docker compose -f compose.yaml -f compose.development.yaml up --detach
-./mvnw spring-boot:run
-```
-
-### Produkcja
-
-```sh
-docker compose -f compose.yaml -f compose.production.yaml up --detach
-```
-
-## Instalacja
-
 ### Prerekwizyty
 
 - Git
@@ -33,77 +18,93 @@ cd AleOkaz/backend
 cp .env.example .env
 ```
 
+### Development
+
+```sh
+docker compose -f compose.yaml -f compose.development.yaml up --detach
+./mvnw spring-boot:run
+```
+
+### Produkcja
+
+```sh
+docker compose -f compose.yaml -f compose.production.yaml up --detach
+```
+
 ## Endpointy
 
 ### Reset hasła
-POST /api/recovery                  {email}                     Wysłanie tokenu\
-POST /api/recovery/verifyToken      {email, token}              Zweryfikowanie tokenu\
-POST /api/recovery/resetPassword    {email, token, password}    Ustawienie nowego hasła
+
+| Metoda | Endpoint                | Body / Parametry                | Opis                        |
+|--------|-------------------------|---------------------------------|-----------------------------|
+| POST   | /api/recovery           | {email}                         | Wysłanie tokenu             |
+| POST   | /api/recovery/reset     | {email, token, password}        | Ustawienie nowego hasła     |
 
 ### Znajomi
-GET  /api/friends/all                       Lista wszystkich znajomych\
-GET  /api/friends/allof/{username}                       Lista wszystkich zaakceptowanych znajomych użytkownika o nicku\
-POST /api/friends/add       {username}      Dodanie znajomego\
-POST /api/friends/remove    {username}      Usunięcie znajomego
-POST /api/friends/deleterequest  {username}      Usunięcie zaproszenia
 
-FriendDTO:
-        UUID friend_id,
-        boolean is_accepted,
-        boolean is_sender
-
-Kody odpowiedzi: 
-        SENT_FRIEND_REQUEST,
-        ACCEPTED_FRIEND_REQUEST,
-        TRIED_TO_ADD_YOURSELF,
-        FRIENDSHIP_EXISTS,
-        FRIENDSHIP_ALREADY_ACCEPTED,
-        ALREADY_SENT_FRIEND_REQUEST,
-        FRIEND_REMOVED,
-        NO_FRIENDSHIP_TO_REMOVE,
+| Metoda  | Endpoint                                 | Opis                                 |
+|---------|------------------------------------------|--------------------------------------|
+| GET     | /api/friends/my                          | Lista wszystkich znajomych           |
+| GET     | /api/friends/username/{username}         | Lista znajomych użytkownika o nicku  |
+| POST    | /api/friends/requests/send/{username}    | Wysłanie zaproszenia                 |
+| DELETE  | /api/friends/requests/cancel/{username}  | Usunięcie zaproszenia                |
+| POST    | /api/friends/requests/accept/{username}  | Akceptacja zaproszenia               |
+| POST    | /api/friends/requests/decline/{username} | Odrzucenie zaproszenia               |
+| GET     | /api/friends/requests/received           | Otrzymane zaproszenia                |
+| GET     | /api/friends/requests/sent               | Wysłane zaproszenia                  |
+| DELETE  | /api/friends/{username}                  | Usunięcie znajomego                  |
 
 ### Powiadomienia
-GET /api/sse/notifications              Otwiera połączenie sse do odbierania powiadomień
-#### Wysyłanie powiadomień z backendu:
-@Autowired\
-private KafkaTemplate<String, String> kafkaTemplate;\
-\
-kafkaTemplate.send(uuid_odbiorcy, tresc_powiadomienia);
+
+| Metoda | Endpoint                  | Opis                                             |
+|--------|---------------------------|--------------------------------------------------|
+| GET    | /api/sse/notifications    | Otwiera połączenie SSE do odbierania powiadomień |
 
 ### Użytkownik
-GET     /api/users/info/{id}                                   AUTH, Zwraca informacje o użytkowniku
-POST    /api/users             {username, email, password}     Rejestracja nowego użytkownika\
-POST    /api/users/login       {username, password}            Logowanie użytkownika\
-POST    /api/users/refresh     {refreshToken}                  Uzyskaj nowy access token
-PUT     /api/users/info/     FORM DATA:                      AUTH, Aktualizuje nazwę lub profilowe użytkownika
-                                    userInfo {username},
-                                    image
+
+| Metoda | Endpoint                  | Body / Parametry                  | Opis                                      |
+|--------|---------------------------|-----------------------------------|-------------------------------------------|
+| GET    | /api/users/info/{id}      |                                   | AUTH, info o użytkowniku                  |
+| GET    | /api/users/info           |                                   | AUTH, info o zalogowanym użytkowniku      |
+| POST   | /api/users/register       | {username, password}              | Rejestracja nowego użytkownika            |
+| POST   | /api/users/login          | {username, password}              | Logowanie użytkownika                     |
+| POST   | /api/users/refresh        | {refreshToken}                    | Uzyskaj nowy access token                 |
+| PUT    | /api/users/info           | FORM DATA: userInfo, image        | AUTH, aktualizuje nazwę/profilowe         |
 
 ### Posty
-GET     /api/posts?userId={userId}                             Zwraca wszystkie posty z możliwością wybrania konkretnego autora opcją ?userId
-GET     /api/posts/{postId}                                    Zwraca dany post
-POST    /api/posts             FORM DATA:                      AUTH, Tworzy nowy post
-                                    post {content, fishingSpotId},
-                                    image
-PUT     /api/posts/{postId}    {content}                       AUTH, Aktualizuje treść posta
-DELETE  /api/posts/{postId}                                    AUTH, Usuwa post
-PUT     /api/posts/{postId}/reactions                          Dodanie reakcji do posta.
-DELETE  /api/posts/{postId}/reactions                          Usunięcie reakcji do posta.
+
+| Metoda | Endpoint                                | Body / Parametry                       | Opis                                      |
+|--------|-----------------------------------------|----------------------------------------|-------------------------------------------|
+| GET    | /api/posts/all?userId={userId}          |                                        | Wszystkie posty (opcjonalnie autora)      |
+| GET    | /api/posts/id/{postId}                  |                                        | Dany post                                 |
+| POST   | /api/posts                              | FORM DATA: post, image                 | AUTH, tworzy nowy post                    |
+| PUT    | /api/posts/{postId}                     | {content}                              | AUTH, aktualizuje treść posta             |
+| DELETE | /api/posts/{postId}                     |                                        | AUTH, usuwa post                          |
+| GET    | /api/posts/fishing-spot/{fishingSpotId} |                                        | Posty z danego łowiska                    |
+
+### Reakcje
+
+| Metoda | Endpoint                        | Body / Parametry | Opis                        |
+|--------|---------------------------------|------------------|-----------------------------|
+| PUT    | /api/reactions/{interactionId}  |                  | Dodanie reakcji do posta    |
+| DELETE | /api/reactions/{interactionId}  |                  | Usunięcie reakcji do posta  |
 
 ### Komentarze
-POST    /api/comments                   {parentId,content}     Tworzenie komentarza.
-PUT     /api/comments/{commentId}       {content}              Aktualizacja komentarza.
-DELETE  /api/comments/{commentId}                              Usunięcie komentarza.
-PUT     /api/comments/{commentId}/reactions                    Dodanie reakcji do komentarza.
-DELETE  /api/comments/{commentId}/reactions                    Usunięcie reakcji do komentarza.
+
+| Metoda | Endpoint                      | Body / Parametry | Opis                        |
+|--------|-------------------------------|------------------|-----------------------------|
+| POST   | /api/comments/{parentId}      | {content}        | Tworzenie komentarza        |
+| PUT    | /api/comments/{commentId}     | {content}        | Aktualizacja komentarza     |
+| DELETE | /api/comments/{commentId}     |                  | Usunięcie komentarza        |
 
 ### Łowiska
-GET     /api/fishingspots/all                                  Zwraca wszystkie łowiska
-GET     /api/fishingspots/allsorted     {latitude, longitude}  Zwraca wszystkie łowiska posortowane wg podanej pozycji, najbliższe = pierwsze na liście
-GET     /api/fishingspots/{spotId}                             Zwraca łowisko o podanym ID
-GET     /api/fishingspots/closest       {latitude, longitude}  Zwraca najbliższe łowisko
-GET     /api/fishingspots/postedIn                             AUTH, zwraca wszystkie łowiska, gdzie zalogowany użytkownik ma posta
-POST    /api/fishingspots               {name, description,    AUTH, tworzy łowisko. description = optional
-                                        latitude, longitude}
-PUT     /api/fishingspots/{spotId}      {name, description,    AUTH, edytuje łowisko. Wszystkie pozycje są opcjonalne, latitude i longitude muszą być oba podane, żeby zmienić pozycję łowiska
-                                        latitude, longitude}
+
+| Metoda | Endpoint                          | Body / Parametry                        | Opis                                         |
+|--------|-----------------------------------|-----------------------------------------|----------------------------------------------|
+| GET    | /api/fishingspots/all             |                                         | Wszystkie łowiska                            |
+| GET    | /api/fishingspots/sorted          | {latitude, longitude}                   | Wszystkie łowiska posortowane wg pozycji     |
+| GET    | /api/fishingspots/closest         | {latitude, longitude}                   | Najbliższe łowisko                           |
+| GET    | /api/fishingspots/postedIn        |                                         | AUTH, łowiska gdzie użytkownik ma posta      |
+| GET    | /api/fishingspots/id/{id}         |                                         | Łowisko o podanym ID                         |
+| POST   | /api/fishingspots                 | {name, description, latitude, longitude}| AUTH, tworzy łowisko                         |
+| PUT    | /api/fishingspots/{id}            | {name, description, latitude, longitude}| AUTH, edytuje łowisko

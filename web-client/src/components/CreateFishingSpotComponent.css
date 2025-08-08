@@ -1,0 +1,82 @@
+.create-fishing-spot-component-container {
+    flex-direction: column;
+    align-items: flex-start;
+    display: flex;
+    width: 100%;
+}
+
+.create-fishing-spot-toggle {
+    cursor: pointer;
+    text-decoration: underline;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+}
+
+.create-fishing-spot-form {
+    display: flex;
+    flex-direction: column;
+    padding-top: 0.8rem;
+    gap: 0.5rem;
+    width: 100%;
+}
+
+.fishing-spot-name-input {
+    resize: none;
+    overflow: hidden;
+    min-height: 1.5rem;
+    padding: 0.5rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.fishing-spot-description-input {
+    resize: none;
+    overflow: hidden;
+    min-height: 4rem;
+    padding: 0.5rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.fishing-spot-coordinates-input {
+    flex-direction: row;
+    display: flex;
+}
+
+.fishing-spot-latitude-input,
+.fishing-spot-longitude-input {
+    resize: none;
+    overflow: hidden;
+    min-height: 1.5rem;
+    padding: 0.5rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 47.6%;
+}
+
+.fishing-spot-latitude-input {
+    margin-right: 0.4rem;
+}
+
+.fishing-spot-longitude-input {
+    margin-left: 0.4rem;
+}
+
+.fishing-spot-submit-button {
+    cursor: pointer;
+    width: fit-content;
+    align-self: center;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    text-align: center;
+    font-size: 1rem;
+    border: 0.05rem solid #ededed;
+}
+
+.fishing-spot-submit-button:hover {
+    background-color: #e2e8f0;
+    border: 0.05rem solid #cbd5e0;
+}

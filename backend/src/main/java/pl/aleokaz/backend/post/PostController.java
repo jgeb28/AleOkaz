@@ -1,15 +1,20 @@
 package pl.aleokaz.backend.post;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import pl.aleokaz.backend.user.AuthorizationException;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import pl.aleokaz.backend.post.commands.PostCommand;
+import pl.aleokaz.backend.security.AuthenticationService;
+
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,109 +22,64 @@ import java.util.UUID;
 @RequestMapping("/api/posts")
 public class PostController {
     @Autowired
-    private PostService postService;
+    private AuthenticationService authenticationService;
 
     @Autowired
-    private ReactionService reactionService;
+    private PostService postService;
 
-    @GetMapping
-    public ResponseEntity<List<PostDto>> getAllPosts(
-            Authentication authentication,
-            @RequestParam(name = "userId", required = false) UUID authorId) {
-        UUID userId = null;
-        if (authentication != null) {
-            userId = UUID.fromString((String) authentication.getPrincipal());
-        }
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
-        List<PostDto> posts;
-
-        if (authorId != null) {
-            posts = postService.getPostsByUserId(userId, authorId);
-        } else {
-            posts = postService.getAllPosts(userId);
-        }
-
-        return new ResponseEntity<>(posts, HttpStatus.OK);
+    @GetMapping("/all")
+    public ResponseEntity<List<PostDTO>> getAllPosts(Authentication authentication, @RequestParam(name = "userId", required = false) UUID authorId) {
+        UUID userId = authenticationService.getCurrentUserId(authentication);
+        List<Post> posts = postService.getPostsByAuthorId(authorId == null ? userId : authorId);
+        if (posts == null || posts.isEmpty())
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(postService.postsAsPostDtos(posts), HttpStatus.OK);
     }
 
-    @GetMapping("/{postId}")
-    public ResponseEntity<PostDto> getPost(
-            Authentication authentication,
-            @PathVariable UUID postId) {
-        UUID userId = null;
-        if (authentication != null) {
-            userId = UUID.fromString((String) authentication.getPrincipal());
-        }
-
-        PostDto post = postService.getPostById(userId, postId);
-        return ResponseEntity.ok().body(post);
+    @GetMapping("/id/{postId}")
+    public ResponseEntity<PostDTO> getPost(Authentication authentication, @PathVariable UUID postId) {
+        UUID userId = authenticationService.getCurrentUserId(authentication); //User is ignored for now, can be used for visibility later
+        Post post = postService.getPostByPostId(postId);
+        if (post == null)
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(post.asPostDTO(), HttpStatus.OK);
     }
 
     @PostMapping(consumes = "multipart/form-data")
-    public ResponseEntity<PostDto> createPost(
-            Authentication authentication,
-            @RequestPart("post") PostCommand post,
-            @RequestParam(value = "image", required = true) MultipartFile image) {
-
-        UUID currentUserId = UUID.fromString((String) authentication.getPrincipal());
-
-        try {
-            PostDto createdPost = postService.createPost(currentUserId, post, image);
-            return ResponseEntity.status(HttpStatus.CREATED).body(createdPost);
-        } catch (ImageSaveException pse) {
-            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(null);
-        }
+    public ResponseEntity<PostDTO> createPost(Authentication authentication, @RequestPart("post") String post, @RequestPart(value = "image", required = true) MultipartFile image) 
+            throws JsonProcessingException, JsonMappingException, IOException {
+        UUID currentUserId = authenticationService.getCurrentUserId(authentication);
+        PostCommand postCommand = objectMapper.readValue(post, PostCommand.class);
+        Post createdPost = postService.createPost(currentUserId, postCommand, image);
+        if (createdPost == null)
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(createdPost.asPostDTO(), HttpStatus.CREATED);
     }
 
     @PutMapping("/{postId}")
-    public ResponseEntity<PostDto> updatePost(
-            Authentication authentication,
-            @PathVariable UUID postId,
-            @RequestPart("post") PostCommand postCommand) {
-
-        UUID currentUserId = UUID.fromString((String) authentication.getPrincipal());
-
-        try {
-            PostDto post = postService.updatePost(currentUserId, postId, postCommand);
-            return ResponseEntity.ok().body(post);
-        } catch (AuthorizationException ae) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
-        }
+    public ResponseEntity<PostDTO> updatePost(Authentication authentication, @PathVariable UUID postId, @RequestPart("post") PostCommand postCommand) {
+        UUID currentUserId = authenticationService.getCurrentUserId(authentication);
+        Post post = postService.updatePost(currentUserId, postId, postCommand);
+        if (post == null)
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(post.asPostDTO(), HttpStatus.OK);
     }
 
     @DeleteMapping("/{postId}")
-    public ResponseEntity<PostDto> deletePost(Authentication authentication, @PathVariable UUID postId) {
-
-        UUID currentUserId = UUID.fromString((String) authentication.getPrincipal());
-
-        try {
-            postService.deletePost(currentUserId, postId);
-            return ResponseEntity.noContent().build();
-        } catch (AuthorizationException ae) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
-        }
+    public ResponseEntity<PostDTO> deletePost(Authentication authentication, @PathVariable UUID postId) {
+        UUID currentUserId = authenticationService.getCurrentUserId(authentication);
+        postService.deletePost(currentUserId, postId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PutMapping("/{postId}/reactions")
-    public ResponseEntity<Void> setPostReaction(
-            Authentication authentication,
-            @PathVariable UUID postId) {
-        final UUID userId = UUID.fromString((String) authentication.getPrincipal());
-
-        // TODO: Wczytanie typu reakcji z @RequestBody.
-        reactionService.setReaction(userId, new ReactionCommand(postId, ReactionType.LIKE));
-
-        return ResponseEntity.noContent().build();
-    }
-
-    @DeleteMapping("/{postId}/reactions")
-    public ResponseEntity<Void> deletePostReaction(
-            Authentication authentication,
-            @PathVariable UUID postId) {
-        final UUID userId = UUID.fromString((String) authentication.getPrincipal());
-
-        reactionService.deleteReaction(userId, postId);
-
-        return ResponseEntity.noContent().build();
+    @GetMapping("/fishing-spot/{fishingSpotId}")
+    public ResponseEntity<List<PostDTO>> getPostsByFishingSpotId(Authentication authentication, @PathVariable UUID fishingSpotId) {
+        UUID currentUserId = authenticationService.getCurrentUserId(authentication);
+        List<Post> posts = postService.getPostsByFishingSpotId(fishingSpotId, currentUserId);
+        if (posts == null || posts.isEmpty())
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(postService.postsAsPostDtos(posts), HttpStatus.OK);
     }
 }

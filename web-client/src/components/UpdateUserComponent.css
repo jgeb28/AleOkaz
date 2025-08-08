@@ -1,0 +1,59 @@
+.update-user-component-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.update-user-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 400px;
+    padding-top: 1rem;
+    gap: 10px;
+}
+
+.update-username-input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.update-user-confirm-button {
+    cursor: pointer;
+    width: fit-content;
+    align-self: center;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    text-align: center;
+    font-size: 1rem;
+    border: 0.05rem solid #ededed;
+}
+
+.update-user-confirm-button:hover {
+    background-color: #f0f0f0;
+    border: 0.05rem solid #ededed;
+}
+
+.user-image-label {
+    cursor: pointer;
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background-color: #f0f0f0;
+    border-radius: 4px;
+    text-align: center;
+    font-size: 1rem;
+    color: #333;
+    width: fit-content;
+}
+
+.update-user-toggle {
+    cursor: pointer;
+    text-decoration: underline;
+    font-size: 0.8rem;
+    height: 0.8rem;
+    padding-left: 0.5rem;
+}

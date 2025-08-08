@@ -1,0 +1,14 @@
+.list-comments-component-container {
+    flex-direction: column;
+    align-items: flex-start;
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.25rem;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.list-comments-component-container>* {
+    width: 100%;
+    box-sizing: border-box;
+}

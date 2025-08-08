@@ -7,4 +7,5 @@ import java.util.UUID;
 
 public interface PostRepository extends JpaRepository<Post, UUID> {
     List<Post> findByAuthorId(UUID authorId);
+    List<Post> findByFishingSpotId(UUID fishingSpotId);
 }

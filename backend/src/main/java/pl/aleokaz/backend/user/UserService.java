@@ -12,22 +12,31 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.NonNull;
 import org.springframework.web.multipart.MultipartFile;
-import pl.aleokaz.backend.post.ImageSaveException;
-import pl.aleokaz.backend.post.ImageService;
+
+import pl.aleokaz.backend.image.ImageService;
+import pl.aleokaz.backend.image.exceptions.ImageSaveException;
+import pl.aleokaz.backend.mail.MailingService;
+import pl.aleokaz.backend.security.JwtTokenProvider;
+import pl.aleokaz.backend.security.LoginResponse;
+import pl.aleokaz.backend.security.RefreshResponse;
+import pl.aleokaz.backend.security.Verification;
+import pl.aleokaz.backend.security.VerificationRepository;
+import pl.aleokaz.backend.user.commands.UpdateInfoCommand;
+import pl.aleokaz.backend.user.exceptions.UserExistsException;
+import pl.aleokaz.backend.user.exceptions.UserNotFoundException;
 
 import java.io.IOException;
 import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
 @Transactional
 public class UserService {
     final static Logger LOGGER = LoggerFactory.getLogger(UserService.class);
-
-    private UserMapper userMapper;
 
     private UserRepository userRepository;
 
@@ -38,112 +47,84 @@ public class UserService {
     @Value("${aleokaz.profile.picture.default}")
     private String defaultProfilePicture;
 
+    @Value("${aleokaz.register.code.length}")
+    private int verificationCodeLength;
+
+    @Autowired
     private ImageService imageService;
 
-    public UserService(@NonNull UserMapper userMapper,
-            @NonNull UserRepository userRepository,
-            @NonNull VerificationRepository verificationRepository,
+    public UserService(@NonNull UserRepository userRepository,
+                       @NonNull VerificationRepository verificationRepository,
                        @NonNull JwtTokenProvider jwtTokenProvider,
-                       @NonNull ImageService imageService) {
-        this.userMapper = userMapper;
+                       @NonNull ImageService imageService,
+                       @NonNull MailingService mailingService) {
         this.userRepository = userRepository;
         this.verificationRepository = verificationRepository;
         this.jwtTokenProvider = jwtTokenProvider;
         this.imageService = imageService;
     }
 
-    /**
-     * Zwraca użytkownika na podstawie id.
-     *
-     * @param id ID użytkownika
-     * @return Użytkownika
-     * @throws UserNotFoundException jeżeli użytkownik nie istnieje.
-     */
-    // TODO(michalciechan): Kto powinien mieć dostęp? Może ograniczony zestaw
-    // danych publicznie, a dla znajomych więcej?
-    public UserDto findUserById(@NonNull UUID id) {
-        final var user = userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException(id));
-
-        return userMapper.convertUserToUserDto(user);
+    public User getUserByUsername(@NonNull String username) {
+        User user = userRepository.findByUsername(username);
+        if (user == null) {
+            throw new UserNotFoundException("username", username);
+        }
+        return user;
     }
 
-    /**
-     * Rejestruje użytkownika i wysyła kod weryfikacyjny na podanego emaila.
-     * Po rejestracji użytkownik jest niezweryfikowany i nie może korzystać w pełni
-     * z serwisu. Ta metoda nie autentykuje użytkownika, więc po rejestracji należy
-     * zalogować użytkownika.
-     *
-     * @param registerCommand Dane użytkownika do zarejestrowania.
-     * @return Zarejestrowanego użytkownika
-     * @throws UserAlreadyExistsException jeżeli użytkownik o takiej samej nazwie
-     *                                    lub emailu istnieje.
-     */
+    public User getUserById(@NonNull UUID id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("id", id.toString()));
+    }
+
+    public User setUserPassword(@NonNull User user, @NonNull String password) {
+        final var passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+        final var encodedPassword = passwordEncoder.encode(String.valueOf(password));
+        user.password(encodedPassword);
+        return userRepository.save(user);
+    }
+
     @PreAuthorize("permitAll()")
-    public UserDto registerUser(@NonNull RegisterCommand registerCommand) {
-        final var username = registerCommand.username();
+    public User registerUser(@NonNull String username,
+                             @NonNull char[] password) {
         if (userRepository.existsByUsername(username)) {
             throw new UserExistsException("username", username);
         }
-
-        final var email = registerCommand.email();
-        if (userRepository.existsByEmail(email)) {
-            // TODO(michalciechan): Zwrócić OK i wysłać emaila, że ktoś próbował
-            // się zarejestrować? Na tę chwilę wyciekają informacje o tym kto ma
-            // u nas konto.
-            throw new UserExistsException("email", email);
-        }
-
         // TODO(michalciechan): Minimalna entropia hasła?
 
-        final var passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
-        final var password = registerCommand.password();
-        final var encodedPassword = passwordEncoder.encode(String.valueOf(password));
+        PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+        String encodedPassword = passwordEncoder.encode(String.valueOf(password));
         for (int i = 0; i < password.length; i++) {
             password[i] = '\0';
         }
 
-        final var roles = new HashSet<>(Arrays.asList(UserRole.UNVERIFIED_USER));
+        Set<UserRole> roles = new HashSet<>(Arrays.asList(UserRole.UNVERIFIED_USER));
         var user = User.builder()
                 .username(username)
-                .email(email)
                 .password(encodedPassword)
                 .roles(roles)
                 .profilePicture(defaultProfilePicture)
                 .build();
         user = userRepository.save(user);
 
-        final var code = createVerificationCode();
+        String verificationCode = createVerificationCode();
 
-        final var verification = Verification.builder()
+        Verification verification = Verification.builder()
                 .user(user)
-                .code(code)
+                .code(verificationCode)
                 .build();
         verificationRepository.save(verification);
 
-        // TODO(michalciechan): Wysłać emaila.
-        LOGGER.info("Created verification code {} for user {}",
-                code,
-                user.id().toString());
-
-        return userMapper.convertUserToUserDto(user);
+        return user;
     }
 
-    /**
-     * Sprawdza, czy login i hasło użytkownika się zgadzają. Jeśli tak, to zwraca
-     * token
-     *
-     * @param loginCommand Dane użytkownika do logowania.
-     * @return JWT Access i Refresh tokeny i ich expiration date
-     * @throws IllegalArgumentException jeżeli dane logowania są niepoprawne
-     */
-
     @PreAuthorize("permitAll()")
-    public LoginResponse loginUser(LoginCommand loginCommand) {
-        var user = userRepository.findByUsername(loginCommand.username());
+    public LoginResponse loginUser(@NonNull String username,
+                                   @NonNull char[] password) {
+        User user = getUserByUsername(username);
 
         final PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
-        if (user == null || !passwordEncoder.matches(loginCommand.password(), user.password())) {
+        if (user == null || !passwordEncoder.matches(String.valueOf(password), user.password())) {
             throw new IllegalArgumentException("Invalid username or password");
         }
 
@@ -159,76 +140,49 @@ public class UserService {
     }
 
     @PreAuthorize("permitAll()")
-    public RefreshResponse refreshUserToken(RefreshCommand refreshCommand) {
-        String refreshToken = refreshCommand.refreshToken();
+    public RefreshResponse refreshUserToken(@NonNull String refreshToken) {
         UUID userId = UUID.fromString(jwtTokenProvider.getUserIdFromToken(refreshToken));
-        System.out.println("user id: " + userId);
 
         Optional<User> optionalUser = userRepository.findById(userId);
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
             String accessToken = jwtTokenProvider.refreshAccessToken(refreshToken, user);
-            System.out.println("New access token: " + accessToken);
 
             RefreshResponse refreshResponse = RefreshResponse.builder()
                 .accessToken(accessToken)
                 .build();
             return refreshResponse;
         } else {
-            // Handle the case where the user was not found
-            throw new IllegalArgumentException("User not found with ID: " + userId);
+            throw new UserNotFoundException("id", userId.toString());
         }
     }
 
-    public UserDto getUserInfo(UUID userId) {
-        Optional<User> optionalUser = userRepository.findById(userId);
-        if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
-            return userMapper.convertUserToUserDto(user);
-        }
-        else {
-            throw new IllegalArgumentException("User not found with ID: " + userId);
-        }
-    }
-
-    public UserDto updateUserInfo(UUID userId, UpdateInfoCommand updateInfoCommand, MultipartFile image) {
-        Optional<User> optionalUser = userRepository.findById(userId);
-        if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
-
-            if(updateInfoCommand != null) {
-                if(!updateInfoCommand.username().isEmpty()) {
-                    user.username(updateInfoCommand.username());
-                }
+    public User updateUserInfo(UUID userId, UpdateInfoCommand updateInfoCommand, MultipartFile image) {
+        User user = getUserById(userId);
+        
+        if(updateInfoCommand != null) {
+            if(!updateInfoCommand.username().isEmpty()) {
+                user.username(updateInfoCommand.username());
             }
+        }
 
-            if(image != null && !image.isEmpty()) {
-                try {
-                    user.profilePicture(imageService.saveProfilePicture(image));
-                } catch (IOException e) {
-                    throw new ImageSaveException();
-                }
+        if(image != null && !image.isEmpty()) {
+            try {
+                user.profilePicture(imageService.saveProfilePicture(image));
+            } catch (IOException e) {
+                throw new ImageSaveException();
             }
-
-            return userMapper.convertUserToUserDto(user);
         }
-        else {
-            throw new IllegalArgumentException("User not found with ID: " + userId);
-        }
+        return user;
     }
 
     private String createVerificationCode() {
-        final int CODE_LENGTH = 6;
-        final char[] DIGITS = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
-
         final var random = new SecureRandom();
 
         String code = "";
-        for (int i = 0; i < CODE_LENGTH; i++) {
-            final var index = random.nextInt(DIGITS.length);
-            code += DIGITS[index];
+        for (int i = 0; i < verificationCodeLength; i++) {
+            code += (char)('0'+ random.nextInt(10));
         }
-
         return code;
     }
 }

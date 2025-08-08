@@ -7,96 +7,88 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 import org.springframework.web.bind.annotation.PathVariable;
 
-import pl.aleokaz.backend.recovery.ResponseMsgDto;
+import pl.aleokaz.backend.security.AuthenticationService;
+import pl.aleokaz.backend.user.User;
+import pl.aleokaz.backend.user.UserService;
 
-//TODO(marcin): Add tests
 @RestController
 @RequestMapping("/api/friends")
 public class FriendsController {
     @Autowired
     private FriendsService friendsService;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private AuthenticationService authenticationService;
 
-    @GetMapping("/all")
+    @GetMapping("/my")
     public ResponseEntity<List<FriendDTO>> getFriends(Authentication authentication) {
-        try {
-            if(authentication == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-            }
-            UUID currentUserId = UUID.fromString((String) authentication.getPrincipal());
-            return ResponseEntity.ok().body(friendsService.getFriends(currentUserId));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(List.of());
-        }
+        UUID currentUserId = authenticationService.getCurrentUserId(authentication);
+        List<User> friends = friendsService.getFriends(currentUserId);
+        return new ResponseEntity<>(FriendsService.usersAsFriendDtos(friends), HttpStatus.OK);
     }
 
-    @GetMapping("/incoming")
+    @GetMapping("/username/{username}")
+    public ResponseEntity<List<FriendDTO>> getFriendsOfUser(Authentication authentication, @PathVariable String username){
+        UUID currentUserId = authenticationService.getCurrentUserId(authentication);
+        List<User> friends = friendsService.getFriendsOfUser(username, currentUserId);
+        return new ResponseEntity<>(FriendsService.usersAsFriendDtos(friends), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{username}")
+    public ResponseEntity<Void> removeFriends(Authentication authentication, @PathVariable String username) {
+        UUID currentUserId = authenticationService.getCurrentUserId(authentication);
+        friendsService.removeFriend(currentUserId, userService.getUserByUsername(username).id());
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/requests/received")
     public ResponseEntity<List<FriendDTO>> getIncomingRequests(Authentication authentication) {
-        try {
-            if(authentication == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-            }
-            UUID currentUserId = UUID.fromString((String) authentication.getPrincipal());
-            return ResponseEntity.ok().body(friendsService.getIncomingRequests(currentUserId));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(List.of());
-        }
+        UUID currentUserId = authenticationService.getCurrentUserId(authentication);
+        List<FriendRequest> incomingRequests = friendsService.getIncomingFriendRequests(currentUserId);
+        return new ResponseEntity<>(FriendsService.friendRequestsAsFriendDtos(incomingRequests, currentUserId), HttpStatus.OK);
     }
 
-    @GetMapping("/allof/{username}")
-    public ResponseEntity<List<FriendDTO>> getFriendsOfUser(@PathVariable String username){
-        try {
-            return ResponseEntity.ok().body(friendsService.getFriendsOfUser(username));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(List.of());
-        }
+    @GetMapping("/requests/sent")
+    public ResponseEntity<List<FriendDTO>> getSentRequests(Authentication authentication) {
+        UUID currentUserId = authenticationService.getCurrentUserId(authentication);
+        List<FriendRequest> incomingRequests = friendsService.getSentFriendRequests(currentUserId);
+        return new ResponseEntity<>(FriendsService.friendRequestsAsFriendDtos(incomingRequests, currentUserId), HttpStatus.OK);
     }
 
-    @PostMapping("/add")
-    public ResponseEntity<ResponseMsgDto> addFriend(Authentication authentication, @RequestBody FriendCommand addFriendCommand) {
-        try {
-            if(authentication == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-            }
-            UUID currentUserId = UUID.fromString((String) authentication.getPrincipal());
-            FriendsService.FriendStatus status = friendsService.addFriend(addFriendCommand, currentUserId);
-            return ResponseEntity.ok().body(ResponseMsgDto.builder().message(status.name()).build());
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(ResponseMsgDto.builder().message("ERROR").build());
-        }
+    @PostMapping("/requests/send/{username}")
+    public ResponseEntity<Void> sendFriendRequest(Authentication authentication, @PathVariable String username) {
+        UUID currentUserId = authenticationService.getCurrentUserId(authentication);
+        friendsService.sendFriendRequest(currentUserId, userService.getUserByUsername(username).id());
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @PostMapping("/remove")
-    public ResponseEntity<ResponseMsgDto> removeFriends(Authentication authentication, @RequestBody FriendCommand removeFriendCommand) {
-        try {
-            if(authentication == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-            }
-            UUID currentUserId = UUID.fromString((String) authentication.getPrincipal());
-            FriendsService.FriendStatus status =  friendsService.removeFriend(removeFriendCommand, currentUserId);
-            return ResponseEntity.ok().body(ResponseMsgDto.builder().message(status.name()).build());
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(ResponseMsgDto.builder().message("ERROR").build());
-        }
+    @DeleteMapping("/requests/cancel/{username}")
+    public ResponseEntity<Void> deleteFriendRequest(Authentication authentication, @PathVariable String username) {
+        UUID currentUserId = authenticationService.getCurrentUserId(authentication);
+        friendsService.cancelFriendRequest(currentUserId, userService.getUserByUsername(username).id());
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping("/deleterequest")
-    public ResponseEntity<ResponseMsgDto> deleteFriendRequest(Authentication authentication, @RequestBody FriendCommand removeFriendCommand) {
-        try {
-            if(authentication == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-            }
-            UUID currentUserId = UUID.fromString((String) authentication.getPrincipal());
-            FriendsService.FriendStatus status =  friendsService.deleteFriendRequest(removeFriendCommand, currentUserId);
-            return ResponseEntity.ok().body(ResponseMsgDto.builder().message(status.name()).build());
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(ResponseMsgDto.builder().message("ERROR").build());
-        }
+    @PostMapping("/requests/accept/{username}")
+    public ResponseEntity<Void> acceptFriendRequest(Authentication authentication, @PathVariable String username) {
+        UUID currentUserId = authenticationService.getCurrentUserId(authentication);
+        friendsService.acceptFriendRequest(currentUserId, userService.getUserByUsername(username).id());
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/requests/decline/{username}")
+    public ResponseEntity<Void> declineFriendRequest(Authentication authentication, @PathVariable String username) {
+        UUID currentUserId = authenticationService.getCurrentUserId(authentication);
+        friendsService.denyFriendRequest(currentUserId, userService.getUserByUsername(username).id());
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

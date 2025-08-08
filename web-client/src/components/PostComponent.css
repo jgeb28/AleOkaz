@@ -1,0 +1,40 @@
+.post-component-container {
+    padding: 1rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+    background-color: #fff;
+    width: 1000px;
+}
+
+.post-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.post-content {
+    color: #4a5568;
+    margin-bottom: 0.5rem;
+}
+
+.post-image {
+    width: 100%;
+    height: auto;
+    border-radius: 0.25rem;
+    border: 1px solid #e2e8f0;
+}
+
+.post-comments {
+    margin-top: 1rem;
+}
+
+.toggle-comments {
+    cursor: pointer;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.post-actions {
+    padding-right: 1.3rem;
+}

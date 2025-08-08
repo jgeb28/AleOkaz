@@ -7,13 +7,11 @@
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
                         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
                         http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
+    
     <changeSet id="1" author="michalciechan">
         <createTable tableName="user">
             <column name="id" type="uuid">
                 <constraints primaryKey="true" primaryKeyName="users_pk" nullable="false" />
-            </column>
-            <column name="email" type="text">
-                <constraints nullable="false" unique="true" />
             </column>
             <column name="username" type="text">
                 <constraints nullable="false" unique="true" />
@@ -21,6 +19,7 @@
             <column name="password" type="text">
                 <constraints nullable="false" />
             </column>
+            <column name="profile_picture" type="text"></column>
         </createTable>
 
         <createTable tableName="user_role">
@@ -93,6 +92,7 @@
             referencedColumnNames="id"
             referencedTableName="user" />
     </changeSet>
+
     <changeSet id="4" author="marcinmarszewski">
         <preConditions onFail="MARK_RAN">
             <not>
@@ -102,9 +102,6 @@
         <createTable tableName="user_friends">
             <column name="id" type="uuid">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_user_friends" />
-            </column>
-            <column name="is_active" type="boolean">
-                <constraints nullable="false" />
             </column>
             <column name="user_id" type="uuid">
                 <constraints nullable="false" />
@@ -125,18 +122,41 @@
             constraintName="user_friends_friend_fk"
             referencedTableName="user"
             referencedColumnNames="id" />
+
+        <createTable tableName="user_friend_requests">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" primaryKeyName="pk_user_friend_requests" nullable="false" />
+            </column>
+            <column name="sender_id" type="uuid">
+                <constraints nullable="false" />
+            </column>
+            <column name="receiver_id" type="uuid">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <addForeignKeyConstraint
+            baseTableName="user_friend_requests"
+            baseColumnNames="sender_id"
+            constraintName="user_friend_requests_sender_fk"
+            referencedTableName="user"
+            referencedColumnNames="id" />
+        <addForeignKeyConstraint
+            baseTableName="user_friend_requests"
+            baseColumnNames="receiver_id"
+            constraintName="user_friend_requests_receiver_fk"
+            referencedTableName="user"
+            referencedColumnNames="id" />
     </changeSet>
+
     <changeSet id="5" author="grzegorz-sawicki">
-        <createTable tableName="post">
+        <createTable tableName="interaction">
             <column name="id" type="uuid">
                 <constraints primaryKey="true" primaryKeyName="post_pk" nullable="false" />
             </column>
             <column name="content" type="text">
                 <constraints nullable="false" />
             </column>
-            <column name="image_url" type="text">
-                <constraints nullable="false" />
-            </column>
+            <column name="image_url" type="text"/>
             <column name="created_at" type="timestamp with time zone">
                 <constraints nullable="false" />
             </column>
@@ -144,57 +164,23 @@
             <column name="author_id" type="uuid">
                 <constraints nullable="false" />
             </column>
+            <column name="type" type="text"></column>
+            <column name="parent_id" type="uuid"></column>
         </createTable>
         <addForeignKeyConstraint
-            baseTableName="post"
+            baseTableName="interaction"
             baseColumnNames="author_id"
             constraintName="fk_post_author"
             referencedTableName="user"
             referencedColumnNames="id" />
     </changeSet>
 
-    <changeSet id="6" author="grzegorz-sawicki">
-        <createTable tableName="post_comment">
-            <column name="id" type="uuid">
-                <constraints primaryKey="true" primaryKeyName="post_comment_pk" nullable="false" />
-            </column>
-            <column name="content" type="text">
-                <constraints nullable="false" />
-            </column>
-            <column name="image_url" type="text">
-                <constraints nullable="false" />
-            </column>
-            <column name="created_at" type="timestamp with time zone">
-                <constraints nullable="false" />
-            </column>
-            <column name="edited_at" type="timestamp with time zone" />
-            <column name="author_id" type="uuid">
-                <constraints nullable="false" />
-            </column>
-            <column name="post_id" type="uuid">
-                <constraints nullable="false" />
-            </column>
-        </createTable>
-        <addForeignKeyConstraint
-            baseTableName="post_comment"
-            baseColumnNames="author_id"
-            constraintName="fk_post_comment_author"
-            referencedTableName="user"
-            referencedColumnNames="id" />
-        <addForeignKeyConstraint
-            baseTableName="post_comment"
-            baseColumnNames="post_id"
-            constraintName="fk_post_comment_to_post"
-            referencedTableName="post"
-            referencedColumnNames="id" />
-    </changeSet>
-
     <changeSet id="7" author="michalciechan">
-        <createTable tableName="post_reaction">
+        <createTable tableName="reaction">
             <column name="id" type="uuid">
                 <constraints primaryKey="true" primaryKeyName="post_reaction_pk" nullable="false" />
             </column>
-            <column name="post_id" type="uuid">
+            <column name="interaction_id" type="uuid">
                 <constraints nullable="false" />
             </column>
             <column name="author_id" type="uuid">
@@ -206,43 +192,18 @@
         </createTable>
 
         <addForeignKeyConstraint
-            baseTableName="post_reaction"
-            baseColumnNames="post_id"
+            baseTableName="reaction"
+            baseColumnNames="interaction_id"
             constraintName="fk_post_reaction_post"
-            referencedTableName="post"
+            referencedTableName="interaction"
             referencedColumnNames="id" />
         <addForeignKeyConstraint
-            baseTableName="post_reaction"
+            baseTableName="reaction"
             baseColumnNames="author_id"
             constraintName="fk_post_reaction_author"
             referencedTableName="user"
             referencedColumnNames="id" />
-        <addUniqueConstraint tableName="post_reaction" columnNames="post_id,author_id" />
-    </changeSet>
-
-    <changeSet id="8" author="michalciechan">
-        <dropTable tableName="post_comment" />
-
-        <dropNotNullConstraint tableName="post" columnName="image_url" />
-
-        <addColumn tableName="post">
-            <column name="type" type="text"></column>
-        </addColumn>
-    </changeSet>
-
-    <changeSet id="9" author="michalciechan">
-        <renameTable oldTableName="post" newTableName="interaction" />
-        <renameTable oldTableName="post_reaction" newTableName="reaction" />
-        <renameColumn tableName="reaction" oldColumnName="post_id" newColumnName="interaction_id" />
-        <addColumn tableName="interaction">
-            <column name="parent_id" type="uuid"></column>
-        </addColumn>
-    </changeSet>
-
-    <changeSet id="10" author="Grzegorz-Sawicki">
-        <addColumn tableName="user">
-            <column name="profile_picture" type="text"></column>
-        </addColumn>
+        <addUniqueConstraint tableName="reaction" columnNames="interaction_id,author_id" />
     </changeSet>
 
     <changeSet id="11" author="Grzegorz-Sawicki">

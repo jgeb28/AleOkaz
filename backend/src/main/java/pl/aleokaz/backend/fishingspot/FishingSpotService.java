@@ -6,12 +6,15 @@ import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import pl.aleokaz.backend.user.AuthorizationException;
-import pl.aleokaz.backend.user.UserRepository;
+
+import pl.aleokaz.backend.fishingspot.commands.FishingSpotCommand;
+import pl.aleokaz.backend.fishingspot.commands.FishingSpotUpdateCommand;
+import pl.aleokaz.backend.fishingspot.exceptions.FishingSpotNotFoundException;
+import pl.aleokaz.backend.user.User;
+import pl.aleokaz.backend.user.UserService;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -20,88 +23,58 @@ public class FishingSpotService {
     private FishingSpotRepository fishingSpotRepository;
 
     @Autowired
-    private FishingSpotMapper fishingSpotMapper;
-
-    @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
     private final GeometryFactory geometryFactory = new GeometryFactory();
 
-    public FishingSpotDto createFishingSpot(UUID userId, FishingSpotCommand fishingSpotCommand) {
-        final var owner = userRepository.findById(userId)
-            .orElseThrow(() -> new RuntimeException("User not found"));
+    public FishingSpot getFishingSpotById(UUID id) {
+        return fishingSpotRepository.findById(id)
+            .orElseThrow(() -> new FishingSpotNotFoundException("id", id.toString()));
+    }
 
+    public List<FishingSpot> getAllFishingSpots() {
+        return fishingSpotRepository.findAll();
+    }
+
+    public List<FishingSpot> getAllFishingSpotsSortedByDistance(double longitude, double latitude) {
+        return fishingSpotRepository.getSortedByDistance(longitude, latitude);
+    }
+
+    public FishingSpot getClosestFishingSpot(double longitude, double latitude) {
+        return fishingSpotRepository.getSortedByDistance(longitude, latitude).getFirst();
+    }
+
+    public List<FishingSpot> getPostedInFishingSpots(UUID userId) {
+        User owner = userService.getUserById(userId);
+        return fishingSpotRepository.findByUserPosts(owner.id());
+    }
+    
+    public List<FishingSpotDTO> fishingSpotsAsFishingSpotDTOs(List<FishingSpot> fishingSpots) {
+        return fishingSpots.stream()
+            .map(FishingSpot::asFishingSpotDTO)
+            .toList();
+    }
+    
+    public FishingSpot createFishingSpot(UUID userId, FishingSpotCommand fishingSpotCommand) {
+        User owner = userService.getUserById(userId);
         Point location = geometryFactory.createPoint(new Coordinate(fishingSpotCommand.longitude(), fishingSpotCommand.latitude()));
 
-        final var fishingSpot = FishingSpot.builder()
+        FishingSpot fishingSpot = FishingSpot.builder()
             .name(fishingSpotCommand.name())
             .description(fishingSpotCommand.description())
             .owner(owner)
             .location(location)
             .build();
 
-        final var savedFishingSpot = fishingSpotRepository.save(fishingSpot);
-
-        return fishingSpotMapper.convertFishingSpotToFishingSpotDto(savedFishingSpot);
+        return fishingSpotRepository.save(fishingSpot);
     }
 
-    public FishingSpotDto getFishingSpotById(UUID id) {
-        final var fishingSpot = fishingSpotRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Fishing Spot not found"));
+    public FishingSpot updateFishingSpot(UUID userId, UUID id, FishingSpotUpdateCommand fishingSpotUpdateCommand) {
+        User user = userService.getUserById(userId);
 
-        return fishingSpotMapper.convertFishingSpotToFishingSpotDto(fishingSpot);
-    }
-
-    public List<FishingSpotDto> getAllFishingSpots() {
-        final List<FishingSpot> fishingSpots = fishingSpotRepository.findAll();
-
-        final List<FishingSpotDto> fishingSpotDtos = fishingSpots.stream()
-            .map(fs -> fishingSpotMapper.convertFishingSpotToFishingSpotDto(fs))
-            .collect(Collectors.toList());
-
-        return fishingSpotDtos;
-    }
-
-    public List<FishingSpotDto> getAllFishingSpotsSortedByDistance(double longitude, double latitude) {
-        final List<FishingSpot> fishingSpots = fishingSpotRepository.getSortedByDistance(longitude, latitude);
-
-        final List<FishingSpotDto> fishingSpotDtos = fishingSpots.stream()
-            .map(fs -> fishingSpotMapper.convertFishingSpotToFishingSpotDto(fs))
-            .collect(Collectors.toList());
-
-        return fishingSpotDtos;
-    }
-
-    public FishingSpotDto getClosestFishingSpot(double longitude, double latitude) {
-        var closestSpot = fishingSpotRepository.getSortedByDistance(longitude, latitude).getFirst();
-
-        return fishingSpotMapper.convertFishingSpotToFishingSpotDto(closestSpot);
-    }
-
-    public List<FishingSpotDto> getPostedInFishingSpots(UUID userId) {
-        final var owner = userRepository.findById(userId)
-            .orElseThrow(() -> new RuntimeException("User not found"));
-
-        final List<FishingSpot> fishingSpots = fishingSpotRepository.findByUserPosts(owner.id());
-
-        final List<FishingSpotDto> fishingSpotDtos = fishingSpots.stream()
-            .map(fs -> fishingSpotMapper.convertFishingSpotToFishingSpotDto(fs))
-            .collect(Collectors.toList());
-
-        return fishingSpotDtos;
-    }
-
-    public FishingSpotDto updateFishingSpot(UUID userId, UUID id, FishingSpotUpdateCommand fishingSpotUpdateCommand) {
-        final var owner = userRepository.findById(userId)
-            .orElseThrow(() -> new RuntimeException("User not found"));
-
-        final var fishingSpot = fishingSpotRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Fishing Spot not found"));
-
-        if (!owner.equals(fishingSpot.owner())) {
-            throw new AuthorizationException(userId.toString());
-        }
-
+        FishingSpot fishingSpot = getFishingSpotById(id); 
+        user.verifyAs(fishingSpot.owner());
+        
         if(fishingSpotUpdateCommand.name() != null) {
             fishingSpot.name(fishingSpotUpdateCommand.name());
         }
@@ -113,8 +86,6 @@ public class FishingSpotService {
             fishingSpot.location(location);
         }
 
-        final var savedFishingSpot = fishingSpotRepository.save(fishingSpot);
-
-        return fishingSpotMapper.convertFishingSpotToFishingSpotDto(savedFishingSpot);
+        return fishingSpotRepository.save(fishingSpot);
     }
 }

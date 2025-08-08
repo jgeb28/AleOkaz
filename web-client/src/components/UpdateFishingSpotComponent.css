@@ -1,0 +1,42 @@
+.update-fishing-spot-component-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.update-fishing-spot-form {
+    display: flex;
+    flex-direction: column;
+    padding-top: 0.8rem;
+    gap: 0.5rem;
+    width: 100%;
+}
+
+.update-fishing-spot-name-input {
+    resize: none;
+    overflow: hidden;
+    min-height: 1.5rem;
+    padding: 0.5rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.update-fishing-spot-description-input {
+    resize: none;
+    overflow: hidden;
+    min-height: 4rem;
+    padding: 0.5rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.update-fishing-spot-toggle {
+    cursor: pointer;
+    text-decoration: underline;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+}

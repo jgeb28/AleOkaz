@@ -1,0 +1,47 @@
+.create-comment-component-container {
+    flex-direction: column;
+    align-items: flex-start;
+    display: flex;
+    width: 100%;
+    padding-left: 0.8rem;
+}
+
+.create-comment-toggle {
+    cursor: pointer;
+    text-decoration: underline;
+    font-size: 0.8rem;
+    height: 0.8rem;
+}
+
+.create-comment-form {
+    display: flex;
+    flex-direction: column;
+    padding-top: 0.8rem;
+    gap: 0.5rem;
+    width: 100%;
+}
+
+.comment-content-input {
+    resize: none;
+    overflow: hidden;
+    min-height: 4rem;
+    padding: 0.5rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.create-comment-submit {
+    cursor: pointer;
+    width: fit-content;
+    align-self: center;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    text-align: center;
+    font-size: 1rem;
+    border: 0.05rem solid #ededed;
+}
+
+.create-comment-submit:hover {
+    background-color: #f0f0f0;
+}
